@@ -1,4 +1,8 @@
-﻿// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
@@ -8,6 +12,7 @@ Shader "Custom/VolumetricFog"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_Color("Color", Color) = (1,1,0,1)
+		_NoiseTex("Fog Texture", 2D) = "black" {}
 		
 	}
 	SubShader
@@ -33,10 +38,10 @@ Shader "Custom/VolumetricFog"
 			uniform float3 _SunOppositeColor;
 			
 			sampler2D _MainTex;
-	//		uniform sampler2D _NoiseTex;
+			sampler2D _NoiseTex;
 			uniform sampler3D _FogTex;
 			
-			#define STEPS 128
+			#define STEPS 64
 			#define STEP_SIZE 1 / STEPS
 			#define MIN_DISTANCE 0.01
 			
@@ -55,6 +60,43 @@ Shader "Custom/VolumetricFog"
             uniform float _NearOverFarClip;
             
 
+			struct VertIn
+			{
+				float4 vertex : POSITION;
+				float2 uv : TEXCOORD0;
+				float4 ray : TEXCOORD1;
+			};
+
+			struct VertOut
+			{
+				float4 vertex : SV_POSITION;
+				float2 uv : TEXCOORD0;
+				float2 uv_depth : TEXCOORD1;
+				float4 interpolatedRay : TEXCOORD2;
+			};
+			
+			
+			VertOut vert(VertIn v)
+			{
+				VertOut o;
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.uv = v.uv.xy;
+				o.uv_depth = v.uv.xy;
+
+				#if UNITY_UV_STARTS_AT_TOP
+				if (_MainTex_TexelSize.y < 0)
+					o.uv.y = 1 - o.uv.y;
+				#endif				
+
+				o.interpolatedRay = v.ray;
+				
+				// Experimental
+			//	o.localPosition = v.vertex.xyz;
+
+				return o;
+			}
+
+			
 		/*	struct appdata
 			{
 				float4 vertex : POSITION;
@@ -62,18 +104,18 @@ Shader "Custom/VolumetricFog"
 				
 			};
 */
-			struct v2f
+	/*		struct v2f
 			{
 				float2 uv : TEXCOORD0;
 				float4 pos : SV_POSITION;
                 float4 ray : TEXCOORD1;    			
-			/*	float4 vertex : SV_POSITION;
+				float4 vertex : SV_POSITION;
 				float3 wPos : TEXCOORD0; // world pos
 				float3 lPos : TEXCOORD1; // local pos
-				float2 uv : TEXCOORD2;*/
-			};
+				float2 uv : TEXCOORD2;
+			};*/
 			
-            v2f vert (appdata_img v)
+     /*       v2f vert (appdata_img v)
             {
                 v2f o;
                 o.pos = v.vertex;
@@ -86,7 +128,7 @@ Shader "Custom/VolumetricFog"
                 #endif				
                 
                 return o;
-            }			
+            }	*/		
 /*
             v2f vert(appdata v) {
             	v2f o;
@@ -162,8 +204,42 @@ Shader "Custom/VolumetricFog"
 				return ret;
 }
         */
+        
+        /*	fixed4 raymarch(float3 position, float3 direction, float3 depth)
+            {
             
-            fixed4 raymarch(float3 position, float3 direction, float3 depth, fixed4 clr)
+                fixed4 ret = fixed4(0,0,0,0);
+                float3 pos = position;
+                
+                for (int i = 0; i < STEPS; i++)
+                {
+                
+                    if(ret.a > 1){
+                        break;
+                    }
+                    
+                    float s =  cellNoise(pos.xy);
+                    
+                    ret.a += s;
+                    pos += STEP_SIZE * direction;
+                }
+                
+                ret = ret + tex2D(_MainTex, position.xy);
+                return ret; // White
+            }*/
+            half4 Fog(half linear01Depth, half2 screenuv)
+            {
+                half z = linear01Depth * _CameraFarOverMaxFar;
+                z = (z - _NearOverFarClip) / (1 -_NearOverFarClip);
+                if (z < 0.0)
+                    return half4(0, 0, 0, 1);
+            
+                half3 uvw = half3(screenuv.x, screenuv.y, z);
+                uvw.xy += cellNoise(uvw * _Screen_TexelSize) * _FogTex_TexelSize * 0.8;
+                return tex3D(_FogTex, uvw);
+            }         
+                   
+            fixed4 raymarch(float3 position, float3 direction, float3 depth, float4 col)
             {   
             
                 //fixed4 c = color;
@@ -178,52 +254,55 @@ Shader "Custom/VolumetricFog"
   
                 
 
-                for (int i = 0; i < STEPS; i++)
+                for (int i = 0; i < STEPS; ++i)
                 {
                     if (c.a >= 0.99) {
 						break;
                     }
                     
                     float3 p = pos + direction * distanceAlongRay;
-                    //textureSample = cellNoise(localPosition);
-                    textureSample = tex3D(_FogTex, float4(p,0));
+                    textureSample = cellNoise(p);
+                 //   textureSample = Fog(depth, p.xy);
+                 //   textureSample = tex3D(_FogTex, p);
                  //   float w1 = pow(1 - textureSample, 2);              
                     
                     c.a += textureSample;
-                           
-                    if (c.a >= 0.99) {
-						break;
-                    }
-                    c.rgb += textureSample;
+                  //  c.rgb += textureSample;
                     
-                    distanceAlongRay += textureSample;
+                    distanceAlongRay += stepInDirection;
                 }
                 
-             //   fixed3 color = lerp(clr.rgb, c.rgb, c.a);
+             //   fixed3 color = lerp(col.rgb, c.rgb, c.a);
             //    noisesample = pow(clamp(noisesample / 2 + 0.5f, 0.0, 1.0), 2);
 
                 
-                
-                return c; 
+            //    return fixed4(color, 1);
+                return c + col; 
             }  
             
-            half4 Fog(half linear01Depth, half2 screenuv)
+
+            fixed4 frag(VertOut i) : SV_Target
             {
-                half z = linear01Depth * _CameraFarOverMaxFar;
-                z = (z - _NearOverFarClip) / (1 -_NearOverFarClip);
-                if (z < 0.0)
-                    return half4(0, 0, 0, 1);
-            
-                half3 uvw = half3(screenuv.x, screenuv.y, z);
-                uvw.xy += cellNoise(uvw.xy * _Screen_TexelSize.zw) * _FogTex_TexelSize.xy * 0.8;
-                return tex3D(_FogTex, uvw);
-            }         
-                 
-            fixed4 frag(v2f i) : SV_Target
-            {
-                half linear01Depth = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv));
-                half4 fog = Fog(linear01Depth, i.uv);
-                return tex2D(_MainTex, i.uv) * fog.a + fog;
+                half4 col = tex2D(_MainTex, i.uv);
+                float rawDepth = DecodeFloatRG(tex2D(_CameraDepthTexture, i.uv_depth));
+                half linearDepth = Linear01Depth(rawDepth);
+                
+                float4 wsDir = linearDepth * i.interpolatedRay;
+                float3 wsPos = _WorldSpaceCameraPos + wsDir;
+                
+                half4 fog = Fog(linearDepth, i.uv);
+                return raymarch(wsPos, wsDir, linearDepth, col);
+             //   return raymarch(wsPos, wsDir, linearDepth);
+          //      float noisesample = tex3Dlod(_FogTex, i.vertex);
+           //     return tex2D(_MainTex, i.uv) + noisesample;
+               // return tex3Dlod(_FogTex, i.vertex);
+               // return tex2D(_NoiseTex, i.uv);
+               // fixed4 rm = raymarch(wsPos, wsDir, linearDepth);
+                
+             //   return rm + fog;
+       //         return col + fog;
+             //   return raymarch(wsPos, wsDir, linearDepth);
+              //  return tex2D(_MainTex, i.uv) * fog.a + fog;
                 
               //  return i.pos;
             

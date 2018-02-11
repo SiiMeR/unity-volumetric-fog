@@ -18,10 +18,10 @@ float frand(int n)
 	return ihash(n) / 2147483647.0;
 }
 
-float2 cellNoise(int2 p)
+float3 cellNoise(int3 p)
 {
-	int i = p.y*256 + p.x;
-	return float2(frand(i), frand(i + 57)) - 0.5;//*2.0-1.0;
+	int i = p.y*256 + p.x + p.z;
+	return float3(frand(i), frand(i + 57), frand(i-57)) - 0.5;//*2.0-1.0;
 }
 
 

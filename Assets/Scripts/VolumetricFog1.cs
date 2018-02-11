@@ -6,7 +6,7 @@ using UnityEngine;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
-public class VolumetricFog : SceneViewFilter {
+public class VolumetricFog1 : SceneViewFilter {
 
     public Transform SunLight;
 
@@ -67,7 +67,7 @@ public class VolumetricFog : SceneViewFilter {
 //        EffectMaterial.SetFloat("_CameraFarOverMaxFar", CurrentCamera.farClipPlane / farClip);
 //        EffectMaterial.SetFloat("_NearOverFarClip", nearClip / farClip);
 
-      //  RaycastCornerBlit(source, destination, EffectMaterial);
+       // RaycastCornerBlit(source, destination, EffectMaterial);
         Graphics.Blit(source, destination, EffectMaterial, 0);
     }
 

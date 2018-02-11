@@ -6,7 +6,7 @@ using UnityEngine;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
-public class VolumetricFog : SceneViewFilter {
+public class FireFog : SceneViewFilter {
 
     public Transform SunLight;
 
@@ -33,17 +33,17 @@ public class VolumetricFog : SceneViewFilter {
     }
     private Material _EffectMaterial;
     
-    [ImageEffectOpaque]
+   [ImageEffectOpaque]
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (EffectMaterial == null)
+        if (!EffectMaterial || !_EffectShader || !_NoiseTex)
         {
             Graphics.Blit(source, destination); // do nothing
             return;
         }
         if (!fog3D)
         {
-            fog3D = CreateTexture3DFrom2DSlices(_NoiseTex, 128);
+            fog3D = TextureUtilities.CreateTexture3DFrom2DSlices(_NoiseTex, 64);
         }
 
         // Set any custom shader variables here.  For example, you could do:
@@ -54,21 +54,20 @@ public class VolumetricFog : SceneViewFilter {
 
         EffectMaterial.SetTexture("_MainTex", source);
 
-        EffectMaterial.SetTexture("_FogTex", fog3D);
+        EffectMaterial.SetTexture("_FogTexture", fog3D);
         
-//        EffectMaterial.SetMatrix("_FrustumCornersES", GetFrustumCorners(CurrentCamera));
-   //     EffectMaterial.SetMatrix("_CameraInvViewMatrix", CurrentCamera.cameraToWorldMatrix);
-//        EffectMaterial.SetVector("_CameraWS", CurrentCamera.transform.position);
+      //  EffectMaterial.SetMatrix("_FrustumCornersES", GetFrustumCorners(CurrentCamera));
+      //  EffectMaterial.SetMatrix("_CameraInvViewMatrix", CurrentCamera.cameraToWorldMatrix);
+      //  EffectMaterial.SetVector("_CameraWS", CurrentCamera.transform.position);
         
           
-//        Shader.SetGlobalVector("_Screen_TexelSize", new Vector4(1.0f / source.width, 1.0f / source.height, source.width, source.height));
-//        Shader.SetGlobalVector("_FogTex_TexelSize", new Vector4(1.0f / 256, 1.0f / 256, 1.0f/128, 0));
+        Shader.SetGlobalVector("_Screen_TexelSize", new Vector4(1.0f / source.width, 1.0f / source.height, source.width, source.height));
+        Shader.SetGlobalVector("_FogTexture_TexelSize", new Vector4(1.0f / 256, 1.0f / 256, 1.0f/128, 0));
         
-//        EffectMaterial.SetFloat("_CameraFarOverMaxFar", CurrentCamera.farClipPlane / farClip);
-//        EffectMaterial.SetFloat("_NearOverFarClip", nearClip / farClip);
-
-      //  RaycastCornerBlit(source, destination, EffectMaterial);
-        Graphics.Blit(source, destination, EffectMaterial, 0);
+     //   Shader.SetGlobalTexture("_FogTexture", fog3D);
+        CustomGraphicsBlit(source, destination, EffectMaterial, 0);
+      //   RaycastCornerBlit(source, destination, EffectMaterial);
+      //  Graphics.Blit(source, destination, EffectMaterial, 0);
     }
 
     /// \brief Stores the normalized rays representing the camera frustum in a 4x4 matrix.  Each row is a vector.
@@ -224,53 +223,7 @@ public class VolumetricFog : SceneViewFilter {
     }
     private Camera _CurrentCamera;
 
-    Texture3D CreateTexture3DFrom2DSlices(Texture2D tex, int size)
-    {
-        Texture2D readableTexture2D = getReadableTexture(tex);
 
-        Color[] colors = new Color[size * size * size];
-
-        int idx = 0;
-        
-        for (int z = 0; z < size; ++z)
-        {
-            for (int y = 0; y < size; ++y)
-            {
-                for (int x = 0; x < size; ++x, ++idx)
-                {
-                    colors[idx] = readableTexture2D.GetPixel(x + z * size, y);
-                }
-            }
-        }
-
-        Texture3D texture3D = new Texture3D(size, size, size, TextureFormat.ARGB32, true);
-        texture3D.SetPixels(colors);
-        texture3D.Apply();
-        return texture3D;
-    }
-    // https://support.unity3d.com/hc/en-us/articles/206486626-How-can-I-get-pixels-from-unreadable-textures-
-    Texture2D getReadableTexture(Texture2D texture)
-    {
-        // Create a temporary RenderTexture of the same size as the texture
-        
-        RenderTexture tmp = RenderTexture.GetTemporary(
-            texture.width,
-            texture.height,
-            0,
-            RenderTextureFormat.Default,
-            RenderTextureReadWrite.Linear);
-
-        // Blit the pixels on texture to the RenderTexture
-        Graphics.Blit(texture, tmp);
-        RenderTexture previous = RenderTexture.active;
-        RenderTexture.active = tmp;
-        Texture2D myTexture2D = new Texture2D(texture.width, texture.height);
-        myTexture2D.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
-        myTexture2D.Apply();
-        RenderTexture.active = previous;
-        RenderTexture.ReleaseTemporary(tmp);
-        return myTexture2D;
-    }
 
 
 }
