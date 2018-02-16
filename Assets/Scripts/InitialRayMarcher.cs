@@ -84,7 +84,7 @@ public class InitialRayMarcher : SceneViewFilter
 
         if (!_FogTexture3D)
         {
-            _FogTexture3D = TextureUtilities.CreateTexture3DFrom2DSlices(_FogTexture2D, 128);
+            _FogTexture3D = TextureUtilities.CreateTexture3DFrom2DSlices(_FogTexture2D, 16);
         }
         // Set any custom shader variables here.  For example, you could do:
         // EffectMaterial.SetFloat("_MyVariable", 13.37f);

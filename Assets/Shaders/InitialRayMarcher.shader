@@ -21,6 +21,7 @@ Shader "Hidden/InitialRayMarcher"
 
 			#include "UnityCG.cginc"
 			#include "DistanceFunc.cginc"
+			#include "CellNoise.cginc"
 			
 			#define STEPS 64
 			
@@ -76,7 +77,7 @@ Shader "Hidden/InitialRayMarcher"
 				// Therefore multiplying the ray by some number i gives the viewspace position
 				// of the point on the ray with [viewspace z]=i
 				o.ray /= abs(o.ray.z);
-
+                
 				// Transform the ray from eyespace to worldspace
 				o.ray = mul(_CameraInvViewMatrix, o.ray);
 
@@ -89,14 +90,14 @@ Shader "Hidden/InitialRayMarcher"
 			// return.x: result of distance field
 			// return.y: material data for closest object
 			float2 map(float3 p) {
-			
-				float2 d_box = float2(sdBox(p - float3(10,0,0), float3(0.75,0.5,0.5)), 0.25);
-				float2 d_sphere = float2(sdSphere(p - float3(-5,2,0), 1), 0.5);
+		                                                                                                                        	
+			//	float2 d_box = float2(sdBox(p - float3(10,0,0), float3(0.75,0.5,0.5)), 0.25);
+				float2 d_sphere = float2(sdBox(p - float3(3,2,0), 1), 0.5);
 
 			//	float2 ret = opU_mat(d_torus, d_box);
-				float2 ret = opU_mat(d_box, d_sphere);
+			//	float2 ret = opU_mat(d_box, d_sphere);
 				
-				return ret;
+				return d_sphere;
 			}
 
 			float3 calcNormal(in float3 pos)
@@ -133,14 +134,29 @@ Shader "Hidden/InitialRayMarcher"
 					float3 p = ro + rd * t; // World space position of sample
 					float2 d = map(p);		// Sample of distance field (see map())
 
+                    
 					// If the sample <= 0, we have hit something (see map()).
 					if (d.x < 0.001) {
-						float3 n = calcNormal(p);
-						float light = dot(-_LightDir.xyz, n);
-						ret = fixed4(tex2D(_MainTex, float2(d.y,0)).xyz * light, 1);
+				//		float3 n = calcNormal(p);
+				//		float light = dot(-_LightDir.xyz, n);
+						
+						//ret = fixed4(cellNoise(float3(d.x, d.y ,)).xyz, 1.0);
+						
+						//ret = fixed4(tex2D(_MainTex, float2(d.y,0)).xyz * light, 1);
+						//float4 particleSample = tex3D(_FogTex, float3(p));
+						float4 particleSample = tex3D(_FogTex, p);
+						/*if(particleSample.x > 0.3){
+						    particleSample = float4(0.4,0.4,0.4,particleSample.a);
+						}
+						else{
+						    particleSample = float4(0,0,0,0);
+						}*/
+						
+					    ret += particleSample.a;
 						break;
 					}
-
+                    
+                    if(ret.a > 0.99) break;
 					// If the sample > 0, we haven't hit anything yet so we should march forward
 					// We step forward by distance d, because d is the minimum distance possible to intersect
 					// an object (see map()).

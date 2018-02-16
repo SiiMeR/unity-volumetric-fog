@@ -23,7 +23,7 @@ public static class TextureUtilities {
 			}
 		}
 
-		Texture3D texture3D = new Texture3D(size, size, size, TextureFormat.RGB24, true);
+		Texture3D texture3D = new Texture3D(size, size, size, TextureFormat.RGBA32, true);
 		texture3D.SetPixels(colors);
 		texture3D.Apply();
 		return texture3D;

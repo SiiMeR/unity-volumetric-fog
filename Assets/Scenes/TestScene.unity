@@ -379,8 +379,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SunLight: {fileID: 435802471}
   _EffectShader: {fileID: 4800000, guid: 069f9ebb5a6d7ca4db6105c61ffdb4f0, type: 3}
-  _RaymarchDrawDistance: 40
-  _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
+  _RaymarchDrawDistance: 101.56
+  _FogTexture2D: {fileID: 2800000, guid: 23d5ea4373b861b408ef7ed28d0e3a97, type: 3}
 --- !u!1 &741482736
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,7 +614,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 864130664}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.19, y: 2.9, z: 7.98}
+  m_LocalPosition: {x: 7.665, y: 1.894, z: -0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -769,7 +769,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1053585813}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.89, y: 2.18, z: 0.07}
+  m_LocalPosition: {x: 25.98, y: 3.29, z: 0.07}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1198,7 +1198,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8200000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
