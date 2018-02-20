@@ -1,5 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
+﻿
 Shader "Hidden/InitialRayMarcher"
 {
 	Properties
@@ -17,7 +16,8 @@ Shader "Hidden/InitialRayMarcher"
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#pragma target 5.0
+            // support for compute shaders
+			#pragma target 5.0 
 
 			#include "UnityCG.cginc"
 			#include "DistanceFunc.cginc"
@@ -26,20 +26,18 @@ Shader "Hidden/InitialRayMarcher"
 			#define STEPS 64
 			
 			uniform sampler2D _CameraDepthTexture;
-			// These are are set by our script (see RaymarchGeneric.cs)
 			uniform sampler2D _MainTex;
-			
 			uniform sampler3D _FogTex;
 			
+			uniform float _DrawDistance;
+			
+			uniform float3 _LightDir;
+			
 			uniform float4 _MainTex_TexelSize;
+			uniform float4 _CameraWS;
 
 			uniform float4x4 _CameraInvViewMatrix;
 			uniform float4x4 _FrustumCornersES;
-			uniform float4 _CameraWS;
-
-			uniform float3 _LightDir;
-
-			uniform float _DrawDistance;
 
 			struct appdata
 			{
@@ -89,14 +87,8 @@ Shader "Hidden/InitialRayMarcher"
 			// negative answer.
 			// return.x: result of distance field
 			// return.y: material data for closest object
-			float2 map(float3 p) {
-		                                                                                                                        	
-			//	float2 d_box = float2(sdBox(p - float3(10,0,0), float3(0.75,0.5,0.5)), 0.25);
-				float2 d_sphere = float2(sdBox(p - float3(3,2,0), 1), 0.5);
-
-			//	float2 ret = opU_mat(d_torus, d_box);
-			//	float2 ret = opU_mat(d_box, d_sphere);
-				
+			float2 map(float3 p) {                                                                   
+				float2 d_sphere = float2(sdBox(p - float3(3,2,0), 1), 0.5);			
 				return d_sphere;
 			}
 
@@ -111,6 +103,7 @@ Shader "Hidden/InitialRayMarcher"
 					map(pos + eps.xyy).x - map(pos - eps.xyy).x,
 					map(pos + eps.yxy).x - map(pos - eps.yxy).x,
 					map(pos + eps.yyx).x - map(pos - eps.yyx).x);
+					
 				return normalize(nor);
 			}
 
@@ -120,7 +113,7 @@ Shader "Hidden/InitialRayMarcher"
 			// s: unity depth buffer
 			fixed4 raymarch(float3 ro, float3 rd, float s) {
 				fixed4 ret = fixed4(0,0,0,0);
-
+                
 				float t = 0; // current distance traveled along ray
 				for (int i = 0; i < STEPS; ++i) {
 					// If we run past the depth buffer, or if we exceed the max draw distance,
@@ -134,33 +127,24 @@ Shader "Hidden/InitialRayMarcher"
 					float3 p = ro + rd * t; // World space position of sample
 					float2 d = map(p);		// Sample of distance field (see map())
 
-                    
 					// If the sample <= 0, we have hit something (see map()).
-					if (d.x < 0.001) {
-				//		float3 n = calcNormal(p);
-				//		float light = dot(-_LightDir.xyz, n);
-						
-						//ret = fixed4(cellNoise(float3(d.x, d.y ,)).xyz, 1.0);
-						
-						//ret = fixed4(tex2D(_MainTex, float2(d.y,0)).xyz * light, 1);
-						//float4 particleSample = tex3D(_FogTex, float3(p));
+					if (d.x < 0.001) { // inside cube
+
 						float4 particleSample = tex3D(_FogTex, p);
-						/*if(particleSample.x > 0.3){
-						    particleSample = float4(0.4,0.4,0.4,particleSample.a);
-						}
-						else{
-						    particleSample = float4(0,0,0,0);
-						}*/
-						
-					    ret += particleSample.a;
-						break;
+						//float4 particleSample = tex3Dlod(_FogTex, float4(p,0));
+                        
+                        if(particleSample.a > 0.4){
+
+					      ret.a += particleSample.a; 
+                        }
+                        
+					//    t += experimentalStepSize;
+						//break;
 					}
-                    
+				    t += abs(d);
+				               
                     if(ret.a > 0.99) break;
-					// If the sample > 0, we haven't hit anything yet so we should march forward
-					// We step forward by distance d, because d is the minimum distance possible to intersect
-					// an object (see map()).
-					t += d;
+			
 				}
 
 				return ret;

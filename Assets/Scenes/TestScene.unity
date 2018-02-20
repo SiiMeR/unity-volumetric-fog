@@ -352,20 +352,6 @@ Transform:
 GameObject:
   m_PrefabParentObject: {fileID: 100002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_PrefabInternal: {fileID: 1727156769}
---- !u!114 &685332944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 685332943}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4825acf8423b8ef418dc30472c7c5a61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SunLight: {fileID: 435802471}
-  _EffectShader: {fileID: 4800000, guid: cdbead6eccfd12147b15d040d1b15cc5, type: 3}
-  _NoiseTex: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
 --- !u!114 &685332949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -379,7 +365,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SunLight: {fileID: 435802471}
   _EffectShader: {fileID: 4800000, guid: 069f9ebb5a6d7ca4db6105c61ffdb4f0, type: 3}
-  _RaymarchDrawDistance: 101.56
+  _RaymarchDrawDistance: 40
   _FogTexture2D: {fileID: 2800000, guid: 23d5ea4373b861b408ef7ed28d0e3a97, type: 3}
 --- !u!1 &741482736
 GameObject:
@@ -614,7 +600,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 864130664}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.665, y: 1.894, z: -0.3}
+  m_LocalPosition: {x: 13.44, y: 1.894, z: -0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1134,7 +1120,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 1.07
+      value: 1.26
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_LocalPosition.z
