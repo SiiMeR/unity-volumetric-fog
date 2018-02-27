@@ -88,7 +88,7 @@ Shader "Hidden/InitialRayMarcher"
 			// return.x: result of distance field
 			// return.y: material data for closest object
 			float2 map(float3 p) {                                                                   
-				float2 d_sphere = float2(sdBox(p - float3(3,2,0), 3), 0.5);			
+				float2 d_sphere = float2(sdBox(p - float3(3,2,0), 10), 0.5);			
 				return d_sphere;
 			}
             
@@ -110,10 +110,14 @@ Shader "Hidden/InitialRayMarcher"
 			// ro: ray origin
 			// rd: ray direction
 			// s: unity depth buffer
-			fixed4 raymarch(float3 ro, float3 rd, float s) {
-				fixed4 ret = fixed4(0,0,0,0);
-                
-                fixed3 fogColor = fixed3(0.6,0.6,0.6);
+			// color: original pixel color from _MainTex
+			fixed4 raymarch(float3 ro, float3 rd, float s, float3 color) {
+			
+			    // http://www.iquilezles.org/www/articles/fog/fog.htm
+			    fixed3 fogColor = fixed3(0.6,0.6,0.6);
+			    float fogAmount = 1.0 - exp(-s*0.05);
+			    
+				fixed4 ret = fixed4(fogColor,0);
                 
 				float t = 0; // current distance traveled along ray
 				float stepsTaken = 0;
@@ -134,18 +138,11 @@ Shader "Hidden/InitialRayMarcher"
 
 					// If the sample <= 0, we have hit something (see map()).
 					if (d.x < 0.001) { // inside cube
+					
 						float4 particleSample = tex3D(_FogTex, p);
-
-                        //if(particleSample.a > 0.4){
-                        
                         ret.a += 0.07;
-                        //ret.a = 0.8 - 1/stepsTaken+1;
-                        ret.rgb = fogColor;
-					  //  ret.a += particleSample.a; 
-                        //}
-                       // ret.rgb += particleSample.rgb;
+                        
 					    t += experimentalStepSize;
-						//break;
 					}
 					else { // not in volume yet, march forward the distance to closest object
 					    t += d;
@@ -155,8 +152,12 @@ Shader "Hidden/InitialRayMarcher"
                     if(ret.a > 0.99) break;
 			
 				}
-               // return fixed4(0.3,0.3,0.3, 1 - 1/stepsTaken);  
-               // ret.a = 1/stepsTaken;      
+				// now find color
+				
+				
+				ret.rgb = lerp(color, ret.rgb,  fogAmount);
+				
+
 				return ret;
 			}
 
@@ -178,15 +179,18 @@ Shader "Hidden/InitialRayMarcher"
 				// This is done by multiplying the eyespace depth by the length of the "z-normalized"
 				// ray (see vert()).  Think of similar triangles: the view-space z-distance between a point
 				// and the camera is proportional to the absolute distance.
-				float depth = LinearEyeDepth(tex2D(_CameraDepthTexture, duv).r);
+				float nonlineardepth = tex2D(_CameraDepthTexture,duv).r;
+
+				float depth = LinearEyeDepth(nonlineardepth);
 				depth *= length(i.ray);
 
 				fixed3 col = tex2D(_MainTex,i.uv);
 
-				fixed4 add = raymarch(ro, rd, depth);
-                
+				fixed4 add = raymarch(ro, rd, depth, col);
+
+                // Returns final color using alpha blending
                 fixed4 mixedcolor = fixed4(col*(1.0 - add.w) + add.xyz * add.w,1.0);
-				// Returns final color using alpha blending
+                 
 				return mixedcolor;
 			}
 			ENDCG
