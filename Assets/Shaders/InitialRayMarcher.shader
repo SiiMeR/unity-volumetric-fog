@@ -88,25 +88,24 @@ Shader "Hidden/InitialRayMarcher"
 			// return.x: result of distance field
 			// return.y: material data for closest object
 			float2 map(float3 p) {                                                                   
-				float2 d_sphere = float2(sdBox(p - float3(3,2,0), 1), 0.5);			
+				float2 d_sphere = float2(sdBox(p - float3(3,2,0), 3), 0.5);			
 				return d_sphere;
 			}
+            
+            float rand(float2 co){
+            
+				float a = 12.9898;
+				float b = 78.233;
+				float c = 43758.5453;
+				float dt = dot(co.xy, float2(a, b));
+				float sn = fmod(dt, 3.14);
 
-			float3 calcNormal(in float3 pos)
-			{
-				const float2 eps = float2(0.001, 0.0);
-				// The idea here is to find the "gradient" of the distance field at pos
-				// Remember, the distance field is not boolean - even if you are inside an object
-				// the number is negative, so this calculation still works.
-				// Essentially you are approximating the derivative of the distance field at this point.
-				float3 nor = float3(
-					map(pos + eps.xyy).x - map(pos - eps.xyy).x,
-					map(pos + eps.yxy).x - map(pos - eps.yxy).x,
-					map(pos + eps.yyx).x - map(pos - eps.yyx).x);
-					
-				return normalize(nor);
-			}
-
+				return 2.0 * frac(sin(sn) * c) - 1.0;
+            }           
+            float randomOffset(float uv){
+                return abs(rand(_Time.zw + uv));
+            }
+            
 			// Raymarch along given ray
 			// ro: ray origin
 			// rd: ray direction
@@ -114,8 +113,14 @@ Shader "Hidden/InitialRayMarcher"
 			fixed4 raymarch(float3 ro, float3 rd, float s) {
 				fixed4 ret = fixed4(0,0,0,0);
                 
+                fixed3 fogColor = fixed3(0.6,0.6,0.6);
+                
 				float t = 0; // current distance traveled along ray
+				float stepsTaken = 0;
+				float experimentalStepSize = 1/STEPS;
+				
 				for (int i = 0; i < STEPS; ++i) {
+				    stepsTaken += 1;
 					// If we run past the depth buffer, or if we exceed the max draw distance,
 					// stop and return nothing (transparent pixel).
 					// this way raymarched objects and traditional meshes can coexist.
@@ -129,24 +134,29 @@ Shader "Hidden/InitialRayMarcher"
 
 					// If the sample <= 0, we have hit something (see map()).
 					if (d.x < 0.001) { // inside cube
-
 						float4 particleSample = tex3D(_FogTex, p);
-						//float4 particleSample = tex3Dlod(_FogTex, float4(p,0));
-                        
-                        if(particleSample.a > 0.4){
 
-					      ret.a += particleSample.a; 
-                        }
+                        //if(particleSample.a > 0.4){
                         
-					//    t += experimentalStepSize;
+                        ret.a += 0.07;
+                        //ret.a = 0.8 - 1/stepsTaken+1;
+                        ret.rgb = fogColor;
+					  //  ret.a += particleSample.a; 
+                        //}
+                       // ret.rgb += particleSample.rgb;
+					    t += experimentalStepSize;
 						//break;
 					}
-				    t += abs(d);
+					else { // not in volume yet, march forward the distance to closest object
+					    t += d;
+					}
+				    
 				               
                     if(ret.a > 0.99) break;
 			
 				}
-
+               // return fixed4(0.3,0.3,0.3, 1 - 1/stepsTaken);  
+               // ret.a = 1/stepsTaken;      
 				return ret;
 			}
 
@@ -157,7 +167,7 @@ Shader "Hidden/InitialRayMarcher"
 				float3 rd = normalize(i.ray.xyz);
 				// ray origin (camera position)
 				float3 ro = _CameraWS;
-
+				
 				float2 duv = i.uv;
 				#if UNITY_UV_STARTS_AT_TOP
 				if (_MainTex_TexelSize.y < 0)
@@ -174,9 +184,10 @@ Shader "Hidden/InitialRayMarcher"
 				fixed3 col = tex2D(_MainTex,i.uv);
 
 				fixed4 add = raymarch(ro, rd, depth);
-
+                
+                fixed4 mixedcolor = fixed4(col*(1.0 - add.w) + add.xyz * add.w,1.0);
 				// Returns final color using alpha blending
-				return fixed4(col*(1.0 - add.w) + add.xyz * add.w,1.0);
+				return mixedcolor;
 			}
 			ENDCG
 		}

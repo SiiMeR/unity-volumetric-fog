@@ -19,9 +19,9 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _Freq: 25.4
+    - _Freq: 30.7
     - _RandomOffset: 1
-    - _Strength: 0.271
-    - _StrengthMultiplier: 19.5
+    - _Strength: 0.421
+    - _StrengthMultiplier: 9.6
     m_Colors:
     - _FogColor: {r: 0.4, g: 0.4, b: 0.4, a: 0}
