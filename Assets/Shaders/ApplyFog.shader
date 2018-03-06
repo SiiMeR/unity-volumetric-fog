@@ -52,7 +52,9 @@
                     NearestUV = UV;
                 }
             }
-        
+            
+			
+			                
             float4 GetNearestDepthSample(float2 uv)
             {
                 //read full resolution depth

@@ -9,6 +9,8 @@
 	        
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
+            #include "DistanceFunc.cginc"
+            
             
             #define STEPS 128
             #define STEPSIZE 1/STEPS
@@ -57,7 +59,19 @@
                 
                 return o; 
 			}
-		
+			
+			
+			// This is the distance field function.  The distance field represents the closest distance to the surface
+			// of any object we put in the scene.  If the given point (point p) is inside of an object, we return a
+			// negative answer.
+			// return.x: result of distance field
+			// return.y: material data for closest object
+			float2 map(float3 p) {                                                                   
+				float2 d_sphere = float2(sdBox(p - float3(109,3,106), 20), 0.5);			
+				return d_sphere;
+			}		
+			
+			
 			fixed4 frag (v2f i) : SV_Target
 			{
                // read low res depth and reconstruct world position
@@ -70,12 +84,10 @@
                 float4 viewPos = float4(i.ray.xyz * lindepth,1);
                 
                 float3 worldPos = mul(InverseViewMatrix, viewPos).xyz;	
-                            
-                //get the ray direction in world space, raymarching is towards the camera
-                
-                
-                float3 rayDir = normalize(_WorldSpaceCameraPos.xyz-worldPos);
-              //  float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
+                           
+                // ray direction in world space
+            //    float3 rayDir = normalize(_WorldSpaceCameraPos.xyz-worldPos);
+                float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
               //  float rayDistance = length(_WorldSpaceCameraPos.xyz-worldPos);
                 float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
                 
@@ -83,7 +95,8 @@
                 float stepSize = rayDistance * STEPSIZE;
                 
                 //raymarch from the world point to the camera
-                float3 currentPos = worldPos.xyz;
+              //  float3 currentPos = worldPos.xyz;
+                float3 currentPos = _WorldSpaceCameraPos.xyz;
                         
                 // Calculate the offsets on the ray according to the interleaved sampling pattern
                 float2 interleavedPos = fmod( float2(i.pos.x, _CameraDepthTexture_TexelSize.w - i.pos.y), GRID_SIZE );		
@@ -103,7 +116,13 @@
                 float transmittance = 1;
                 
                 for(int i = 0 ; i < STEPS ; i++ )
-                {					
+                {				
+                
+                    float2 distanceSample = map(currentPos); // sample distance field at current position
+                    
+                    if(distanceSample.x < 0.0001){ // we are inside the predefined cube
+                    
+      
                   //  float2 noiseUV = currentPos.xz / TerrainSize.xz;
                     float2 noiseUV = currentPos.xz ;
                     float noiseValue = saturate( 2 * tex2Dlod(_NoiseTexture, float4(10*noiseUV + 0.5*_Time.xx, 0, 0)));
@@ -136,6 +155,8 @@
                     //accumulate light
                     result += (scattering * transmittance * stepSize) * fColour;
         
+                    }
+                    
                     //raymarch towards the camera
                     currentPos += rayDir * stepSize;	
                 }

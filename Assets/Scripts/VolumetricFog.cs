@@ -4,8 +4,8 @@ using UnityEngine.Rendering;
 
 
 [ExecuteInEditMode]
-	[RequireComponent (typeof(Camera))]
-	class VolumetricFog : SceneViewFilter
+//	[RequireComponent (typeof(Camera))]
+	class VolumetricFog : MonoBehaviour
 	{
 		[SerializeField] private Shader _ApplyFogShader;
 		[SerializeField] private Shader _CalculateFogShader;
@@ -77,7 +77,7 @@ using UnityEngine.Rendering;
 			get
 			{
 				if (!_CurrentCamera)
-					_CurrentCamera = GetComponent<Camera>();
+					_CurrentCamera = Camera.main;
 				return _CurrentCamera;
 			}
 		}
@@ -160,13 +160,12 @@ using UnityEngine.Rendering;
 
 			Light light = GameObject.Find("Directional Light").GetComponent<Light>();
 
-			Camera camera = GetComponent<Camera>();
 
-			Matrix4x4 worldViewProjection = camera.worldToCameraMatrix * camera.projectionMatrix;
+			Matrix4x4 worldViewProjection = CurrentCamera.worldToCameraMatrix * CurrentCamera.projectionMatrix;
 			Matrix4x4 invWorldViewProjection = worldViewProjection.inverse;
 
-			Shader.SetGlobalMatrix("InverseViewMatrix", camera.cameraToWorldMatrix);
-			Shader.SetGlobalMatrix("InverseProjectionMatrix", camera.projectionMatrix.inverse);
+			Shader.SetGlobalMatrix("InverseViewMatrix", CurrentCamera.cameraToWorldMatrix);
+			Shader.SetGlobalMatrix("InverseProjectionMatrix", CurrentCamera.projectionMatrix.inverse);
 
 		//	CalculateFogMaterial.SetTexture ("LowResDepth", lowresDepthRT); TODO
 			CalculateFogMaterial.SetTexture ("_NoiseTexture", _FogTexture2D);
