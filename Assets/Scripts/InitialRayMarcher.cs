@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Rendering;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
@@ -7,30 +8,72 @@ public class InitialRayMarcher : SceneViewFilter
 {
     public Transform SunLight;
 
-    [SerializeField]
-    private Shader _EffectShader;
-    [SerializeField]
-    private float _RaymarchDrawDistance = 40;
-    [SerializeField] 
-    private Texture2D _FogTexture2D;
+    [SerializeField] private Shader _ApplyFogShader;
+    [SerializeField] private Shader _CalculateFogShader;
+    [SerializeField] private Shader _ApplyBlurShader;
+    
+    
+    [SerializeField] private float _RaymarchDrawDistance = 40;
+    [SerializeField] private Texture2D _FogTexture2D;
+    
+    [SerializeField] private float _FogDensityCoef = 0.3f;
+    [SerializeField] private float _ScatteringCoef = 0.25f;
+    [SerializeField] private float _ExtinctionCoef = 0.01f;
+    
 
     private Texture3D _FogTexture3D;
-
-    public Material EffectMaterial
+    
+    private Material _ApplyFogMaterial;
+    
+    public Material ApplyFogMaterial
     {
         get
         {
-            if (!_EffectMaterial && _EffectShader)
+            if (!_ApplyFogMaterial && _ApplyFogShader)
             {
-                _EffectMaterial = new Material(_EffectShader);
-                _EffectMaterial.hideFlags = HideFlags.HideAndDontSave;
+                _ApplyFogMaterial = new Material(_ApplyFogShader);
+                _ApplyFogMaterial.hideFlags = HideFlags.HideAndDontSave;
             }
 
-            return _EffectMaterial;
+            return _ApplyFogMaterial;
         }
     }
-    private Material _EffectMaterial;
 
+
+    private Material _CalculateFogMaterial;
+
+    public Material CalculateFogMaterial
+    {
+        get
+        {
+            if (!_CalculateFogMaterial && _CalculateFogShader)
+            {
+                _CalculateFogMaterial = new Material(_CalculateFogShader);
+                _CalculateFogMaterial.hideFlags = HideFlags.HideAndDontSave;
+            }
+
+            return _CalculateFogMaterial;
+        }
+    }
+
+    private Material _ApplyBlurMaterial;
+
+    public Material ApplyBlurMaterial
+    {
+        get
+        {
+            if (!_ApplyBlurMaterial && _ApplyBlurShader)
+            {
+                _ApplyBlurMaterial = new Material(_ApplyBlurShader);
+                _ApplyBlurMaterial.hideFlags = HideFlags.HideAndDontSave;
+            }
+
+            return _ApplyBlurMaterial;
+        }
+    }
+    
+    private Camera _CurrentCamera;
+    
     public Camera CurrentCamera
     {
         get
@@ -40,7 +83,54 @@ public class InitialRayMarcher : SceneViewFilter
             return _CurrentCamera;
         }
     }
-    private Camera _CurrentCamera;
+
+
+    private CommandBuffer _AfterShadowPass;
+    
+    void Start()
+    {
+        AddLightCommandBuffer();
+    }
+    
+    void OnDestroy()
+    {
+        RemoveLightCommandBuffer();
+    }
+    
+    private void RemoveLightCommandBuffer()
+    {
+        // TODO : SUPPORT MULTIPLE LIGHTS 
+        if (SunLight != null)
+        {
+            Light light = SunLight.GetComponent<Light>();    
+        }
+        
+        if (_AfterShadowPass != null && GetComponent<Light>())
+        {
+            GetComponent<Light>().RemoveCommandBuffer(LightEvent.AfterShadowMap, _AfterShadowPass);
+        }
+    }
+
+
+
+    
+    
+    // based on https://interplayoflight.wordpress.com/2015/07/03/adventures-in-postprocessing-with-unity/
+    void AddLightCommandBuffer()
+    {
+        _AfterShadowPass = new CommandBuffer();
+        _AfterShadowPass.name = "Volumetric Fog ShadowMap";
+        _AfterShadowPass.SetGlobalTexture("ShadowMap", new RenderTargetIdentifier(BuiltinRenderTextureType.CurrentActive));
+
+        Light light = SunLight.GetComponent<Light>();
+    
+        if (light)
+        {
+            light.AddCommandBuffer(LightEvent.AfterShadowMap, _AfterShadowPass);
+        }
+
+    }
+
 
     void OnDrawGizmos()
     {
@@ -76,8 +166,9 @@ public class InitialRayMarcher : SceneViewFilter
     [ImageEffectOpaque]
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (!EffectMaterial || !_EffectShader)
+        if (!ApplyFogMaterial || !_ApplyFogShader || !CalculateFogMaterial || !_CalculateFogShader )
         {
+            print("sum ting fong");
             Graphics.Blit(source, destination); // do nothing
             return;
         }
@@ -86,21 +177,80 @@ public class InitialRayMarcher : SceneViewFilter
         {
             _FogTexture3D = TextureUtilities.CreateTexture3DFrom2DSlices(_FogTexture2D, 16);
         }
+        
+        int fogRTW = source.width;
+        int fogRTH = source.height;
+        
+        RenderTexture fogRenderTexture1 = RenderTexture.GetTemporary(fogRTW, fogRTH, 0 , RenderTextureFormat.ARGBHalf);
+        RenderTexture fogRenderTexture2 = RenderTexture.GetTemporary(fogRTW, fogRTH, 0 , RenderTextureFormat.ARGBHalf);
+
+        fogRenderTexture1.filterMode = FilterMode.Bilinear;
+        fogRenderTexture2.filterMode = FilterMode.Bilinear;
+        
+        CalculateFogMaterial.SetVector ("_LightColor", SunLight.GetComponent<Light>().color.linear);
+        CalculateFogMaterial.SetColor("_ShadowColor", Color.black); // TODO : CHANGE THIS  
+        CalculateFogMaterial.SetFloat ("_LightIntensity", SunLight.GetComponent<Light>().intensity);
+        CalculateFogMaterial.SetTexture("_NoiseTex", _FogTexture2D);
+        CalculateFogMaterial.SetFloat("_FogDensityCoef", _FogDensityCoef);
+        CalculateFogMaterial.SetFloat("_ScatteringCoef", _ScatteringCoef);
+        CalculateFogMaterial.SetFloat("_ExtinctionCoef", _ExtinctionCoef);
+        CalculateFogMaterial.SetFloat("_DrawDistance", _RaymarchDrawDistance);
+        CalculateFogMaterial.SetMatrix("_FrustumCornersES", GetFrustumCorners(CurrentCamera));
+        CalculateFogMaterial.SetMatrix("_CameraInvViewMatrix", CurrentCamera.cameraToWorldMatrix);
+        CalculateFogMaterial.SetMatrix("_CameraInvProjMatrix", CurrentCamera.projectionMatrix.inverse);
+        CalculateFogMaterial.SetVector("_CameraWS", CurrentCamera.transform.position);
+        
+        //CustomGraphicsBlit(source, fogRenderTexture1, CalculateFogMaterial, 0);
+        Graphics.Blit(source, fogRenderTexture1, CalculateFogMaterial);
+        
+        
+        //TODO : BLUR IMAGE AFTER CALCULATING FOG
+        ApplyFogMaterial.SetTexture("_FogRenderTargetPoint", fogRenderTexture1);
+        ApplyFogMaterial.SetTexture("_FogRenderTargetLinear", fogRenderTexture1);
+        
+        //CustomGraphicsBlit(source, destination,  ApplyFogMaterial, 0);
+        Graphics.Blit(source, destination, ApplyFogMaterial);
+        RenderTexture.ReleaseTemporary(fogRenderTexture1);
+   /*     int rtW = source.width/4;
+        int rtH = source.height/4;
+        RenderTexture buffer = RenderTexture.GetTemporary(rtW, rtH, 0);
+
+        // Copy source to the 4x4 smaller texture.
+        DownSample4x (source, buffer);
+
+        // Blur the small texture
+        for(int i = 0; i < 3; i++)
+        {
+            RenderTexture buffer2 = RenderTexture.GetTemporary(rtW, rtH, 0);
+            FourTapCone (buffer, buffer2, i);
+            RenderTexture.ReleaseTemporary(buffer);
+            buffer = buffer2;
+        }
+        CustomGraphicsBlit(buffer,destination, EffectMaterial,0);
+    //    Graphics.Blit(buffer, destination);
+            
+
+        
+        // TODO : blur
+        */
         // Set any custom shader variables here.  For example, you could do:
         // EffectMaterial.SetFloat("_MyVariable", 13.37f);
         // This would set the shader uniform _MyVariable to value 13.37
-        EffectMaterial.SetTexture("_FogTex", _FogTexture3D);
         
+    //    ApplyFogMaterial.SetTexture("_FogTex", _FogTexture3D);
+    //    EffectMaterial.SetTexture("_BlurTex", buffer);
         
-        EffectMaterial.SetVector("_LightDir", SunLight ? SunLight.forward : Vector3.down);
+    //    ApplyFogMaterial.SetVector("_LightDir", SunLight ? SunLight.forward : Vector3.down);
 
-        EffectMaterial.SetFloat("_DrawDistance", _RaymarchDrawDistance);
 
-        EffectMaterial.SetMatrix("_FrustumCornersES", GetFrustumCorners(CurrentCamera));
-        EffectMaterial.SetMatrix("_CameraInvViewMatrix", CurrentCamera.cameraToWorldMatrix);
-        EffectMaterial.SetVector("_CameraWS", CurrentCamera.transform.position);
 
-        CustomGraphicsBlit(source, destination, EffectMaterial, 0);
+     /*   CustomGraphicsBlit(source, fogRenderTexture1, ApplyFogMaterial, 0);
+
+        ApplyFogMaterial.SetTexture("FogRendertargetLinear", fogRenderTexture1);
+        
+        CustomGraphicsBlit(source, destination, ApplyFogMaterial, 1);*/
+        
+  
     }
 
     /// \brief Stores the normalized rays representing the camera frustum in a 4x4 matrix.  Each row is a vector.
@@ -177,6 +327,32 @@ public class InitialRayMarcher : SceneViewFilter
         
         GL.End();
         GL.PopMatrix();
+    }
+    
+    
+    
+    // Performs one blur iteration.
+    public void FourTapCone (RenderTexture source, RenderTexture dest, int iteration)
+    {
+        float off = 0.5f + iteration*0.6f;
+        Graphics.BlitMultiTap (source, dest, ApplyFogMaterial,
+            new Vector2(-off, -off),
+            new Vector2(-off,  off),
+            new Vector2( off,  off),
+            new Vector2( off, -off)
+        );
+    }
+
+    // Downsamples the texture to a quarter resolution.
+    private void DownSample4x (RenderTexture source, RenderTexture dest)
+    {
+        float off = 1.0f;
+        Graphics.BlitMultiTap (source, dest, ApplyFogMaterial,
+            new Vector2(-off, -off),
+            new Vector2(-off,  off),
+            new Vector2( off,  off),
+            new Vector2( off, -off)
+        );
     }
 
 }

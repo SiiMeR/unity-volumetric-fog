@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Final pass in the contrast stretch effect: apply
 // color stretch to the original image, based on currently
 // adapted to minimum/maximum luminances.
@@ -25,13 +27,12 @@ struct v2f {
 
 uniform sampler2D _MainTex;
 uniform sampler2D _AdaptTex;
-half4 _MainTex_ST;
 
 v2f vert (appdata_img v)
 {
 	v2f o;
-	o.pos = UnityObjectToClipPos(v.vertex);
-	o.uv[0] = MultiplyUV (UNITY_MATRIX_TEXTURE0, UnityStereoScreenSpaceUVAdjust(v.texcoord, _MainTex_ST));
+	o.pos = UnityObjectToClipPos (v.vertex);
+	o.uv[0] = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);
 	o.uv[1] = float2(0.5,0.5);
 	return o;
 }

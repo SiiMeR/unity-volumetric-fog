@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/FXAA II" {
 Properties {
 	_MainTex ("Base (RGB)", 2D) = "white" {}
@@ -74,8 +76,8 @@ CGPROGRAM
     #define FxaaFloat2 float2
     #define FxaaSat(a) saturate((a))
     #define FxaaTex sampler2D
-    #define FxaaTexLod0(t, p) tex2Dlod(t, float4(UnityStereoScreenSpaceUVAdjust(p, _MainTex_ST), 0.0, 0.0))
-    #define FxaaTexOff(t, p, o, r) tex2Dlod(t, float4(UnityStereoScreenSpaceUVAdjust(p + (o * r), _MainTex_ST), 0, 0))
+    #define FxaaTexLod0(t, p) tex2Dlod(t, float4(p, 0.0, 0.0))
+    #define FxaaTexOff(t, p, o, r) tex2Dlod(t, float4(p + (o * r), 0, 0))
 #endif
 /*--------------------------------------------------------------------------*/
 #if FXAA_HLSL_4
@@ -83,8 +85,8 @@ CGPROGRAM
     #define FxaaFloat2 float2
     #define FxaaSat(a) saturate((a))
     struct FxaaTex { SamplerState smpl; Texture2D tex; };
-    #define FxaaTexLod0(t, p) t.tex.SampleLevel(t.smpl, UnityStereoScreenSpaceUVAdjust(p, _MainTex_ST), 0.0) 
-    #define FxaaTexOff(t, p, o, r) t.tex.SampleLevel(t.smpl, UnityStereoScreenSpaceUVAdjust(p, _MainTex_ST), 0.0, o)
+    #define FxaaTexLod0(t, p) t.tex.SampleLevel(t.smpl, p, 0.0) 
+    #define FxaaTexOff(t, p, o, r) t.tex.SampleLevel(t.smpl, p, 0.0, o)
 #endif
 
 
@@ -109,8 +111,6 @@ float2 rcpFrame) {          // {1.0/frameWidth, 1.0/frameHeight}
                                 PIXEL SHADER
                                 
 ============================================================================*/
-half4 _MainTex_ST;
-
 float3 FxaaPixelShader(
 float4 posPos,       // Output of FxaaVertexShader interpolated across screen.
 FxaaTex tex,         // Input texture.
@@ -169,7 +169,7 @@ float4 _MainTex_TexelSize;
 v2f vert (appdata_img v)
 {
 	v2f o;
-	o.pos = UnityObjectToClipPos(v.vertex);
+	o.pos = UnityObjectToClipPos (v.vertex);
 	o.uv = FxaaVertexShader (v.texcoord.xy*2-1, _MainTex_TexelSize.xy);
 	return o;
 }

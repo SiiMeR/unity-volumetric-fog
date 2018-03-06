@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/BlendForBloom" {
 	Properties {
 		_MainTex ("Screen Blended", 2D) = "" {}
@@ -22,9 +24,7 @@ Shader "Hidden/BlendForBloom" {
 	
 	half _Intensity;
 	half4 _ColorBuffer_TexelSize;
-	half4 _ColorBuffer_ST;
 	half4 _MainTex_TexelSize;
-	half4 _MainTex_ST;
 		
 	v2f vert( appdata_img v ) {
 		v2f o;
@@ -52,35 +52,35 @@ Shader "Hidden/BlendForBloom" {
 	}
 	
 	half4 fragScreen (v2f i) : SV_Target {
-		half4 addedbloom = tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[0].xy, _MainTex_ST)) * _Intensity;
-		half4 screencolor = tex2D(_ColorBuffer, UnityStereoScreenSpaceUVAdjust(i.uv[1], _ColorBuffer_ST));
+		half4 addedbloom = tex2D(_MainTex, i.uv[0].xy) * _Intensity;
+		half4 screencolor = tex2D(_ColorBuffer, i.uv[1]);
 		return 1-(1-addedbloom)*(1-screencolor);
 	}
 
 	half4 fragScreenCheap(v2f i) : SV_Target {
-		half4 addedbloom = tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[0].xy, _MainTex_ST)) * _Intensity;
-		half4 screencolor = tex2D(_ColorBuffer, UnityStereoScreenSpaceUVAdjust(i.uv[1], _ColorBuffer_ST));
+		half4 addedbloom = tex2D(_MainTex, i.uv[0].xy) * _Intensity;
+		half4 screencolor = tex2D(_ColorBuffer, i.uv[1]);
 		return 1-(1-addedbloom)*(1-screencolor);
 	}
 
 	half4 fragAdd (v2f i) : SV_Target {
-		half4 addedbloom = tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[0].xy, _MainTex_ST));
-		half4 screencolor = tex2D(_ColorBuffer, UnityStereoScreenSpaceUVAdjust(i.uv[1], _ColorBuffer_ST));
+		half4 addedbloom = tex2D(_MainTex, i.uv[0].xy);
+		half4 screencolor = tex2D(_ColorBuffer, i.uv[1]);
 		return _Intensity * addedbloom + screencolor;
 	}
 
 	half4 fragAddCheap (v2f i) : SV_Target {
-		half4 addedbloom = tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[0].xy, _MainTex_ST));
-		half4 screencolor = tex2D(_ColorBuffer, UnityStereoScreenSpaceUVAdjust(i.uv[1], _ColorBuffer_ST));
+		half4 addedbloom = tex2D(_MainTex, i.uv[0].xy);
+		half4 screencolor = tex2D(_ColorBuffer, i.uv[1]);
 		return _Intensity * addedbloom + screencolor;
 	}
 
 	half4 fragVignetteMul (v2f i) : SV_Target {
-		return tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[0].xy, _MainTex_ST)) * tex2D(_ColorBuffer, UnityStereoScreenSpaceUVAdjust(i.uv[0], _ColorBuffer_ST));
+		return tex2D(_MainTex, i.uv[0].xy) * tex2D(_ColorBuffer, i.uv[0]);
 	}
 
 	half4 fragVignetteBlend (v2f i) : SV_Target {
-		return half4(1,1,1, tex2D(_ColorBuffer, UnityStereoScreenSpaceUVAdjust(i.uv[0], _ColorBuffer_ST)).r);
+		return half4(1,1,1, tex2D(_ColorBuffer, i.uv[0]).r);
 	}
 
 	half4 fragClear (v2f i) : SV_Target {
@@ -88,29 +88,29 @@ Shader "Hidden/BlendForBloom" {
 	}
 
 	half4 fragAddOneOne (v2f i) : SV_Target {
-		half4 addedColors = tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[0].xy, _MainTex_ST));
+		half4 addedColors = tex2D(_MainTex, i.uv[0].xy);
 		return addedColors * _Intensity;
 	}
 
 	half4 frag1Tap (v2f i) : SV_Target {
-		return tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[0].xy, _MainTex_ST));
+		return tex2D(_MainTex, i.uv[0].xy);
 	}
 	
 	half4 fragMultiTapMax (v2f_mt i) : SV_Target {
-		half4 outColor = tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[4].xy, _MainTex_ST));
-		outColor = max(outColor, tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[0].xy, _MainTex_ST)));
-		outColor = max(outColor, tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[1].xy, _MainTex_ST)));
-		outColor = max(outColor, tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[2].xy, _MainTex_ST)));
-		outColor = max(outColor, tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[3].xy, _MainTex_ST)));
+		half4 outColor = tex2D(_MainTex, i.uv[4].xy);
+		outColor = max(outColor, tex2D(_MainTex, i.uv[0].xy));
+		outColor = max(outColor, tex2D(_MainTex, i.uv[1].xy));
+		outColor = max(outColor, tex2D(_MainTex, i.uv[2].xy));
+		outColor = max(outColor, tex2D(_MainTex, i.uv[3].xy));
 		return outColor;
 	}
 
 	half4 fragMultiTapBlur (v2f_mt i) : SV_Target {
 		half4 outColor = 0;
-		outColor += tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[0].xy, _MainTex_ST));
-		outColor += tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[1].xy, _MainTex_ST));
-		outColor += tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[2].xy, _MainTex_ST));
-		outColor += tex2D(_MainTex, UnityStereoScreenSpaceUVAdjust(i.uv[3].xy, _MainTex_ST));
+		outColor += tex2D(_MainTex, i.uv[0].xy);
+		outColor += tex2D(_MainTex, i.uv[1].xy);
+		outColor += tex2D(_MainTex, i.uv[2].xy);
+		outColor += tex2D(_MainTex, i.uv[3].xy);
 		return outColor/4;
 	}
 

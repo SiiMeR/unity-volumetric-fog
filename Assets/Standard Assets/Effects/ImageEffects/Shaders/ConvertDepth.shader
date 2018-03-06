@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/ConvertDepth" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "" {}
@@ -15,14 +17,12 @@ Shader "Hidden/ConvertDepth" {
 		
 	sampler2D _MainTex;
 	sampler2D_float _CameraDepthTexture;
-	
-	half4 _CameraDepthTexture_ST;
-
+		
 	v2f vert( appdata_img v ) 
 	{
 		v2f o;
 		o.pos = UnityObjectToClipPos(v.vertex);
-		o.uv = UnityStereoScreenSpaceUVAdjust(v.texcoord.xy, _CameraDepthTexture_ST);
+		o.uv =  v.texcoord.xy;
 		return o;
 	}
 	

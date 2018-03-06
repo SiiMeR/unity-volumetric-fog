@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/NoiseAndGrain" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
@@ -47,7 +49,7 @@ Shader "Hidden/NoiseAndGrain" {
 		{
 			v2f o;
 			
-			o.pos = UnityObjectToClipPos(v.vertex);	
+			o.pos = UnityObjectToClipPos (v.vertex);	
 			
 		#if UNITY_UV_STARTS_AT_TOP
 			o.uv_screen = v.vertex.xyxy;
@@ -56,9 +58,7 @@ Shader "Hidden/NoiseAndGrain" {
 		#else
         		o.uv_screen = v.vertex.xy;
 		#endif
-
-			o.uv_screen = UnityStereoTransformScreenSpaceTex(o.uv_screen);
-
+			
 			// different tiling for 3 channels
 			o.uvRg = v.texcoord.xyxy + v.texcoord1.xyxy * _NoiseTilingPerChannel.rrgg * _NoiseTex_TexelSize.xyxy;
 			o.uvB = v.texcoord.xy + v.texcoord1.xy * _NoiseTilingPerChannel.bb * _NoiseTex_TexelSize.xy;

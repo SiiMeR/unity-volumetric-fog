@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/ColorCorrectionCurvesSimple" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "" {}
@@ -17,14 +19,12 @@ Shader "Hidden/ColorCorrectionCurvesSimple" {
 	sampler2D _MainTex;
 	sampler2D _RgbTex;
 	fixed _Saturation;
-
-	half4 _MainTex_ST;
 	
 	v2f vert( appdata_img v ) 
 	{
 		v2f o;
 		o.pos = UnityObjectToClipPos(v.vertex);
-		o.uv = UnityStereoScreenSpaceUVAdjust(v.texcoord.xy, _MainTex_ST);
+		o.uv = v.texcoord.xy;
 		return o;
 	} 
 	
