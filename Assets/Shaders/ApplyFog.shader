@@ -100,8 +100,8 @@
 			fogSample = tex2Dlod(FogRendertargetPoint, float4(NearestUV,0,0)) ;
 		}
                 
-                return fogSample;
-            }
+            return fogSample;
+        }
         
             
             float4 frag(v2f input) : SV_Target 

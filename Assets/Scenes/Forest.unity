@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18033013, g: 0.22577041, b: 0.30695018, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -171,13 +171,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 597845559}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.4073749, y: -0.23531182, z: 0.107225195, w: 0.8758864}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 49.826004, y: -30.236002, z: -0.34500003}
 --- !u!1001 &614976249
 Prefab:
   m_ObjectHideFlags: 0
@@ -225,6 +225,14 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_IsPrefabParent: 0
@@ -265,7 +273,7 @@ Terrain:
   serializedVersion: 3
   m_TerrainData: {fileID: 15600000, guid: 32620d2a18d1d6543869088db9e2d1c5, type: 2}
   m_TreeDistance: 2000
-  m_TreeBillboardDistance: 50
+  m_TreeBillboardDistance: 400
   m_TreeCrossFadeLength: 5
   m_TreeMaximumFullLODCount: 50
   m_DetailObjectDistance: 100
@@ -309,7 +317,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1097241482}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21738455dcf6b354c81e21a6a4efa6e9, type: 3}
   m_Name: 
@@ -317,13 +325,22 @@ MonoBehaviour:
   _ApplyFogShader: {fileID: 4800000, guid: 234a6daa6de91c84abe7ad7b0909739f, type: 3}
   _CalculateFogShader: {fileID: 4800000, guid: f23c80f7a6f11ab4ca09d8bf57f45523, type: 3}
   _ApplyBlurShader: {fileID: 4800000, guid: dacc5cc659bad3b41b48782cae543e86, type: 3}
-  _RaymarchDrawDistance: 100
+  _RaymarchDrawDistance: 400
+  _FogWorldPosition: {x: 106.28, y: 3, z: 100}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
   _FogDensityCoef: 0.3
   _ScatteringCoef: 0.25
   _ExtinctionCoef: 0.01
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
   SunLight: {fileID: 597845561}
+--- !u!45 &1097241488
+Skybox:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1097241482}
+  m_Enabled: 1
+  m_CustomSkybox: {fileID: 2100000, guid: 39cace2863926444a9a78daa8ae26413, type: 2}
 --- !u!1 &1252731390
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,14 +356,14 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1252731391
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1252731390}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21738455dcf6b354c81e21a6a4efa6e9, type: 3}
   m_Name: 
@@ -355,6 +372,7 @@ MonoBehaviour:
   _CalculateFogShader: {fileID: 4800000, guid: f23c80f7a6f11ab4ca09d8bf57f45523, type: 3}
   _ApplyBlurShader: {fileID: 4800000, guid: dacc5cc659bad3b41b48782cae543e86, type: 3}
   _RaymarchDrawDistance: 50
+  _FogWorldPosition: {x: 100, y: 3, z: 150}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
   _FogDensityCoef: 0.3
   _ScatteringCoef: 0.25

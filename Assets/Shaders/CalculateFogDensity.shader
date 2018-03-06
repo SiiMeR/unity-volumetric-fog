@@ -27,7 +27,8 @@
                               _CameraDepthTexture_TexelSize;
                               
             uniform float3    _ShadowColor,
-                              _LightColor;
+                              _LightColor,
+                              _FogWorldPosition;
                               
             uniform float     _FogDensity,
                               _ScatteringCoef,
@@ -67,7 +68,7 @@
 			// return.x: result of distance field
 			// return.y: material data for closest object
 			float2 map(float3 p) {                                                                   
-				float2 d_sphere = float2(sdBox(p - float3(109,3,106), 20), 0.5);			
+				float2 d_sphere = float2(sdBox(p - float3(_FogWorldPosition), 20), 0.5);			
 				return d_sphere;
 			}		
 			

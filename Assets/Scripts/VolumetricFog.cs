@@ -1,11 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
 
-
 [ExecuteInEditMode]
-//	[RequireComponent (typeof(Camera))]
-	class VolumetricFog : MonoBehaviour
+    [RequireComponent (typeof(Camera))]
+	class VolumetricFog : SceneViewFilter
 	{
 		[SerializeField] private Shader _ApplyFogShader;
 		[SerializeField] private Shader _CalculateFogShader;
@@ -13,6 +11,8 @@ using UnityEngine.Rendering;
 		
 		
 		[SerializeField] private float _RaymarchDrawDistance = 40;
+		[SerializeField] private Vector3 _FogWorldPosition;
+		
 		[SerializeField] private Texture2D _FogTexture2D;
     
 		[SerializeField] private float _FogDensityCoef = 0.3f;
@@ -77,7 +77,7 @@ using UnityEngine.Rendering;
 			get
 			{
 				if (!_CurrentCamera)
-					_CurrentCamera = Camera.main;
+					_CurrentCamera = GetComponent<Camera>();
 				return _CurrentCamera;
 			}
 		}
@@ -166,7 +166,7 @@ using UnityEngine.Rendering;
 
 			Shader.SetGlobalMatrix("InverseViewMatrix", CurrentCamera.cameraToWorldMatrix);
 			Shader.SetGlobalMatrix("InverseProjectionMatrix", CurrentCamera.projectionMatrix.inverse);
-
+	
 		//	CalculateFogMaterial.SetTexture ("LowResDepth", lowresDepthRT); TODO
 			CalculateFogMaterial.SetTexture ("_NoiseTexture", _FogTexture2D);
 			CalculateFogMaterial.SetFloat ("_FogDensity", _FogDensityCoef);
@@ -174,8 +174,10 @@ using UnityEngine.Rendering;
 			CalculateFogMaterial.SetFloat ("_ExtinctionCoef", _ExtinctionCoef);
 			CalculateFogMaterial.SetFloat ("_ViewDistance", _RaymarchDrawDistance);
 			CalculateFogMaterial.SetVector ("_LightColor", light.color.linear);
+			CalculateFogMaterial.SetVector ("_FogWorldPosition", _FogWorldPosition);
 			CalculateFogMaterial.SetFloat ("_LightIntensity", light.intensity);
 			CalculateFogMaterial.SetColor ("_ShadowColor", _ShadowColor);
+			
 
 
 			//render fog
