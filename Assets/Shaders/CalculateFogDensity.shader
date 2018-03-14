@@ -14,7 +14,7 @@
             
             #define STEPS 128
             #define STEPSIZE 1/STEPS
-            #define GRID_SIZE 8
+            #define GRID_SIZE 4
             #define GRID_SIZE_SQR_RCP (1.0/(GRID_SIZE*GRID_SIZE))
             
             UNITY_DECLARE_SHADOWMAP(ShadowMap);
@@ -81,6 +81,8 @@
                 //linearise depth		
                 float lindepth = Linear01Depth (depth);
                 
+                float linearEyeDepth = LinearEyeDepth(depth);
+                
                 //get view and then world positions		
                 float4 viewPos = float4(i.ray.xyz * lindepth,1);
                 
@@ -117,49 +119,52 @@
                 float transmittance = 1;
                 
                 for(int i = 0 ; i < STEPS ; i++ )
-                {				
-                
+                {	
+                    			
+                    if(transmittance < 0.01){
+                        break;
+                    }
+                    
                     float2 distanceSample = map(currentPos); // sample distance field at current position
                     
                     if(distanceSample.x < 0.0001){ // we are inside the predefined cube
                     
-      
-                  //  float2 noiseUV = currentPos.xz / TerrainSize.xz;
-                    float2 noiseUV = currentPos.xz ;
-                    float noiseValue = saturate( 2 * tex2Dlod(_NoiseTexture, float4(10*noiseUV + 0.5*_Time.xx, 0, 0)));
-                    
-                    //modulate fog density by a noise value to make it more interesting
-                    float fogDensity = noiseValue * _FogDensity;
-        
-                    float scattering =  _ScatteringCoef * fogDensity;
-                    float extinction = _ExtinctionCoef * fogDensity;
                         
-                    //calculate shadow at this sample position
-                    float3 shadowCoord0 = mul(unity_WorldToShadow[0], float4(currentPos,1)).xyz; 
-                    float3 shadowCoord1 = mul(unity_WorldToShadow[1], float4(currentPos,1)).xyz; 
-                    float3 shadowCoord2 = mul(unity_WorldToShadow[2], float4(currentPos,1)).xyz; 
-                    float3 shadowCoord3 = mul(unity_WorldToShadow[3], float4(currentPos,1)).xyz;
+                      //  float2 noiseUV = currentPos.xz / TerrainSize.xz;
+                        float2 noiseUV = currentPos.xz;
+                        float noiseValue = saturate(2 * tex2Dlod(_NoiseTexture, float4(10*noiseUV + 0.5*_Time.xx, 0, 0)));
+                        
+                        //modulate fog density by a noise value to make it more interesting
+                        float fogDensity = noiseValue * _FogDensity;
+            
+                        float scattering =  _ScatteringCoef * fogDensity;
+                        float extinction = _ExtinctionCoef * fogDensity;
+                            
+                        //calculate shadow at this sample position
+                        float3 shadowCoord0 = mul(unity_WorldToShadow[0], float4(currentPos,1)).xyz; 
+                        float3 shadowCoord1 = mul(unity_WorldToShadow[1], float4(currentPos,1)).xyz;                      
+                        float3 shadowCoord2 = mul(unity_WorldToShadow[2], float4(currentPos,1)).xyz; 
+                        float3 shadowCoord3 = mul(unity_WorldToShadow[3], float4(currentPos,1)).xyz;
+                        
+                        float4 shadowCoord = float4(shadowCoord0 * weights[0] + shadowCoord1 * weights[1] + shadowCoord2 * weights[2] + shadowCoord3 * weights[3],1); 
+                        
+                        //do shadow test and store the result				
+                        float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);				
+                        
+                        //calculate transmittance
+                        transmittance *= exp( -extinction * stepSize);
                     
-                    float4 shadowCoord = float4(shadowCoord0 * weights[0] + shadowCoord1 * weights[1] + shadowCoord2 * weights[2] + shadowCoord3 * weights[3],1); 
-                    
-                    //do shadow test and store the result				
-                    float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);				
-                    
-                    //calculate transmittance
-                    transmittance *= exp( -extinction * stepSize);
-                
-                    //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas
-
-                    
-                    float3 fColour = lerp(_ShadowColor, litFogColour, shadowTerm);
-                    
-                    //accumulate light
-                    result += (scattering * transmittance * stepSize) * fColour;
+                        //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas
+    
+                        float3 fColour = lerp(_ShadowColor, litFogColour, shadowTerm);
+                        
+                        //accumulate light
+                        result += (scattering * transmittance * stepSize) * fColour;
         
                     }
                     
-                    //raymarch towards the camera
-                    currentPos += rayDir * stepSize;	
+                    //raymarch along the ray
+                    currentPos += rayDir * stepSize;
                 }
                                 
                 return float4(result, transmittance);        

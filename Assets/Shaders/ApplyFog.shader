@@ -24,7 +24,7 @@
             float4 _MainTex_TexelSize; // (1.0/width, 1.0/height, width, height)
             float4 _CameraDepthTexture_TexelSize;
             
-            float DepthThreshold;
+            float DepthThreshold = 0.5;
             
             uniform float4x4  InverseViewMatrix,                         
                               InverseProjectionMatrix;	                       
@@ -60,7 +60,7 @@
                 //read full resolution depth
                 float ZFull = Linear01Depth( SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, uv) );
         
-                //find low res depth texture texel size
+                //find depth texture texel size
                 const float2 TexelSize = 2.0 * _CameraDepthTexture_TexelSize.xy;
                 const float depthTreshold =  DepthThreshold ;
                 
@@ -97,7 +97,8 @@
 		}
 		else
 		{
-			fogSample = tex2Dlod(FogRendertargetPoint, float4(NearestUV,0,0)) ;
+			//fogSample = tex2Dlod(FogRendertargetPoint, float4(NearestUV,0,0)) ;
+		    fogSample = tex2Dlod( FogRendertargetLinear, float4(lowResUV,0,0)) ; 
 		}
                 
             return fogSample;

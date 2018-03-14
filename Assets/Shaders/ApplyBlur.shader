@@ -56,7 +56,15 @@ Shader "Hidden/ApplyBlur"
 			result += tex2D(_MainTex, ( input.uv + BlurDir * offset[i] * _MainTex_TexelSize.xy )) * w * weight[i];
 			
 			totalWeight += w * weight[i];
-			
+	 
+          depth = Linear01Depth(tex2D(_CameraDepthTexture, (input.uv - BlurDir * offset[i] * _MainTex_TexelSize.xy )));
+ 
+          w = abs(depth-centralDepth)* BlurDepthFalloff;
+          w = exp(-w*w);
+ 
+          result += tex2D(_MainTex, ( input.uv - BlurDir * offset[i] * _MainTex_TexelSize.xy )) * w* weight[i];
+ 
+          totalWeight += w * weight[i];		
 
 		}
 			
