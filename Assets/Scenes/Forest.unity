@@ -138,7 +138,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
-  m_Color: {r: 0.875, g: 0.8742273, b: 0.536, a: 1}
+  m_Color: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -330,17 +330,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21738455dcf6b354c81e21a6a4efa6e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ApplyFogShader: {fileID: 4800000, guid: 234a6daa6de91c84abe7ad7b0909739f, type: 3}
   _CalculateFogShader: {fileID: 4800000, guid: f23c80f7a6f11ab4ca09d8bf57f45523, type: 3}
   _ApplyBlurShader: {fileID: 4800000, guid: dacc5cc659bad3b41b48782cae543e86, type: 3}
-  _RaymarchDrawDistance: 400
-  _FogWorldPosition: {x: 111.61, y: 3, z: 100}
+  _ApplyFogShader: {fileID: 4800000, guid: 234a6daa6de91c84abe7ad7b0909739f, type: 3}
+  SunLight: {fileID: 597845561}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
+  _FogWorldPosition: {x: 111.61, y: 3, z: 100}
+  _UseQuaterResRenderTextures: 0
   _FogDensityCoef: 0.3
   _ScatteringCoef: 0.25
   _ExtinctionCoef: 0.01
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
-  SunLight: {fileID: 597845561}
+  _LightColor: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
+  _BlurEnabled: 0
+  _RaymarchDrawDistance: 400
 --- !u!45 &1097241488
 Skybox:
   m_ObjectHideFlags: 0
@@ -376,17 +379,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21738455dcf6b354c81e21a6a4efa6e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ApplyFogShader: {fileID: 4800000, guid: 234a6daa6de91c84abe7ad7b0909739f, type: 3}
   _CalculateFogShader: {fileID: 4800000, guid: f23c80f7a6f11ab4ca09d8bf57f45523, type: 3}
   _ApplyBlurShader: {fileID: 4800000, guid: dacc5cc659bad3b41b48782cae543e86, type: 3}
-  _RaymarchDrawDistance: 50
-  _FogWorldPosition: {x: 100, y: 3, z: 150}
+  _ApplyFogShader: {fileID: 4800000, guid: 234a6daa6de91c84abe7ad7b0909739f, type: 3}
+  SunLight: {fileID: 597845561}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
+  _FogWorldPosition: {x: 100, y: 3, z: 150}
+  _UseQuaterResRenderTextures: 0
   _FogDensityCoef: 0.3
   _ScatteringCoef: 0.25
   _ExtinctionCoef: 0.01
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
-  SunLight: {fileID: 597845561}
+  _LightColor: {r: 0, g: 0, b: 0, a: 0}
+  _BlurEnabled: 0
+  _RaymarchDrawDistance: 50
 --- !u!4 &1252731393
 Transform:
   m_ObjectHideFlags: 0

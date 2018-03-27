@@ -10,18 +10,21 @@
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
             #include "DistanceFunc.cginc"
-            
+            #include "UnityShadowLibrary.cginc"
             
             #define STEPS 128
             #define STEPSIZE 1/STEPS
-            #define GRID_SIZE 4
+            #define GRID_SIZE 8
             #define GRID_SIZE_SQR_RCP (1.0/(GRID_SIZE*GRID_SIZE))
             
             UNITY_DECLARE_SHADOWMAP(ShadowMap);
+            float4 ShadowMap_TexelSize;
             
             uniform sampler2D _MainTex,
                               _CameraDepthTexture,
                               _NoiseTexture;
+                              
+            uniform sampler3D _NoiseTex3D;
                               
             uniform float4    _MainTex_TexelSize,
                               _CameraDepthTexture_TexelSize;
@@ -72,7 +75,30 @@
 				return d_sphere;
 			}		
 			
+	        
+	        // get the coefficients of each cascade
+			fixed4 getCascadeWeights(float z){
 			
+                float4 zNear = float4( z >= _LightSplitsNear ); 
+                float4 zFar = float4( z < _LightSplitsFar ); 
+                float4 weights = zNear * zFar; 
+                
+			    return weights;
+			}
+			
+			// combines cascades to get shadowmap coordinate for later sampling of shadowmap
+			fixed4 getShadowCoord(float4 worldPos, float4 weights){
+			     //calculate shadow at this sample position
+                float3 shadowCoord0 = mul(unity_WorldToShadow[0], worldPos).xyz; 
+                float3 shadowCoord1 = mul(unity_WorldToShadow[1], worldPos).xyz;                      
+                float3 shadowCoord2 = mul(unity_WorldToShadow[2], worldPos).xyz; 
+                float3 shadowCoord3 = mul(unity_WorldToShadow[3], worldPos).xyz;
+                        
+                // float4 shadowCoord = float4(shadowCoord0 * weights[0] + shadowCoord1 * weights[1] + shadowCoord2 * weights[2] + shadowCoord3 * weights[3],1); 
+                float4 shadowCoord = float4(shadowCoord0 * weights.x + shadowCoord1 * weights[1] + shadowCoord2 * weights[2] + shadowCoord3 * weights[3],1); 
+                
+                return shadowCoord;            
+			} 
 			fixed4 frag (v2f i) : SV_Target
 			{
                // read low res depth and reconstruct world position
@@ -89,9 +115,7 @@
                 float3 worldPos = mul(InverseViewMatrix, viewPos).xyz;	
                            
                 // ray direction in world space
-            //    float3 rayDir = normalize(_WorldSpaceCameraPos.xyz-worldPos);
                 float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
-              //  float rayDistance = length(_WorldSpaceCameraPos.xyz-worldPos);
                 float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
                 
                 //calculate step size for raymarching
@@ -108,12 +132,9 @@
                 
                 float3 result = 0;
                 
-                //calculate weights for cascade split selection
-                float4 viewZ = -viewPos.z; 
-                float4 zNear = float4( viewZ >= _LightSplitsNear ); 
-                float4 zFar = float4( viewZ < _LightSplitsFar ); 
-                float4 weights = zNear * zFar; 
-                        
+                //calculate weights for cascade split selection             
+                float4 weights = getCascadeWeights(-viewPos.z);
+                
                 float3 litFogColour = _LightIntensity * _LightColor;
                 
                 float transmittance = 1;
@@ -129,9 +150,11 @@
                     
                     if(distanceSample.x < 0.0001){ // we are inside the predefined cube
                     
-                        
-                      //  float2 noiseUV = currentPos.xz / TerrainSize.xz;
+
                         float2 noiseUV = currentPos.xz;
+                     //   float3 noiseUV = currentPos.xyz;
+                      //  float noiseValue = saturate(2 * tex3Dlod(_NoiseTex3D, float4(10 * noiseUV + 0.5 * _Time.xxx, 0)));
+                     
                         float noiseValue = saturate(2 * tex2Dlod(_NoiseTexture, float4(10*noiseUV + 0.5*_Time.xx, 0, 0)));
                         
                         //modulate fog density by a noise value to make it more interesting
@@ -139,15 +162,9 @@
             
                         float scattering =  _ScatteringCoef * fogDensity;
                         float extinction = _ExtinctionCoef * fogDensity;
-                            
-                        //calculate shadow at this sample position
-                        float3 shadowCoord0 = mul(unity_WorldToShadow[0], float4(currentPos,1)).xyz; 
-                        float3 shadowCoord1 = mul(unity_WorldToShadow[1], float4(currentPos,1)).xyz;                      
-                        float3 shadowCoord2 = mul(unity_WorldToShadow[2], float4(currentPos,1)).xyz; 
-                        float3 shadowCoord3 = mul(unity_WorldToShadow[3], float4(currentPos,1)).xyz;
                         
-                        float4 shadowCoord = float4(shadowCoord0 * weights[0] + shadowCoord1 * weights[1] + shadowCoord2 * weights[2] + shadowCoord3 * weights[3],1); 
-                        
+                        float4 shadowCoord = getShadowCoord(float4(currentPos,1), weights);
+                           
                         //do shadow test and store the result				
                         float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);				
                         
