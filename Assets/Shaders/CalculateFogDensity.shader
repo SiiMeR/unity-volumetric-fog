@@ -12,13 +12,10 @@
             #include "DistanceFunc.cginc"
             #include "UnityShadowLibrary.cginc"
             
-            #define STEPS 128
-            #define STEPSIZE 1/STEPS
-            #define GRID_SIZE 8
-            #define GRID_SIZE_SQR_RCP (1.0/(GRID_SIZE*GRID_SIZE))
+            #pragma multi_compile SHADOWS_ON SHADOWS_OFF 
+            // compile 2 shaders so switching at runtime is faster
             
             UNITY_DECLARE_SHADOWMAP(ShadowMap);
-            float4 ShadowMap_TexelSize;
             
             uniform sampler2D _MainTex,
                               _CameraDepthTexture,
@@ -27,7 +24,8 @@
             uniform sampler3D _NoiseTex3D;
                               
             uniform float4    _MainTex_TexelSize,
-                              _CameraDepthTexture_TexelSize;
+                              _CameraDepthTexture_TexelSize,
+                              _LightData;
                               
             uniform float3    _ShadowColor,
                               _LightColor,
@@ -36,13 +34,23 @@
             uniform float     _FogDensity,
                               _ScatteringCoef,
                               _ExtinctionCoef,
+                              _Anisotropy,
                               _ViewDistance,
-                              _LightIntensity;
+                              _LightIntensity,
+                              _FogSize,
+                              _InterleavedSamplingSQRSize,
+                              _RaymarchSteps;
                               
             uniform float4x4  InverseViewMatrix,                   
                               InverseProjectionMatrix;
                               
 
+
+            #define STEPS _RaymarchSteps
+            #define STEPSIZE 1/STEPS
+            #define GRID_SIZE _InterleavedSamplingSQRSize
+            #define GRID_SIZE_SQR_RCP (1.0/(GRID_SIZE*GRID_SIZE))
+            
 			struct v2f
 			{
 				float4 pos : SV_POSITION;
@@ -71,12 +79,12 @@
 			// return.x: result of distance field
 			// return.y: material data for closest object
 			float2 map(float3 p) {                                                                   
-				float2 d_sphere = float2(sdBox(p - float3(_FogWorldPosition), 20), 0.5);			
+				float2 d_sphere = float2(sdBox(p - float3(_FogWorldPosition), _FogSize), 0.5);			
 				return d_sphere;
 			}		
 			
-	        
-	        // get the coefficients of each cascade
+	
+	        // get the coefficients of each shadow cascade
 			fixed4 getCascadeWeights(float z){
 			
                 float4 zNear = float4( z >= _LightSplitsNear ); 
@@ -99,6 +107,18 @@
                 
                 return shadowCoord;            
 			} 
+			
+			// use Henyey-Greenstein phase function to approximate Mie scattering(GPU PRO 5)
+			fixed4 getHenyeyGreenstein(float3 lightPos, float3 cameraPos){
+			
+			    float n = 1 - _Anisotropy;
+			    float c = dot(lightPos,cameraPos);
+			    float d = 1 + _Anisotropy * _Anisotropy - 2*_Anisotropy * c;
+			    
+			    return n * n / (4 * 3.1415 * pow(d, 1.5));
+			}
+
+			
 			fixed4 frag (v2f i) : SV_Target
 			{
                // read low res depth and reconstruct world position
@@ -163,17 +183,28 @@
                         float scattering =  _ScatteringCoef * fogDensity;
                         float extinction = _ExtinctionCoef * fogDensity;
                         
+                         //calculate transmittance by applying Beer law
+                        transmittance *= exp( -extinction * stepSize);
+                        
+                        
+                              
+#if SHADOWS_ON
                         float4 shadowCoord = getShadowCoord(float4(currentPos,1), weights);
-                           
+                        
                         //do shadow test and store the result				
                         float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);				
-                        
-                        //calculate transmittance
-                        transmittance *= exp( -extinction * stepSize);
                     
                         //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas
-    
-                        float3 fColour = lerp(_ShadowColor, litFogColour, shadowTerm);
+                        float3 fColour = lerp(_ShadowColor, litFogColour, shadowTerm);                                            
+#endif
+
+#if SHADOWS_OFF
+                        float3 fColour = litFogColour;   
+#endif
+
+                      //  float3 lightDir = normalize(currentPos - _LightData.xyz);
+                      //  float HGfn = getHenyeyGreenstein(lightDir, currentPos) * _ScatteringCoef;
+                        
                         
                         //accumulate light
                         result += (scattering * transmittance * stepSize) * fColour;

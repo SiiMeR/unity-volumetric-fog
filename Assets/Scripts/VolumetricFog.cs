@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Rendering;
 
 [ExecuteInEditMode]
@@ -15,28 +16,38 @@ using UnityEngine.Rendering;
 		[SerializeField] private Transform SunLight;
 		[SerializeField] private Texture2D _FogTexture2D;
 		
-		[HeaderAttribute("Position and size")]
+		[HeaderAttribute("Position and size(in m³)")]
 		
 		[SerializeField] private Vector3 _FogWorldPosition;
+		[SerializeField] private float _FogSize = 10.0f;
 
-		[HeaderAttribute("Performance")] 
+		[HeaderAttribute("Performance")]
 		
-		[SerializeField] private bool _UseQuaterResRenderTextures;
+		[SerializeField] [Range(1, 8)] private int _RenderTextureResDivision = 2;
+		[SerializeField] [Range(16, 256)] private int _RayMarchSteps = 128;
+		
+		[Tooltip("Interleaved sampling square size")]
+		[SerializeField] [Range(1, 16)] private int _SQRSize = 8;
 		
 		[HeaderAttribute("Physical coefficients")]
 		
 		[SerializeField] private float _FogDensityCoef = 0.3f;
 		[SerializeField] private float _ScatteringCoef = 0.25f;
 		[SerializeField] private float _ExtinctionCoef = 0.01f;
+		[SerializeField] private float _Anisotropy = 0.5f;
+		
 		
 		[HeaderAttribute("Color")]
 		
 		[SerializeField] private Color _ShadowColor = Color.black;
 		[SerializeField] private Color _LightColor;
 		
+		[SerializeField] [Range(0,10)] private float _LightIntensity = 1;
+		
 		[HeaderAttribute("Debug")] 
 		
 		[SerializeField] private bool _BlurEnabled;
+		[SerializeField] private bool _ShadowsEnabled;
 		[SerializeField] private float _RaymarchDrawDistance = 40;
 			
 		
@@ -109,7 +120,6 @@ using UnityEngine.Rendering;
     
 		void Start()
 		{
-			SunLight.GetComponent<Light>().color = _LightColor;
 			AddLightCommandBuffer();
 		}
     
@@ -171,6 +181,21 @@ using UnityEngine.Rendering;
 				_FogTexture3D = TextureUtilities.CreateTexture3DFrom2DSlices(_FogTexture2D, 128);
 			}
 
+			if (_ShadowsEnabled)
+			{
+				Shader.EnableKeyword("SHADOWS_ON");
+				Shader.DisableKeyword("SHADOWS_OFF");
+			}
+			else
+			{
+				Shader.DisableKeyword("SHADOWS_ON");
+				Shader.EnableKeyword("SHADOWS_OFF");
+			}
+			
+			SunLight.GetComponent<Light>().color = _LightColor;
+			SunLight.GetComponent<Light>().intensity = _LightIntensity;
+			
+			
 			RenderTextureFormat formatRF32 = RenderTextureFormat.RFloat;
 			int lowresDepthWidth= source.width;
 			int lowresDepthHeight= source.height;
@@ -185,14 +210,8 @@ using UnityEngine.Rendering;
 */
 			RenderTextureFormat format = RenderTextureFormat.ARGBHalf;
 			
-			int fogRTWidth= source.width;
-			int fogRTHeight= source.height;
-			
-			if (_UseQuaterResRenderTextures)
-			{
-				fogRTWidth /= 2;
-				fogRTHeight /= 2;
-			}
+			int fogRTWidth= source.width / _RenderTextureResDivision;
+			int fogRTHeight= source.height / _RenderTextureResDivision;
 
 
 			RenderTexture fogRT1 = RenderTexture.GetTemporary (fogRTWidth, fogRTHeight, 0, format);
@@ -205,17 +224,27 @@ using UnityEngine.Rendering;
 
 			Shader.SetGlobalMatrix("InverseViewMatrix", CurrentCamera.cameraToWorldMatrix);
 			Shader.SetGlobalMatrix("InverseProjectionMatrix", CurrentCamera.projectionMatrix.inverse);
-	
+
+
+			
 		//	CalculateFogMaterial.SetTexture ("LowResDepth", lowresDepthRT); TODO
 			CalculateFogMaterial.SetTexture ("_NoiseTexture", _FogTexture2D);
 			CalculateFogMaterial.SetTexture("_NoiseTex3D", _FogTexture3D);
 			
+			CalculateFogMaterial.SetFloat("_RaymarchSteps", _RayMarchSteps);
+			CalculateFogMaterial.SetFloat("_InterleavedSamplingSQRSize", _SQRSize);
+
+			CalculateFogMaterial.SetVector("_LightData", new Vector4(light.transform.position.x, light.transform.position.y, light.transform.position.z,0));
+			
+			
 			CalculateFogMaterial.SetFloat ("_FogDensity", _FogDensityCoef);
 			CalculateFogMaterial.SetFloat ("_ScatteringCoef", _ScatteringCoef);
 			CalculateFogMaterial.SetFloat ("_ExtinctionCoef", _ExtinctionCoef);
+			CalculateFogMaterial.SetFloat("_Anisotropy", _Anisotropy);
 			CalculateFogMaterial.SetFloat ("_ViewDistance", _RaymarchDrawDistance);
 			CalculateFogMaterial.SetVector ("_FogWorldPosition", _FogWorldPosition);
-			CalculateFogMaterial.SetFloat ("_LightIntensity", light.intensity);
+			CalculateFogMaterial.SetFloat("_FogSize", _FogSize);
+			CalculateFogMaterial.SetFloat ("_LightIntensity", _LightIntensity);
 			CalculateFogMaterial.SetColor ("_ShadowColor", _ShadowColor);
 			CalculateFogMaterial.SetVector ("_LightColor", _LightColor);
 

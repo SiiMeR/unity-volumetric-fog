@@ -139,7 +139,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
-  m_Intensity: 1
+  m_Intensity: 1.68
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -241,6 +241,10 @@ Prefab:
       propertyPath: field of view
       value: 59
       objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_UseHeadBob
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_IsPrefabParent: 0
@@ -336,14 +340,20 @@ MonoBehaviour:
   SunLight: {fileID: 597845561}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
   _FogWorldPosition: {x: 111.61, y: 3, z: 100}
-  _UseQuaterResRenderTextures: 0
+  _FogSize: 20
+  _RenderTextureResDivision: 1
+  _RayMarchSteps: 256
+  _SQRSize: 8
   _FogDensityCoef: 0.3
   _ScatteringCoef: 0.25
   _ExtinctionCoef: 0.01
+  _Anisotropy: 0.5
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
   _LightColor: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
+  _LightIntensity: 1.68
   _BlurEnabled: 0
-  _RaymarchDrawDistance: 400
+  _ShadowsEnabled: 1
+  _RaymarchDrawDistance: 418.83
 --- !u!45 &1097241488
 Skybox:
   m_ObjectHideFlags: 0
@@ -351,7 +361,7 @@ Skybox:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1097241482}
   m_Enabled: 1
-  m_CustomSkybox: {fileID: 2100000, guid: 39cace2863926444a9a78daa8ae26413, type: 2}
+  m_CustomSkybox: {fileID: 0}
 --- !u!1 &1252731390
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,13 +395,19 @@ MonoBehaviour:
   SunLight: {fileID: 597845561}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
   _FogWorldPosition: {x: 100, y: 3, z: 150}
-  _UseQuaterResRenderTextures: 0
+  _FogSize: 0
+  _RenderTextureResDivision: 0
+  _RayMarchSteps: 128
+  _SQRSize: 8
   _FogDensityCoef: 0.3
   _ScatteringCoef: 0.25
   _ExtinctionCoef: 0.01
+  _Anisotropy: 0.5
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
   _LightColor: {r: 0, g: 0, b: 0, a: 0}
+  _LightIntensity: 1
   _BlurEnabled: 0
+  _ShadowsEnabled: 0
   _RaymarchDrawDistance: 50
 --- !u!4 &1252731393
 Transform:
