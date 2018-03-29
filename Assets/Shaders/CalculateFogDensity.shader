@@ -10,7 +10,7 @@
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
             #include "DistanceFunc.cginc"
-            #include "UnityShadowLibrary.cginc"
+           // #include "UnityShadowLibrary.cginc"
             
             #pragma multi_compile SHADOWS_ON SHADOWS_OFF 
             // compile 2 shaders so switching at runtime is faster
@@ -78,7 +78,9 @@
 			// negative answer.
 			// return.x: result of distance field
 			// return.y: material data for closest object
-			float2 map(float3 p) {                                                                   
+			float2 map(float3 p) {
+			
+			         // sphere???                                                                   
 				float2 d_sphere = float2(sdBox(p - float3(_FogWorldPosition), _FogSize), 0.5);			
 				return d_sphere;
 			}		
@@ -103,7 +105,7 @@
                 float3 shadowCoord3 = mul(unity_WorldToShadow[3], worldPos).xyz;
                         
                 // float4 shadowCoord = float4(shadowCoord0 * weights[0] + shadowCoord1 * weights[1] + shadowCoord2 * weights[2] + shadowCoord3 * weights[3],1); 
-                float4 shadowCoord = float4(shadowCoord0 * weights.x + shadowCoord1 * weights[1] + shadowCoord2 * weights[2] + shadowCoord3 * weights[3],1); 
+                float4 shadowCoord = float4(shadowCoord0 * weights[0] + shadowCoord1 * weights[1] + shadowCoord2 * weights[2] + shadowCoord3 * weights[3],1); 
                 
                 return shadowCoord;            
 			} 
@@ -127,7 +129,8 @@
                 //linearise depth		
                 float lindepth = Linear01Depth (depth);
                 
-                float linearEyeDepth = LinearEyeDepth(depth);
+                
+                //float lindepth = LinearEyeDepth(depth);
                 
                 //get view and then world positions		
                 float4 viewPos = float4(i.ray.xyz * lindepth,1);
@@ -141,7 +144,6 @@
                 //calculate step size for raymarching
                 float stepSize = rayDistance * STEPSIZE;
                 
-                //raymarch from the world point to the camera
               //  float3 currentPos = worldPos.xyz;
                 float3 currentPos = _WorldSpaceCameraPos.xyz;
                         
@@ -149,6 +151,7 @@
                 float2 interleavedPos = fmod( float2(i.pos.x, _CameraDepthTexture_TexelSize.w - i.pos.y), GRID_SIZE );		
                 float rayStartOffset = ( interleavedPos.y * GRID_SIZE + interleavedPos.x ) * ( STEPSIZE * GRID_SIZE_SQR_RCP ) ;
                 currentPos += rayStartOffset * rayDir.xyz;
+                // debug TODO
                 
                 float3 result = 0;
                 
@@ -193,7 +196,7 @@
                         
                         //do shadow test and store the result				
                         float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);				
-                    
+                        
                         //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas
                         float3 fColour = lerp(_ShadowColor, litFogColour, shadowTerm);                                            
 #endif

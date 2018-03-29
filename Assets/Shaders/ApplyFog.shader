@@ -97,7 +97,6 @@
 		}
 		else
 		{
-			//fogSample = tex2Dlod(FogRendertargetPoint, float4(NearestUV,0,0)) ;
 		    fogSample = tex2Dlod( FogRendertargetLinear, float4(lowResUV,0,0)) ; 
 		}
                 

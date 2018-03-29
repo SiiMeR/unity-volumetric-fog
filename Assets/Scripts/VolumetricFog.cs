@@ -196,19 +196,18 @@ using UnityEngine.Rendering;
 			SunLight.GetComponent<Light>().intensity = _LightIntensity;
 			
 			
-			RenderTextureFormat formatRF32 = RenderTextureFormat.RFloat;
+			RenderTextureFormat RTFogOutput = RenderTextureFormat.RFloat;
 			int lowresDepthWidth= source.width;
 			int lowresDepthHeight= source.height;
 
-			RenderTexture lowresDepthRT = RenderTexture.GetTemporary (lowresDepthWidth, lowresDepthHeight, 0, formatRF32);
-			
-			
+			RenderTexture lowresDepthRT = RenderTexture.GetTemporary (lowresDepthWidth, lowresDepthHeight, 0, RTFogOutput);
 /*
 			//downscale depth buffer to quarter resolution
 			Graphics.Blit (source, lowresDepthRT, _DownscaleDepthMaterial);
 			lowresDepthRT.filterMode = FilterMode.Point;
-*/
+			*/
 			RenderTextureFormat format = RenderTextureFormat.ARGBHalf;
+			// float 4 : 1. A , 2: R, 3 : G, 4 : B
 			
 			int fogRTWidth= source.width / _RenderTextureResDivision;
 			int fogRTHeight= source.height / _RenderTextureResDivision;
@@ -253,6 +252,11 @@ using UnityEngine.Rendering;
 			//render fog
 			Graphics.Blit (source, fogRT1, CalculateFogMaterial);
 
+			if (true)
+			{
+				Graphics.Blit(fogRT1, destination);
+				return;
+			}
 
 
 			if (_BlurEnabled)
@@ -286,7 +290,7 @@ using UnityEngine.Rendering;
 			
 		//	ApplyFogMaterial.SetTexture ("LowResDepthTexture", lowresDepthRT);
 
-			//upscale fog and apply to main rendertarget
+			//apply to main rendertarget
 			Graphics.Blit (source, destination, ApplyFogMaterial);
 			
 			RenderTexture.ReleaseTemporary(lowresDepthRT);

@@ -139,7 +139,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
-  m_Intensity: 1.68
+  m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -350,8 +350,8 @@ MonoBehaviour:
   _Anisotropy: 0.5
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
   _LightColor: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
-  _LightIntensity: 1.68
-  _BlurEnabled: 0
+  _LightIntensity: 1
+  _BlurEnabled: 1
   _ShadowsEnabled: 1
   _RaymarchDrawDistance: 418.83
 --- !u!45 &1097241488
