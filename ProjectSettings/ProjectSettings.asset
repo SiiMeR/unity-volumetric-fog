@@ -646,7 +646,7 @@ PlayerSettings:
   cloudServicesEnabled:
     UNet: 1
   facebookSdkVersion: 7.9.4
-  apiCompatibilityLevel: 2
+  apiCompatibilityLevel: 3
   cloudProjectId: 7dd13093-4555-4c5d-8c50-253a5a77f7c1
   projectName: unity-volumetric-fog
   organizationId: siimer

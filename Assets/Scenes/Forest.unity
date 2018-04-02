@@ -305,7 +305,7 @@ Terrain:
   m_MaterialTemplate: {fileID: 0}
   m_BakeLightProbesForTrees: 1
   m_ScaleInLightmap: 0.1024
-  m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightmapParameters: {fileID: 15201, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!4 &1095410653
 Transform:
   m_ObjectHideFlags: 0
@@ -344,14 +344,15 @@ MonoBehaviour:
   _RenderTextureResDivision: 1
   _RayMarchSteps: 256
   _SQRSize: 8
-  _FogDensityCoef: 0.3
+  _FogDensityCoef: 0.78
   _ScatteringCoef: 0.25
   _ExtinctionCoef: 0.01
   _Anisotropy: 0.5
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
   _LightColor: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
   _LightIntensity: 1
-  _BlurEnabled: 1
+  _ApplyFogColor: 1
+  _BlurEnabled: 0
   _ShadowsEnabled: 1
   _RaymarchDrawDistance: 418.83
 --- !u!45 &1097241488
@@ -406,6 +407,7 @@ MonoBehaviour:
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
   _LightColor: {r: 0, g: 0, b: 0, a: 0}
   _LightIntensity: 1
+  _ApplyFogColor: 0
   _BlurEnabled: 0
   _ShadowsEnabled: 0
   _RaymarchDrawDistance: 50

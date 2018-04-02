@@ -43,9 +43,10 @@ using UnityEngine.Rendering;
 		[SerializeField] private Color _LightColor;
 		
 		[SerializeField] [Range(0,10)] private float _LightIntensity = 1;
-		
+
 		[HeaderAttribute("Debug")] 
 		
+		[SerializeField] private bool _ApplyFogColor;
 		[SerializeField] private bool _BlurEnabled;
 		[SerializeField] private bool _ShadowsEnabled;
 		[SerializeField] private float _RaymarchDrawDistance = 40;
@@ -252,11 +253,8 @@ using UnityEngine.Rendering;
 			//render fog
 			Graphics.Blit (source, fogRT1, CalculateFogMaterial);
 
-			if (true)
-			{
-				Graphics.Blit(fogRT1, destination);
-				return;
-			}
+
+			Graphics.Blit(fogRT1, destination);
 
 
 			if (_BlurEnabled)
@@ -281,17 +279,21 @@ using UnityEngine.Rendering;
 				Graphics.Blit (fogRT2, fogRT1, ApplyBlurMaterial);			
 			}
 
-	
-		
-			//apply fog to main scene
-			
-			ApplyFogMaterial.SetTexture ("FogRendertargetPoint", fogRT1);
-			ApplyFogMaterial.SetTexture ("FogRendertargetLinear", fogRT1);
-			
-		//	ApplyFogMaterial.SetTexture ("LowResDepthTexture", lowresDepthRT);
 
-			//apply to main rendertarget
-			Graphics.Blit (source, destination, ApplyFogMaterial);
+
+			if (_ApplyFogColor)
+			{
+				//apply fog to main scene
+			
+				ApplyFogMaterial.SetTexture ("FogRendertargetPoint", fogRT1);
+				ApplyFogMaterial.SetTexture ("FogRendertargetLinear", fogRT1);
+			
+				//	ApplyFogMaterial.SetTexture ("LowResDepthTexture", lowresDepthRT);
+
+				//apply to main rendertarget
+				Graphics.Blit (source, destination, ApplyFogMaterial);
+			}
+
 			
 			RenderTexture.ReleaseTemporary(lowresDepthRT);
 			RenderTexture.ReleaseTemporary(fogRT1);

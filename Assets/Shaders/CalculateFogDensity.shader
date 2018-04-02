@@ -103,9 +103,16 @@
                 float3 shadowCoord1 = mul(unity_WorldToShadow[1], worldPos).xyz;                      
                 float3 shadowCoord2 = mul(unity_WorldToShadow[2], worldPos).xyz; 
                 float3 shadowCoord3 = mul(unity_WorldToShadow[3], worldPos).xyz;
-                        
-                // float4 shadowCoord = float4(shadowCoord0 * weights[0] + shadowCoord1 * weights[1] + shadowCoord2 * weights[2] + shadowCoord3 * weights[3],1); 
-                float4 shadowCoord = float4(shadowCoord0 * weights[0] + shadowCoord1 * weights[1] + shadowCoord2 * weights[2] + shadowCoord3 * weights[3],1); 
+                           
+
+               
+                float4 shadowCoord = float4(shadowCoord0 * weights[0] + 
+                                            shadowCoord1 * weights[1] + 
+                                            shadowCoord2 * weights[2] +
+                                            shadowCoord3 * weights[3],
+                                            1); 
+                
+               // shadowCoord = mul(unity_WorldToShadow[(int)dot(weights, float4(1,1,1,1))], worldPos);
                 
                 return shadowCoord;            
 			} 
@@ -155,9 +162,9 @@
                 
                 float3 result = 0;
                 
-                //calculate weights for cascade split selection             
+                //calculate weights for cascade split selection     
                 float4 weights = getCascadeWeights(-viewPos.z);
-                
+
                 float3 litFogColour = _LightIntensity * _LightColor;
                 
                 float transmittance = 1;
@@ -178,7 +185,7 @@
                      //   float3 noiseUV = currentPos.xyz;
                       //  float noiseValue = saturate(2 * tex3Dlod(_NoiseTex3D, float4(10 * noiseUV + 0.5 * _Time.xxx, 0)));
                      
-                        float noiseValue = saturate(2 * tex2Dlod(_NoiseTexture, float4(10*noiseUV + 0.5*_Time.xx, 0, 0)));
+                        float noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(10*noiseUV + 0.5*_Time.xx, 0, 0)));
                         
                         //modulate fog density by a noise value to make it more interesting
                         float fogDensity = noiseValue * _FogDensity;
