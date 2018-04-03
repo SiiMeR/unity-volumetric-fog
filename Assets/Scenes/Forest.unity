@@ -37,8 +37,8 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18032978, g: 0.2257697, b: 0.30694908, a: 1}
+  m_Sun: {fileID: 597845560}
+  m_IndirectSpecularColor: {r: 0.18099883, g: 0.22656196, b: 0.30727124, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -55,7 +55,7 @@ LightmapSettings:
     m_EnableRealtimeLightmaps: 1
   m_LightmapEditorSettings:
     serializedVersion: 9
-    m_Resolution: 2
+    m_Resolution: 15
     m_BakeResolution: 40
     m_TextureWidth: 1024
     m_TextureHeight: 1024
@@ -64,7 +64,8 @@ LightmapSettings:
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
     m_Padding: 2
-    m_LightmapParameters: {fileID: 0}
+    m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000,
+      type: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
     m_FinalGather: 0
@@ -145,7 +146,7 @@ Light:
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
-    m_Resolution: -1
+    m_Resolution: 3
     m_CustomResolution: -1
     m_Strength: 1
     m_Bias: 0.05
@@ -171,13 +172,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 597845559}
-  m_LocalRotation: {x: 0.4073749, y: -0.23531182, z: 0.107225195, w: 0.8758864}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalRotation: {x: -0.38741648, y: 0.23768188, z: -0.10186389, w: -0.88489527}
+  m_LocalPosition: {x: 65.9, y: 79.4, z: 81}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 49.826004, y: -30.236002, z: -0.34500003}
+  m_LocalEulerAnglesHint: {x: 1212.771, y: -210.213, z: -180.328}
 --- !u!1001 &614976249
 Prefab:
   m_ObjectHideFlags: 0
@@ -235,15 +236,67 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_RenderingPath
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: field of view
-      value: 59
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_UseHeadBob
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: near clip plane
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_AllowDynamicResolution
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_HDR
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0.0022455899
+      objectReference: {fileID: 0}
+    - target: {fileID: 400002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0.0021280134
+      objectReference: {fileID: 0}
+    - target: {fileID: 400002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0.005433522
+      objectReference: {fileID: 0}
+    - target: {fileID: 400002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.99998045
+      objectReference: {fileID: 0}
+    - target: {fileID: 400002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -0.259
+      objectReference: {fileID: 0}
+    - target: {fileID: 400002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -0.24200001
+      objectReference: {fileID: 0}
+    - target: {fileID: 400002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -0.62200004
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: orthographic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: far clip plane
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_ClearFlags
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
@@ -305,7 +358,7 @@ Terrain:
   m_MaterialTemplate: {fileID: 0}
   m_BakeLightProbesForTrees: 1
   m_ScaleInLightmap: 0.1024
-  m_LightmapParameters: {fileID: 15201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!4 &1095410653
 Transform:
   m_ObjectHideFlags: 0
@@ -340,22 +393,26 @@ MonoBehaviour:
   SunLight: {fileID: 597845561}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
   _FogWorldPosition: {x: 111.61, y: 3, z: 100}
-  _FogSize: 20
+  _FogSize: 50.87
   _RenderTextureResDivision: 1
-  _RayMarchSteps: 128
+  _RayMarchSteps: 256
   _SQRSize: 8
-  _FogDensityCoef: 0.78
-  _ScatteringCoef: 0.25
-  _ExtinctionCoef: 0.03
-  _Anisotropy: 0.5
+  _FogDensityCoef: 0.5
+  _RayleighScatteringCoef: 0.25
+  _HenyeyGreensteinScatteringCoef: 0.32
+  _ExtinctionCoef: 0.02
+  _Anisotropy: 0.08
+  _HeightDensityCoef: 0.31
+  _BaseHeightDensity: 1.8
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
   _LightColor: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
   _AmbientFog: 0.05
   _LightIntensity: 1.1
-  _ApplyFogColor: 0
-  _BlurEnabled: 1
+  _FogColorEnabled: 1
+  _BlurEnabled: 0
   _ShadowsEnabled: 1
-  _RaymarchDrawDistance: 418.83
+  _HeightFogEnabled: 1
+  _RaymarchDrawDistance: 507.93
 --- !u!45 &1097241488
 Skybox:
   m_ObjectHideFlags: 0
@@ -364,65 +421,3 @@ Skybox:
   m_GameObject: {fileID: 1097241482}
   m_Enabled: 1
   m_CustomSkybox: {fileID: 0}
---- !u!1 &1252731390
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1252731393}
-  - component: {fileID: 1252731391}
-  m_Layer: 0
-  m_Name: Fog
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1252731391
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1252731390}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21738455dcf6b354c81e21a6a4efa6e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _CalculateFogShader: {fileID: 4800000, guid: f23c80f7a6f11ab4ca09d8bf57f45523, type: 3}
-  _ApplyBlurShader: {fileID: 4800000, guid: dacc5cc659bad3b41b48782cae543e86, type: 3}
-  _ApplyFogShader: {fileID: 4800000, guid: 234a6daa6de91c84abe7ad7b0909739f, type: 3}
-  SunLight: {fileID: 597845561}
-  _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
-  _FogWorldPosition: {x: 100, y: 3, z: 150}
-  _FogSize: 0
-  _RenderTextureResDivision: 0
-  _RayMarchSteps: 128
-  _SQRSize: 8
-  _FogDensityCoef: 0.3
-  _ScatteringCoef: 0.25
-  _ExtinctionCoef: 0.01
-  _Anisotropy: 0.5
-  _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
-  _LightColor: {r: 0, g: 0, b: 0, a: 0}
-  _AmbientFog: 0
-  _LightIntensity: 1
-  _ApplyFogColor: 0
-  _BlurEnabled: 0
-  _ShadowsEnabled: 0
-  _RaymarchDrawDistance: 50
---- !u!4 &1252731393
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1252731390}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 77, y: 2.8, z: 79.6}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

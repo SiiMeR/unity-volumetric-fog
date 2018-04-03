@@ -32,9 +32,12 @@ using UnityEngine.Rendering;
 		[HeaderAttribute("Physical coefficients")]
 		
 		[SerializeField] private float _FogDensityCoef = 0.3f;
-		[SerializeField] private float _ScatteringCoef = 0.25f;
+		[SerializeField] private float _RayleighScatteringCoef = 0.25f;
+		[SerializeField] private float _HenyeyGreensteinScatteringCoef = 0.25f;
 		[SerializeField] private float _ExtinctionCoef = 0.01f;
 		[SerializeField] private float _Anisotropy = 0.5f;
+		[SerializeField] private float _HeightDensityCoef = 0.5f;
+		[SerializeField] private float _BaseHeightDensity = 0.5f;
 		
 		
 		[HeaderAttribute("Color")]
@@ -47,9 +50,11 @@ using UnityEngine.Rendering;
 
 		[HeaderAttribute("Debug")] 
 		
-		[SerializeField] private bool _ApplyFogColor;
+		[SerializeField] private bool _FogColorEnabled;
 		[SerializeField] private bool _BlurEnabled;
 		[SerializeField] private bool _ShadowsEnabled;
+		[SerializeField] private bool _HeightFogEnabled;
+		
 		[SerializeField] private float _RaymarchDrawDistance = 40;
 			
 		
@@ -183,6 +188,8 @@ using UnityEngine.Rendering;
 				_FogTexture3D = TextureUtilities.CreateTexture3DFrom2DSlices(_FogTexture2D, 128);
 			}
 
+			
+			
 			if (_ShadowsEnabled)
 			{
 				Shader.EnableKeyword("SHADOWS_ON");
@@ -193,6 +200,20 @@ using UnityEngine.Rendering;
 				Shader.DisableKeyword("SHADOWS_ON");
 				Shader.EnableKeyword("SHADOWS_OFF");
 			}
+
+			if (_HeightFogEnabled)
+			{
+				Shader.EnableKeyword("HEIGHTFOG_ON");
+				Shader.DisableKeyword("HEIGHTFOG_OFF");
+			}
+			else
+			{
+				Shader.EnableKeyword("HEIGHTFOG_OFF");
+				Shader.DisableKeyword("HEIGHTFOG_ON");
+			}
+			
+			
+			
 			
 			SunLight.GetComponent<Light>().color = _LightColor;
 			SunLight.GetComponent<Light>().intensity = _LightIntensity;
@@ -235,13 +256,16 @@ using UnityEngine.Rendering;
 			CalculateFogMaterial.SetFloat("_RaymarchSteps", _RayMarchSteps);
 			CalculateFogMaterial.SetFloat("_InterleavedSamplingSQRSize", _SQRSize);
 
-			CalculateFogMaterial.SetVector("_LightData", new Vector4(light.transform.position.x, light.transform.position.y, light.transform.position.z,0));
-			
-			
+
 			CalculateFogMaterial.SetFloat ("_FogDensity", _FogDensityCoef);
-			CalculateFogMaterial.SetFloat ("_ScatteringCoef", _ScatteringCoef);
+			CalculateFogMaterial.SetFloat ("_RayleighScatteringCoef", _RayleighScatteringCoef);
+			CalculateFogMaterial.SetFloat ("_HGScatteringCoef", _HenyeyGreensteinScatteringCoef);
+			
 			CalculateFogMaterial.SetFloat ("_ExtinctionCoef", _ExtinctionCoef);
 			CalculateFogMaterial.SetFloat("_Anisotropy", _Anisotropy);
+			CalculateFogMaterial.SetFloat("_BaseHeightDensity", _BaseHeightDensity);
+			CalculateFogMaterial.SetFloat("_HeightDensityCoef", _HeightDensityCoef);
+			
 			CalculateFogMaterial.SetFloat ("_ViewDistance", _RaymarchDrawDistance);
 			CalculateFogMaterial.SetVector ("_FogWorldPosition", _FogWorldPosition);
 			CalculateFogMaterial.SetFloat("_FogSize", _FogSize);
@@ -249,6 +273,8 @@ using UnityEngine.Rendering;
 			CalculateFogMaterial.SetColor ("_ShadowColor", _ShadowColor);
 			CalculateFogMaterial.SetVector ("_LightColor", _LightColor);
 			CalculateFogMaterial.SetFloat("_AmbientFog", _AmbientFog);
+			
+		
 
 
 
@@ -283,7 +309,7 @@ using UnityEngine.Rendering;
 
 
 
-			if (_ApplyFogColor)
+			if (_FogColorEnabled)
 			{
 				//apply fog to main scene
 			
