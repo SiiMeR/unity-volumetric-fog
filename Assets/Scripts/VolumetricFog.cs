@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 [ExecuteInEditMode]
     [RequireComponent (typeof(Camera))]
-	class VolumetricFog : SceneViewFilter
+	class VolumetricFog : MonoBehaviour
 	{
 
 
@@ -41,6 +41,7 @@ using UnityEngine.Rendering;
 		
 		[SerializeField] private Color _ShadowColor = Color.black;
 		[SerializeField] private Color _LightColor;
+		[SerializeField] [Range(0,1)] private float _AmbientFog;
 		
 		[SerializeField] [Range(0,10)] private float _LightIntensity = 1;
 
@@ -247,6 +248,7 @@ using UnityEngine.Rendering;
 			CalculateFogMaterial.SetFloat ("_LightIntensity", _LightIntensity);
 			CalculateFogMaterial.SetColor ("_ShadowColor", _ShadowColor);
 			CalculateFogMaterial.SetVector ("_LightColor", _LightColor);
+			CalculateFogMaterial.SetFloat("_AmbientFog", _AmbientFog);
 
 
 

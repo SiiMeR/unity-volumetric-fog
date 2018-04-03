@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18033013, g: 0.22577041, b: 0.30695018, a: 1}
+  m_IndirectSpecularColor: {r: 0.18032978, g: 0.2257697, b: 0.30694908, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -139,7 +139,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
-  m_Intensity: 1
+  m_Intensity: 1.1
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -195,7 +195,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 144.6
+      value: 132.7
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_LocalRotation.x
@@ -342,17 +342,18 @@ MonoBehaviour:
   _FogWorldPosition: {x: 111.61, y: 3, z: 100}
   _FogSize: 20
   _RenderTextureResDivision: 1
-  _RayMarchSteps: 256
+  _RayMarchSteps: 128
   _SQRSize: 8
   _FogDensityCoef: 0.78
   _ScatteringCoef: 0.25
-  _ExtinctionCoef: 0.01
+  _ExtinctionCoef: 0.03
   _Anisotropy: 0.5
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
   _LightColor: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
-  _LightIntensity: 1
-  _ApplyFogColor: 1
-  _BlurEnabled: 0
+  _AmbientFog: 0.05
+  _LightIntensity: 1.1
+  _ApplyFogColor: 0
+  _BlurEnabled: 1
   _ShadowsEnabled: 1
   _RaymarchDrawDistance: 418.83
 --- !u!45 &1097241488
@@ -406,6 +407,7 @@ MonoBehaviour:
   _Anisotropy: 0.5
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
   _LightColor: {r: 0, g: 0, b: 0, a: 0}
+  _AmbientFog: 0
   _LightIntensity: 1
   _ApplyFogColor: 0
   _BlurEnabled: 0

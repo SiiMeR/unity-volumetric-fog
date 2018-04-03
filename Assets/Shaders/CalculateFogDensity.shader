@@ -39,7 +39,8 @@
                               _LightIntensity,
                               _FogSize,
                               _InterleavedSamplingSQRSize,
-                              _RaymarchSteps;
+                              _RaymarchSteps,
+                              _AmbientFog;
                               
             uniform float4x4  InverseViewMatrix,                   
                               InverseProjectionMatrix;
@@ -205,15 +206,16 @@
                         float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);				
                         
                         //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas
-                        float3 fColour = lerp(_ShadowColor, litFogColour, shadowTerm);                                            
+                        //add a bit of ambient fog so shadowed areas get some fog too
+                        float3 fColour = lerp(_ShadowColor, litFogColour, shadowTerm + _AmbientFog);                                            
 #endif
 
 #if SHADOWS_OFF
                         float3 fColour = litFogColour;   
 #endif
 
-                      //  float3 lightDir = normalize(currentPos - _LightData.xyz);
-                      //  float HGfn = getHenyeyGreenstein(lightDir, currentPos) * _ScatteringCoef;
+                        float3 lightDir = normalize(currentPos - _LightData.xyz);
+                        float HGfn = getHenyeyGreenstein(lightDir, currentPos) * _ScatteringCoef;
                         
                         
                         //accumulate light
