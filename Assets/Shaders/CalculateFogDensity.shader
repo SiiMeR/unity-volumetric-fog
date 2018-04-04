@@ -106,23 +106,44 @@
 			
 			// combines cascades to get shadowmap coordinate for later sampling of shadowmap
 			fixed4 getShadowCoord(float4 worldPos, float4 weights){
+			
+			 
+			    float3 shadowCoord = float3(0,0,0);
+			    
+			    // find which cascades need sampling and then take the positions to light space using worldtoshadow
+			    
+			    if(weights[0] == 1){
+			        shadowCoord += mul(unity_WorldToShadow[0], worldPos).xyz; 
+			    }
+			    if(weights[1] == 1){
+			        shadowCoord += mul(unity_WorldToShadow[1], worldPos).xyz; 
+			    }
+			    if(weights[2] == 1){
+			        shadowCoord += mul(unity_WorldToShadow[2], worldPos).xyz; 
+			    }
+			    if(weights[3] == 1){
+			        shadowCoord += mul(unity_WorldToShadow[3], worldPos).xyz; 
+			    }
+			    
+			  
+			
 			     //calculate shadow at this sample position
+			     /* ALTERNATE
                 float3 shadowCoord0 = mul(unity_WorldToShadow[0], worldPos).xyz; 
                 float3 shadowCoord1 = mul(unity_WorldToShadow[1], worldPos).xyz;                      
                 float3 shadowCoord2 = mul(unity_WorldToShadow[2], worldPos).xyz; 
                 float3 shadowCoord3 = mul(unity_WorldToShadow[3], worldPos).xyz;
                            
-
                
                 float4 shadowCoord = float4(shadowCoord0 * weights[0] + 
                                             shadowCoord1 * weights[1] + 
                                             shadowCoord2 * weights[2] +
                                             shadowCoord3 * weights[3],
                                             1); 
+                */
+            //    shadowCoord = mul(unity_WorldToShadow[(int)dot(weights, float4(1,1,1,1))], worldPos);
                 
-               // shadowCoord = mul(unity_WorldToShadow[(int)dot(weights, float4(1,1,1,1))], worldPos);
-                
-                return shadowCoord;            
+                return float4(shadowCoord,1);            
 			} 
 			
 			// from unity adam demo volumetric fog
@@ -136,9 +157,7 @@
 			}
 			
 		    fixed4 getRayleigh(float cosTheta){
-		        float phase = (3.0 / (16.0 * pi)) * (1 + (cosTheta * cosTheta));
-		        
-		        return phase;
+		        return (3.0 / (16.0 * pi)) * (1 + (cosTheta * cosTheta));
 		    }
 			
 			
@@ -156,20 +175,23 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 
+
+                
                // read depth and reconstruct world position
                 float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
                 
                 //linearise depth		
                 float lindepth = Linear01Depth (depth);
                 
-                
+            
               //  float lindepth = LinearEyeDepth(depth);
                 
                 //get view and then world positions		
                 float4 viewPos = float4(i.ray.xyz * lindepth,1);
                 
                 float3 worldPos = mul(InverseViewMatrix, viewPos).xyz;	
-                           
+                    
+                            
                 // ray direction in world space
                 float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
                 float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
@@ -241,6 +263,21 @@
                          //calculate transmittance by applying Beer law
                         transmittance *= exp( -extinction * stepSize);
 
+                        // WSlightpos0 for directional light == light direction
+                        float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+                        float3 cameraDir = normalize(_WorldSpaceCameraPos.xyz - currentPos);
+                        
+                    //    float cosTheta = saturate(dot(cameraDir, lightDir));
+                        float cosTheta = dot(rayDir, lightDir);
+                  
+                        float HGscattering = getHenyeyGreenstein(cosTheta) * _HGScatteringCoef;
+                        
+                        float Rayleighscattering = getRayleigh(cosTheta) * _RayleighScatteringCoef;
+           
+                        // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
+                        float inScattering = (HGscattering + Rayleighscattering) * fogDensity;
+
+
 #if SHADOWS_ON
                         float4 shadowCoord = getShadowCoord(float4(currentPos,1), weights);
     
@@ -249,32 +286,18 @@
 
                         //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas
                         //add a bit of ambient fog so shadowed areas get some fog too
-                        float3 fColour = lerp(_ShadowColor, litFogColor, shadowTerm + _AmbientFog);        
+                        float3 fColor = lerp(_ShadowColor, litFogColor, shadowTerm + _AmbientFog);         
                                   
 #endif
 
 #if SHADOWS_OFF
-                        float3 fColour = litFogColor;   
+                        float3 fColor = litFogColor;   
 #endif
                         
 
-                        // WSlightpos0 for directional light == light direction
-                        float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
-                        float3 cameraDir = normalize(_WorldSpaceCameraPos.xyz - currentPos);
-                        
-                    //    float cosTheta = saturate(dot(cameraDir, lightDir));
-                        float cosTheta = dot(cameraDir, lightDir);
-                  
-                        float HGscattering = getHenyeyGreenstein(cosTheta) * _HGScatteringCoef;
-                        
-                        float Rayleighscattering = getRayleigh(cosTheta) * _RayleighScatteringCoef;
-                        
 
-                        
-                        // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
-                        float inScattering = (HGscattering + Rayleighscattering) * fogDensity;
                         //accumulate light
-                        result += inScattering * transmittance * stepSize * fColour;
+                        result += inScattering * transmittance * stepSize * fColor;
    
                     }
                     // TODO : STEP BY DISTANCE FIELD SAMPLE IF NOT IN CUBE

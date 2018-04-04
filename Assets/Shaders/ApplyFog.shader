@@ -15,16 +15,16 @@
 				float3 ray : TEXCOORD1;
             };   
 			
-	
-            sampler2D _MainTex;	
-            sampler2D _CameraDepthTexture;
-            sampler2D FogRendertargetPoint;
-            sampler2D FogRendertargetLinear;
+
+            uniform sampler2D FogRendertargetLinear,
+                              FogRendertargetPoint,
+                              _CameraDepthTexture,
+                              _MainTex;
             
-            float4 _MainTex_TexelSize; // (1.0/width, 1.0/height, width, height)
-            float4 _CameraDepthTexture_TexelSize;
+            uniform float4 _CameraDepthTexture_TexelSize,
+                   _MainTex_TexelSize;
             
-            float DepthThreshold = 0.5;
+            float DepthThreshold = 1;
             
             uniform float4x4  InverseViewMatrix,                         
                               InverseProjectionMatrix;	                       
@@ -37,7 +37,7 @@
                 
                 return o;
             }
-        
+        /*
             void UpdateNearestSample(	inout float MinDist,
                                         inout float2 NearestUV,
                                         float Z,
@@ -52,9 +52,9 @@
                     NearestUV = UV;
                 }
             }
-            
+            */
 			
-			                
+			/*                
             float4 GetNearestDepthSample(float2 uv)
             {
                 //read full resolution depth
@@ -97,16 +97,20 @@
 		}
 		else
 		{
-		    fogSample = tex2Dlod( FogRendertargetLinear, float4(lowResUV,0,0)) ; 
+		    fogSample = tex2Dlod( FogRendertargetPoint, float4(lowResUV,0,0)) ; 
 		}
                 
             return fogSample;
         }
-        
+        */
             
             float4 frag(v2f input) : SV_Target 
             {			
-                float4 fogSample = GetNearestDepthSample(input.uv);
+              //  float4 fogSample = GetNearestDepthSample(input.uv);
+              //  float4 linearDepthSample = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, input.uv));
+                
+                float4 fogSample = tex2Dlod(FogRendertargetLinear, float4(input.uv,0,0));
+                
                 
                 float4 colorSample = tex2D(_MainTex, input.uv);
                 

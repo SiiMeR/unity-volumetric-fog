@@ -232,7 +232,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 8100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_RenderingPath
@@ -248,7 +248,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: near clip plane
-      value: 0.03
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_AllowDynamicResolution
@@ -296,6 +296,14 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
       propertyPath: m_ClearFlags
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8200000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8200000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+      propertyPath: Mute
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -346,7 +354,7 @@ Terrain:
   m_HeightmapPixelError: 5
   m_SplatMapDistance: 1000
   m_HeightmapMaximumLOD: 0
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_DrawHeightmap: 1
   m_DrawTreesAndFoliage: 1
   m_ReflectionProbeUsage: 1
@@ -402,14 +410,18 @@ MonoBehaviour:
   _HenyeyGreensteinScatteringCoef: 0.32
   _ExtinctionCoef: 0.02
   _Anisotropy: 0.08
-  _HeightDensityCoef: 0.31
-  _BaseHeightDensity: 1.8
+  _HeightDensityCoef: 0.4
+  _BaseHeightDensity: 2
+  _BlurIterations: 4
+  _BlurDepthFalloff: 25
+  _BlurOffsets: {x: 1, y: 2, z: 3}
+  _BlurWeights: {x: 0.2, y: 0.1, z: 0.05}
   _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
   _LightColor: {r: 1, g: 0.9391481, b: 0.44852942, a: 0}
   _AmbientFog: 0.05
   _LightIntensity: 1.1
   _FogColorEnabled: 1
-  _BlurEnabled: 0
+  _BlurEnabled: 1
   _ShadowsEnabled: 1
   _HeightFogEnabled: 1
   _RaymarchDrawDistance: 507.93

@@ -39,6 +39,12 @@ using UnityEngine.Rendering;
 		[SerializeField] private float _HeightDensityCoef = 0.5f;
 		[SerializeField] private float _BaseHeightDensity = 0.5f;
 		
+		[HeaderAttribute("Blur")]
+		
+		[SerializeField] [Range(1, 8)] private int _BlurIterations = 4;
+		[SerializeField] private float _BlurDepthFalloff = 0.5f;
+		[SerializeField] private Vector3 _BlurOffsets = new Vector3(1, 2, 3);
+		[SerializeField] private Vector3 _BlurWeights = new Vector3(0.213f, 0.17f, 0.036f);
 		
 		[HeaderAttribute("Color")]
 		
@@ -276,35 +282,46 @@ using UnityEngine.Rendering;
 			
 		
 
-
-
 			//render fog
 			Graphics.Blit (source, fogRT1, CalculateFogMaterial);
-
-
 			Graphics.Blit(fogRT1, destination);
 
 
 			if (_BlurEnabled)
 			{
-				//blur fog, quarter resolution
-				ApplyBlurMaterial.SetFloat ("BlurDepthFalloff", 0.01f);
+				
+				ApplyBlurMaterial.SetFloat("_BlurDepthFalloff", _BlurDepthFalloff);
+				
+				Vector4 BlurOffsets =   new Vector4(0, // initial sample is always at the center 
+													_BlurOffsets.x,
+													_BlurOffsets.y,
+													_BlurOffsets.z);
+				
+				ApplyBlurMaterial.SetVector("_BlurOffsets", BlurOffsets);
+
+				// x is sum of all weights
+				Vector4 BlurWeightsWithTotal =  new Vector4(_BlurWeights.x + _BlurWeights.y + _BlurWeights.z,
+															_BlurWeights.x,
+															_BlurWeights.y,
+															_BlurWeights.z);
+				
+				ApplyBlurMaterial.SetVector("_BlurWeights", BlurWeightsWithTotal);
 				//	ApplyBlurMaterial.SetTexture ("LowresDepthSampler", lowresDepthRT);
 
-				ApplyBlurMaterial.SetVector ("BlurDir", new Vector2(0,1));
-				Graphics.Blit (fogRT1, fogRT2, ApplyBlurMaterial);
 
-				//blur fog, quarter resolution
-				ApplyBlurMaterial.SetVector ("BlurDir", new Vector2(1,0));
-				Graphics.Blit (fogRT2, fogRT1, ApplyBlurMaterial);
+				for (int i = 0; i < _BlurIterations; i++)
+				{
+					
+					// vertical blur 
+					ApplyBlurMaterial.SetVector ("BlurDir", new Vector2(0,1));
+					Graphics.Blit (fogRT1, fogRT2, ApplyBlurMaterial);
 
-				//blur fog, quarter resolution
-				ApplyBlurMaterial.SetVector ("BlurDir", new Vector2(0,1));
-				Graphics.Blit (fogRT1, fogRT2, ApplyBlurMaterial);
-			
-				//blur fog, quarter resolution
-				ApplyBlurMaterial.SetVector ("BlurDir", new Vector2(1,0));
-				Graphics.Blit (fogRT2, fogRT1, ApplyBlurMaterial);			
+					// horizontal blur
+					ApplyBlurMaterial.SetVector ("BlurDir", new Vector2(1,0));
+					Graphics.Blit (fogRT2, fogRT1, ApplyBlurMaterial);
+
+				}
+	
 			}
 
 
