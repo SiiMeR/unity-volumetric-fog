@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityStandardAssets.ImageEffects;
 
 [ExecuteInEditMode]
     [RequireComponent (typeof(Camera))]
@@ -176,10 +177,10 @@ using UnityEngine.Rendering;
 		}
 
 		private Texture3D _FogTexture3D;
-		
+
 		void OnRenderImage (RenderTexture source, RenderTexture destination)
 		{
-			if (!_FogTexture2D || 
+			if (!_FogTexture2D ||
 			    !ApplyFogMaterial || !_ApplyFogShader ||
 			    !CalculateFogMaterial || !_CalculateFogShader ||
 			    !ApplyBlurMaterial || !_ApplyBlurShader)

@@ -115,6 +115,7 @@
                 float4 colorSample = tex2D(_MainTex, input.uv);
                 
                 float4 result = colorSample * fogSample.a + fogSample;
+               // float4 result = colorSample * fogSample.a + fogSample * (1-fogSample.a);
                 
                 return result;
             }
