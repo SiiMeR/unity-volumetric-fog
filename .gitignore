@@ -36,4 +36,5 @@ sysinfo.txt
 # Project Rider files 
 .idea/
 /Assets/Plugins/*
+/Assets/Plugins.meta
 

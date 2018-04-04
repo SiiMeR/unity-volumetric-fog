@@ -1,7 +1,5 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
-using UnityStandardAssets.ImageEffects;
 
 [ExecuteInEditMode]
     [RequireComponent (typeof(Camera))]
@@ -9,7 +7,7 @@ using UnityStandardAssets.ImageEffects;
 	{
 
 
-		[HeaderAttribute("Required assets")]
+		[Header("Required assets")]
 		
 		[SerializeField] private Shader _CalculateFogShader;
 		[SerializeField] private Shader _ApplyBlurShader;
@@ -17,12 +15,12 @@ using UnityStandardAssets.ImageEffects;
 		[SerializeField] private Transform SunLight;
 		[SerializeField] private Texture2D _FogTexture2D;
 		
-		[HeaderAttribute("Position and size(in m³)")]
+		[Header("Position and size(in m³)")]
 		
 		[SerializeField] private Vector3 _FogWorldPosition;
 		[SerializeField] private float _FogSize = 10.0f;
 
-		[HeaderAttribute("Performance")]
+		[Header("Performance")]
 		
 		[SerializeField] [Range(1, 8)] private int _RenderTextureResDivision = 2;
 		[SerializeField] [Range(16, 256)] private int _RayMarchSteps = 128;
@@ -30,7 +28,7 @@ using UnityStandardAssets.ImageEffects;
 		[Tooltip("Interleaved sampling square size")]
 		[SerializeField] [Range(1, 16)] private int _SQRSize = 8;
 		
-		[HeaderAttribute("Physical coefficients")]
+		[Header("Physical coefficients")]
 		
 		[SerializeField] private float _FogDensityCoef = 0.3f;
 		[SerializeField] private float _RayleighScatteringCoef = 0.25f;
@@ -40,14 +38,14 @@ using UnityStandardAssets.ImageEffects;
 		[SerializeField] private float _HeightDensityCoef = 0.5f;
 		[SerializeField] private float _BaseHeightDensity = 0.5f;
 		
-		[HeaderAttribute("Blur")]
+		[Header("Blur")]
 		
 		[SerializeField] [Range(1, 8)] private int _BlurIterations = 4;
 		[SerializeField] private float _BlurDepthFalloff = 0.5f;
 		[SerializeField] private Vector3 _BlurOffsets = new Vector3(1, 2, 3);
 		[SerializeField] private Vector3 _BlurWeights = new Vector3(0.213f, 0.17f, 0.036f);
 		
-		[HeaderAttribute("Color")]
+		[Header("Color")]
 		
 		[SerializeField] private Color _ShadowColor = Color.black;
 		[SerializeField] private Color _LightColor;
@@ -55,7 +53,7 @@ using UnityStandardAssets.ImageEffects;
 		
 		[SerializeField] [Range(0,10)] private float _LightIntensity = 1;
 
-		[HeaderAttribute("Debug")] 
+		[Header("Debug")] 
 		
 		[SerializeField] private bool _FogColorEnabled;
 		[SerializeField] private bool _BlurEnabled;
