@@ -110,11 +110,12 @@
               //  float4 linearDepthSample = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, input.uv));
                 
                 float4 fogSample = tex2Dlod(FogRendertargetLinear, float4(input.uv,0,0));
-                
-                
+               // float4 fogSample = tex2D(FogRendertargetLinear, input.uv);
+                          
                 float4 colorSample = tex2D(_MainTex, input.uv);
                 
-                float4 result = colorSample * fogSample.a + fogSample;
+               // float4 result = colorSample * fogSample.a + fogSample;
+                float4 result = float4(colorSample.rgb * fogSample.a + fogSample,colorSample.a);
                // float4 result = colorSample * fogSample.a + fogSample * (1-fogSample.a);
                 
                 return result;

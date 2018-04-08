@@ -1,0 +1,144 @@
+fileFormatVersion: 2
+guid: 5abe67cd20e1370448e92e848734bbd3
+timeCreated: 1502197109
+licenseType: Store
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: Glass_01
+    100002: Glass_02
+    100004: Glass_03
+    100006: Glass_04
+    100008: Glass_05
+    100010: Glass_06
+    100012: Glass_07
+    100014: Glass_08
+    100016: Glass_09
+    100018: Glass_10
+    100020: //RootNode
+    100022: Metal_Tower
+    100024: Metal_Tower_Door
+    400000: Glass_01
+    400002: Glass_02
+    400004: Glass_03
+    400006: Glass_04
+    400008: Glass_05
+    400010: Glass_06
+    400012: Glass_07
+    400014: Glass_08
+    400016: Glass_09
+    400018: Glass_10
+    400020: //RootNode
+    400022: Metal_Tower
+    400024: Metal_Tower_Door
+    2300000: Glass_01
+    2300002: Glass_02
+    2300004: Glass_03
+    2300006: Glass_04
+    2300008: Glass_05
+    2300010: Glass_06
+    2300012: Glass_07
+    2300014: Glass_08
+    2300016: Glass_09
+    2300018: Glass_10
+    2300020: Metal_Tower
+    2300022: Metal_Tower_Door
+    3300000: Glass_01
+    3300002: Glass_02
+    3300004: Glass_03
+    3300006: Glass_04
+    3300008: Glass_05
+    3300010: Glass_06
+    3300012: Glass_07
+    3300014: Glass_08
+    3300016: Glass_09
+    3300018: Glass_10
+    3300020: Metal_Tower
+    3300022: Metal_Tower_Door
+    4300000: Metal_Tower
+    4300002: Metal_Tower_Door
+    4300004: Glass_04
+    4300006: Glass_09
+    4300008: Glass_01
+    4300010: Glass_02
+    4300012: Glass_06
+    4300014: Glass_07
+    4300016: Glass_08
+    4300018: Glass_05
+    4300020: Glass_10
+    4300022: Glass_03
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.01
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

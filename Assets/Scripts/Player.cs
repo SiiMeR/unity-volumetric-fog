@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
 		{
 			ms *= 2;
 		}
-
+		
 		transform.position += Camera.main.transform.forward * ms * Input.GetAxis("Vertical") * Time.deltaTime;
 		transform.position += Camera.main.transform.right * ms * Input.GetAxis("Horizontal") * Time.deltaTime;
 

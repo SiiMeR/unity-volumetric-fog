@@ -159,6 +159,21 @@
 		    fixed4 getRayleigh(float cosTheta){
 		        return (3.0 / (16.0 * pi)) * (1 + (cosTheta * cosTheta));
 		    }
+		    
+		    
+		    // as per https://developer.nvidia.com/sites/default/files/akamai/gameworks/downloads/papers/NVVL/Fast_Flexible_Physically-Based_Volumetric_Light_Scattering.pdf
+		    fixed4 mieHazy(float cosTheta){
+		    
+		        float cosThetaPow = pow(((1 + cosTheta) / 2),8);
+		        return (1 / 4 * pi) * (0.5 + ((9/2) * cosThetaPow));
+		    }
+		    
+		    fixed4 mieMurky(float cosTheta){
+		    
+		        float cosThetaPow = pow(((1 + cosTheta) / 2),32);
+		        
+		        return (1 / 4 * pi) * (0.5 + ((33/2) * cosThetaPow));
+		    }
 			
 			
 			// gpu pro 6 p. 224
@@ -268,12 +283,13 @@
                         float3 cameraDir = normalize(_WorldSpaceCameraPos.xyz - currentPos);
                         
                     //    float cosTheta = saturate(dot(cameraDir, lightDir));
-                        float cosTheta = dot(rayDir, lightDir);
+                        float cosTheta = dot(rayDir, -lightDir);
                   
                         float HGscattering = getHenyeyGreenstein(cosTheta) * _HGScatteringCoef;
+                       // float HGscattering = mieMurky(cosTheta)* _HGScatteringCoef;
                         
                         float Rayleighscattering = getRayleigh(cosTheta) * _RayleighScatteringCoef;
-           
+                        
                         // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
                         float inScattering = (HGscattering + Rayleighscattering) * fogDensity;
 
