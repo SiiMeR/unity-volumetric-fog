@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 597845560}
-  m_IndirectSpecularColor: {r: 0.18364525, g: 0.2291231, b: 0.30518815, a: 1}
+  m_IndirectSpecularColor: {r: 0.18364483, g: 0.22912258, b: 0.305187, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -498,14 +498,17 @@ MonoBehaviour:
   _ApplyFogShader: {fileID: 4800000, guid: 234a6daa6de91c84abe7ad7b0909739f, type: 3}
   SunLight: {fileID: 597845561}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
+  _LimitFogInSize: 1
   _FogWorldPosition: {x: 111.61, y: 3, z: 100}
   _FogSize: 86
   _RenderTextureResDivision: 1
   _RayMarchSteps: 256
   _SQRSize: 8
-  _FogDensityCoef: 1.28
+  _UseRayleighScattering: 1
   _RayleighScatteringCoef: 0.25
+  _UseHenyeyGreensteinScattering: 1
   _HenyeyGreensteinScatteringCoef: 0.32
+  _FogDensityCoef: 1.28
   _ExtinctionCoef: 0.08
   _Anisotropy: 0.08
   _HeightDensityCoef: 0.17
@@ -518,7 +521,7 @@ MonoBehaviour:
   _LightColor: {r: 0.44117647, g: 0.237591, b: 0.14597751, a: 0}
   _AmbientFog: 0.1
   _LightIntensity: 1.1
-  _FogColorEnabled: 1
+  _AddSceneColor: 1
   _BlurEnabled: 1
   _ShadowsEnabled: 1
   _HeightFogEnabled: 1

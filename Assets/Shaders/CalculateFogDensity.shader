@@ -12,10 +12,14 @@
             #include "DistanceFunc.cginc"
            // #include "UnityShadowLibrary.cginc"
             
-            #pragma multi_compile SHADOWS_ON SHADOWS_OFF
-            #pragma multi_compile HEIGHTFOG_ON HEIGHTFOG_OFF
             // compile multiple variants of shaders so switching at runtime is faster
             
+            #pragma multi_compile SHADOWS_ON SHADOWS_OFF
+            #pragma shader_feature __ HEIGHTFOG
+            #pragma shader_feature __ RAYLEIGH_SCATTERING
+            #pragma shader_feature __ HG_SCATTERING
+            #pragma shader_feature __ LIMITFOGSIZE
+
             UNITY_DECLARE_SHADOWMAP(ShadowMap);
             
             uniform sampler2D _MainTex,
@@ -243,31 +247,24 @@
                         break;
                     }
                     
+                    float2 distanceSample = 0;
                     
-                    
-                    float2 distanceSample = map(currentPos); // sample distance field at current position
-                    
+#if defined(LIMITFOGSIZE)
+                    distanceSample = map(currentPos); // sample distance field at current position
+#endif                    
 
                     if(distanceSample.x < 0.0001){ // we are inside the predefined cube
                     
 
                         float2 noiseUV = currentPos.xz;
-                        
-
-                     //   float3 noiseUV = currentPos.xyz;
-                      //  float noiseValue = saturate(2 * tex3Dlod(_NoiseTex3D, float4(10 * noiseUV + 0.5 * _Time.xxx, 0)));
-                        
-                        
+         
                         float noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(10*noiseUV + 0.5*_Time.xx, 0, 0)));
-             
-                        
+                                     
                         //modulate fog density by a noise value to make it more interesting
                         float fogDensity = noiseValue * _FogDensity;
                         
-    
-#if HEIGHTFOG_ON
-                        float heightDensity = getHeightDensity(currentPos.y);
-                        
+#if defined(HEIGHTFOG)
+                        float heightDensity = getHeightDensity(currentPos.y);  
                         fogDensity *= saturate(heightDensity);
 #endif                        
                         
@@ -284,14 +281,23 @@
                         
                     //    float cosTheta = saturate(dot(cameraDir, lightDir));
                         float cosTheta = dot(rayDir, -lightDir);
-                  
-                        float HGscattering = getHenyeyGreenstein(cosTheta) * _HGScatteringCoef;
+                        
+                        float inScattering = 0; 
+                        
+#if defined(RAYLEIGH_SCATTERING)
+                        float Rayleighscattering = getRayleigh(cosTheta) * _RayleighScatteringCoef * fogDensity;
+                        inScattering += Rayleighscattering;
+#endif
+
+#if defined(HG_SCATTERING)
+                        float HGscattering = getHenyeyGreenstein(cosTheta) * _HGScatteringCoef * fogDensity;
+                        inScattering += HGscattering;
+#endif                    
+                        
                        // float HGscattering = mieMurky(cosTheta)* _HGScatteringCoef;
-                        
-                        float Rayleighscattering = getRayleigh(cosTheta) * _RayleighScatteringCoef;
-                        
+
                         // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
-                        float inScattering = (HGscattering + Rayleighscattering) * fogDensity;
+                   //     float inScattering = (HGscattering + Rayleighscattering);
 
 
 #if SHADOWS_ON
@@ -303,15 +309,13 @@
                         //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas
                         //add a bit of ambient fog so shadowed areas get some fog too
                         float3 fColor = lerp(_ShadowColor, litFogColor, shadowTerm + _AmbientFog);         
-                                  
+                                 
 #endif
 
 #if SHADOWS_OFF
                         float3 fColor = litFogColor;   
 #endif
                         
-
-
                         //accumulate light
                         result += inScattering * transmittance * stepSize * fColor;
    
