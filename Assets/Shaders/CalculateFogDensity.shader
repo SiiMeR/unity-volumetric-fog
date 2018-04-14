@@ -18,7 +18,10 @@
             #pragma shader_feature __ HEIGHTFOG
             #pragma shader_feature __ RAYLEIGH_SCATTERING
             #pragma shader_feature __ HG_SCATTERING
+            #pragma shader_feature __ CS_SCATTERING
             #pragma shader_feature __ LIMITFOGSIZE
+            #pragma shader_feature __ INTERLEAVED_SAMPLING
+            
 
             UNITY_DECLARE_SHADOWMAP(ShadowMap);
             
@@ -37,7 +40,7 @@
                               
             uniform float     _FogDensity,
                               _RayleighScatteringCoef,
-                              _HGScatteringCoef,
+                              _MieScatteringCoef,
                               _ExtinctionCoef,
                               _Anisotropy,
                               _ViewDistance,
@@ -160,7 +163,7 @@
                 return (1 - gsq) / denom;
 			}
 			
-		    fixed4 getRayleigh(float cosTheta){
+		    fixed4 getRayleighPhase(float cosTheta){
 		        return (3.0 / (16.0 * pi)) * (1 + (cosTheta * cosTheta));
 		    }
 		    
@@ -189,7 +192,23 @@
 			}
 			
 			
-
+			// http://publications.lib.chalmers.se/records/fulltext/203057/203057.pdf p. 12
+			float getCornetteShanks(float costheta){
+			     float g2 = _Anisotropy * _Anisotropy;
+			     
+			     float term1 = (3 * ( 1 -  g2)) / (2 * (2 + g2));
+			     
+			     float cos2 = costheta * costheta;
+			     
+			     float term2 = (1 + cos2) / (pow((1 + g2 - 2 * _Anisotropy * cos2),3/2));
+			     
+			     return term1 * term2;
+			     
+			     
+			
+			}
+            float3 ExpRL = float3(6.55e-6, 1.73e-5, 2.30e-5); 
+            float3 ExpHG = float3(2e-6.xxx);
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -216,18 +235,27 @@
                 float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
                 
                 //calculate step size for raymarching
-                float stepSize = rayDistance * STEPSIZE;
-                
+                float stepSize = rayDistance / STEPS;
+             //  float stepSize = rayDistance * STEPSIZE; 
               //  float3 currentPos = worldPos.xyz;
                 float3 currentPos = _WorldSpaceCameraPos.xyz;
                         
+                        
+#if defined(INTERLEAVED_SAMPLING)
                 // Calculate the offsets on the ray according to the interleaved sampling pattern
                 float2 interleavedPos = fmod( float2(i.pos.x, _CameraDepthTexture_TexelSize.w - i.pos.y), GRID_SIZE );		
               //  float2 interleavedPos = fmod(i.pos.xy, GRID_SIZE);		
                 float rayStartOffset = ( interleavedPos.y * GRID_SIZE + interleavedPos.x ) * ( STEPSIZE * GRID_SIZE_SQR_RCP ) ;
-
-              
+                 
                 currentPos += rayStartOffset * rayDir.xyz; // TODO : figure this out or remove
+
+#else 
+
+                currentPos +=  rayDir.xyz; 
+
+#endif                
+                
+                
                 
                 float3 result = 0;
                 
@@ -236,6 +264,7 @@
                 
                // if(true){ return  -viewPos.z < _LightSplitsFar;}
                 float3 litFogColor = _LightIntensity * _LightColor;
+             //   float3 litFogColor = _LightIntensity ;
                 
                 float transmittance = 1;
                 
@@ -279,26 +308,30 @@
                         float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
                         float3 cameraDir = normalize(_WorldSpaceCameraPos.xyz - currentPos);
                         
-                    //    float cosTheta = saturate(dot(cameraDir, lightDir));
                         float cosTheta = dot(rayDir, -lightDir);
                         
+                        
+                        // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
                         float inScattering = 0; 
                         
 #if defined(RAYLEIGH_SCATTERING)
-                        float Rayleighscattering = getRayleigh(cosTheta) * _RayleighScatteringCoef * fogDensity;
+                        float Rayleighscattering = getRayleighPhase(cosTheta) * _RayleighScatteringCoef * fogDensity;
+                     //   float Rayleighscattering = getRayleighPhase(cosTheta) * ExpRL * fogDensity;
                         inScattering += Rayleighscattering;
 #endif
 
 #if defined(HG_SCATTERING)
-                        float HGscattering = getHenyeyGreenstein(cosTheta) * _HGScatteringCoef * fogDensity;
+                        float HGscattering = getHenyeyGreenstein(cosTheta) * _MieScatteringCoef * fogDensity;
+                       // float3 HGscattering = getHenyeyGreenstein(cosTheta) * ExpHG * fogDensity;
+                
+                   //    
                         inScattering += HGscattering;
+                            
+#elif defined(CS_SCATTERING) 
+                        float CSscattering = getCornetteShanks(cosTheta) * _MieScatteringCoef * fogDensity;
+                        inScattering += CSscattering;
 #endif                    
                         
-                       // float HGscattering = mieMurky(cosTheta)* _HGScatteringCoef;
-
-                        // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
-                   //     float inScattering = (HGscattering + Rayleighscattering);
-
 
 #if SHADOWS_ON
                         float4 shadowCoord = getShadowCoord(float4(currentPos,1), weights);

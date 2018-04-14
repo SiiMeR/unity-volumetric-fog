@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 597845560}
-  m_IndirectSpecularColor: {r: 0.18364483, g: 0.22912258, b: 0.305187, a: 1}
+  m_IndirectSpecularColor: {r: 0.18373281, g: 0.22913489, b: 0.3046847, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -172,13 +172,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 597845559}
-  m_LocalRotation: {x: -0.2782352, y: 0.2482033, z: -0.072553866, w: -0.9250493}
+  m_LocalRotation: {x: -0.27027956, y: 0.24721703, z: -0.070712775, w: -0.92781055}
   m_LocalPosition: {x: 65.9, y: 79.4, z: 81}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 1226.58, y: -210.119, z: -180.267}
+  m_LocalEulerAnglesHint: {x: 1227.554, y: -209.888, z: -180.164}
 --- !u!1001 &614976249
 Prefab:
   m_ObjectHideFlags: 0
@@ -498,23 +498,24 @@ MonoBehaviour:
   _ApplyFogShader: {fileID: 4800000, guid: 234a6daa6de91c84abe7ad7b0909739f, type: 3}
   SunLight: {fileID: 597845561}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
-  _LimitFogInSize: 1
+  _LimitFogInSize: 0
   _FogWorldPosition: {x: 111.61, y: 3, z: 100}
   _FogSize: 86
   _RenderTextureResDivision: 1
-  _RayMarchSteps: 256
+  _RayMarchSteps: 64
+  _UseInterleavedSampling: 1
   _SQRSize: 8
   _UseRayleighScattering: 1
-  _RayleighScatteringCoef: 0.25
-  _UseHenyeyGreensteinScattering: 1
-  _HenyeyGreensteinScatteringCoef: 0.32
-  _FogDensityCoef: 1.28
-  _ExtinctionCoef: 0.08
-  _Anisotropy: 0.08
+  _RayleighScatteringCoef: 0.2
+  _MieScatteringCoef: 0.34
+  _MieScatteringApproximation: 0
+  _FogDensityCoef: 1.3
+  _ExtinctionCoef: 0.1
+  _Anisotropy: 0.13
   _HeightDensityCoef: 0.17
   _BaseHeightDensity: 1.8
   _BlurIterations: 2
-  _BlurDepthFalloff: 286.85
+  _BlurDepthFalloff: 100
   _BlurOffsets: {x: 1, y: 2, z: 3}
   _BlurWeights: {x: 0.2, y: 0.1, z: 0.05}
   _ShadowColor: {r: 0.06742001, g: 0.21015531, b: 0.491, a: 1}

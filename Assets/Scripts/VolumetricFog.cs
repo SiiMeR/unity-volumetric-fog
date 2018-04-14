@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
     [RequireComponent (typeof(Camera))]
 	class VolumetricFog : MonoBehaviour
 	{
-
+		
 
 		[Header("Required assets")]
 		
@@ -25,6 +25,8 @@ using UnityEngine.Rendering;
 		
 		[SerializeField] [Range(1, 8)] private int _RenderTextureResDivision = 2;
 		[SerializeField] [Range(16, 256)] private int _RayMarchSteps = 128;
+
+		[SerializeField] private bool _UseInterleavedSampling = true;
 		
 		[Tooltip("Interleaved sampling square size")]
 		[SerializeField] [Range(1, 16)] private int _SQRSize = 8;
@@ -34,9 +36,11 @@ using UnityEngine.Rendering;
 		[SerializeField] private bool _UseRayleighScattering = true;
 		[SerializeField] private float _RayleighScatteringCoef = 0.25f;
 
-		[SerializeField] private bool _UseHenyeyGreensteinScattering = true;
-		[SerializeField] private float _HenyeyGreensteinScatteringCoef = 0.25f;
-			
+		[SerializeField] private float _MieScatteringCoef = 0.25f;
+
+		[SerializeField]
+		private MieScatteringApproximation _MieScatteringApproximation = MieScatteringApproximation.HenyeyGreenstein;
+		
 		[SerializeField] private float _FogDensityCoef = 0.3f;
 		[SerializeField] private float _ExtinctionCoef = 0.01f;
 		[SerializeField] [Range(-1,1)]  private float _Anisotropy = 0.5f;
@@ -73,11 +77,14 @@ using UnityEngine.Rendering;
 		private Material _CalculateFogMaterial;
 		private Material _ApplyFogMaterial;
 
+		public enum MieScatteringApproximation
+		{
+			HenyeyGreenstein,
+			CornetteShanks,
+			Off
+		}
 
 
-
-		
-        
 		public Material ApplyFogMaterial
 		{
 			get
@@ -243,9 +250,13 @@ using UnityEngine.Rendering;
 
 			Shader.SetGlobalMatrix("InverseViewMatrix", CurrentCamera.cameraToWorldMatrix);
 			Shader.SetGlobalMatrix("InverseProjectionMatrix", CurrentCamera.projectionMatrix.inverse);
-
+			
+			
+			ToggleShaderKeyword(CalculateFogMaterial, "SHADOWS_ON", _ShadowsEnabled); // todo fix
 			ToggleShaderKeyword(CalculateFogMaterial, "LIMITFOGSIZE", _LimitFogInSize);
 			ToggleShaderKeyword(CalculateFogMaterial, "HEIGHTFOG", _HeightFogEnabled);
+			ToggleShaderKeyword(CalculateFogMaterial, "INTERLEAVED_SAMPLING", _UseInterleavedSampling);
+			
 			
 			if (_UseRayleighScattering)
 			{
@@ -258,16 +269,31 @@ using UnityEngine.Rendering;
 				CalculateFogMaterial.DisableKeyword("RAYLEIGH_SCATTERING");
 			}
 
-			if (_UseHenyeyGreensteinScattering)
+
+			switch (_MieScatteringApproximation)
 			{
-				CalculateFogMaterial.EnableKeyword("HG_SCATTERING");
-				CalculateFogMaterial.SetFloat ("_HGScatteringCoef", _HenyeyGreensteinScatteringCoef);
+				case MieScatteringApproximation.HenyeyGreenstein:
+					ToggleShaderKeyword(CalculateFogMaterial, "HG_SCATTERING", true);
+					ToggleShaderKeyword(CalculateFogMaterial, "CS_SCATTERING", false);
+					CalculateFogMaterial.SetFloat("_MieScatteringCoef", _MieScatteringCoef);
+					break;
+
+				case MieScatteringApproximation.CornetteShanks:
+
+					ToggleShaderKeyword(CalculateFogMaterial, "CS_SCATTERING", true);
+					ToggleShaderKeyword(CalculateFogMaterial, "HG_SCATTERING", false);
+
+					CalculateFogMaterial.SetFloat("_MieScatteringCoef", _MieScatteringCoef);
+					break;
+
+				case MieScatteringApproximation.Off:
+					ToggleShaderKeyword(CalculateFogMaterial, "HG_SCATTERING", false);
+					ToggleShaderKeyword(CalculateFogMaterial, "CS_SCATTERING", false);
+					break;
 			}
-			else
-			{
-				CalculateFogMaterial.DisableKeyword("HG_SCATTERING");
-			}
-		
+
+			//		CalculateFogMaterial.SetVector("ExpRL", new Vector3((float)6.55e-6,(float)1.73e-5, (float)2.30e-5));
+			
 		//	CalculateFogMaterial.SetTexture ("LowResDepth", lowresDepthRT); TODO
 			CalculateFogMaterial.SetTexture ("_NoiseTexture", _FogTexture2D);
 			CalculateFogMaterial.SetTexture("_NoiseTex3D", _FogTexture3D);
