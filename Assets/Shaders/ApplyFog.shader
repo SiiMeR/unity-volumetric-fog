@@ -126,9 +126,9 @@
 	ENDCG
 	SubShader
 	{
-		// No culling or depth
+		// No culling or depth writes
 		Cull Off ZWrite Off ZTest Always
-
+        
 		Pass
 		{
 			CGPROGRAM

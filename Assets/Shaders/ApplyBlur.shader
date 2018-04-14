@@ -83,6 +83,7 @@ Shader "Hidden/ApplyBlur"
 	{
 		 Pass 
 		 {
+			//  ZTest Always Cull Off ZWrite Off
 			  ZTest Always Cull Off ZWrite Off
 
 			  CGPROGRAM

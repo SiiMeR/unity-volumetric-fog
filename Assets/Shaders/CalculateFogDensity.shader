@@ -43,7 +43,6 @@
                               _MieScatteringCoef,
                               _ExtinctionCoef,
                               _Anisotropy,
-                              _ViewDistance,
                               _LightIntensity,
                               _FogSize,
                               _InterleavedSamplingSQRSize,
@@ -87,6 +86,17 @@
                 return o; 
 			}
 			
+			
+				// http://byteblacksmith.com/improvements-to-the-canonical-one-liner-glsl-rand-for-opengl-es-2-0/
+	        float rand(float2 co) {
+                float a = 12.9898;
+                float b = 78.233;
+                float c = 43758.5453;
+                float dt = dot(co.xy, float2(a, b));
+                float sn = fmod(dt, 3.14);
+        
+                return 2.0 * frac(sin(sn) * c) - 1.0;
+            }
 			
 			// This is the distance field function.  The distance field represents the closest distance to the surface
 			// of any object we put in the scene.  If the given point (point p) is inside of an object, we return a
@@ -207,6 +217,11 @@
 			     
 			
 			}
+			
+			float getBeerLaw(float density, float stepSize){
+			    return saturate(exp( -density * stepSize)); //* (1.0 - exp(-density * 2.0));		
+			}
+			
             float3 ExpRL = float3(6.55e-6, 1.73e-5, 2.30e-5); 
             float3 ExpHG = float3(2e-6.xxx);
 			
@@ -287,7 +302,7 @@
 
                         float2 noiseUV = currentPos.xz;
          
-                        float noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(10*noiseUV + 0.5*_Time.xx, 0, 0)));
+                        float noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(10*noiseUV + 0.5*rand(noiseUV), 0, 0)));
                                      
                         //modulate fog density by a noise value to make it more interesting
                         float fogDensity = noiseValue * _FogDensity;
@@ -302,7 +317,7 @@
                         float extinction = _ExtinctionCoef * fogDensity;
                         
                          //calculate transmittance by applying Beer law
-                        transmittance *= exp( -extinction * stepSize);
+                        transmittance *= getBeerLaw(extinction, stepSize);
 
                         // WSlightpos0 for directional light == light direction
                         float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
@@ -371,6 +386,7 @@
 	
 	SubShader
 	{
+	    Tags { "Queue" = "Transparent" }
 		// No culling or depth
 		Cull Off ZWrite Off ZTest Always
 

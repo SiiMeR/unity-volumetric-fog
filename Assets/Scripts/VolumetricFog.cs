@@ -68,9 +68,8 @@ using UnityEngine.Rendering;
 		[SerializeField] private bool _BlurEnabled;
 		[SerializeField] private bool _ShadowsEnabled;
 		[SerializeField] private bool _HeightFogEnabled;
-		
-		[SerializeField] private float _RaymarchDrawDistance = 40;
-			
+
+		[SerializeField] private bool _Test;
 		
 		private Material _DownscaleDepthMaterial;//TODO
 		private Material _ApplyBlurMaterial;
@@ -188,6 +187,7 @@ using UnityEngine.Rendering;
 
 		private Texture3D _FogTexture3D;
 
+		
 		void OnRenderImage (RenderTexture source, RenderTexture destination)
 		{
 			if (!_FogTexture2D ||
@@ -310,21 +310,22 @@ using UnityEngine.Rendering;
 			CalculateFogMaterial.SetFloat("_BaseHeightDensity", _BaseHeightDensity);
 			CalculateFogMaterial.SetFloat("_HeightDensityCoef", _HeightDensityCoef);
 			
-			CalculateFogMaterial.SetFloat ("_ViewDistance", _RaymarchDrawDistance);
 			CalculateFogMaterial.SetVector ("_FogWorldPosition", _FogWorldPosition);
 			CalculateFogMaterial.SetFloat("_FogSize", _FogSize);
 			CalculateFogMaterial.SetFloat ("_LightIntensity", _LightIntensity);
 			CalculateFogMaterial.SetColor ("_ShadowColor", _ShadowColor);
 			CalculateFogMaterial.SetVector ("_LightColor", _LightColor);
 			CalculateFogMaterial.SetFloat("_AmbientFog", _AmbientFog);
-			
-		
+
+
 
 			//render fog
+
 			Graphics.Blit (source, fogRT1, CalculateFogMaterial);
+			//Graphics.Blit (fogRT1, source, CalculateFogMaterial);
 			Graphics.Blit(fogRT1, destination);
 
-
+		
 			if (_BlurEnabled)
 			{
 				

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -35,7 +36,14 @@ public class Player : MonoBehaviour
 		transform.position += Camera.main.transform.right * ms * Input.GetAxis("Horizontal") * Time.deltaTime;
 
 		transform.localRotation *= Quaternion.Euler (0f, yRot, 0f);
-		Camera.main.transform.localRotation *= Quaternion.Euler(-xRot, 0f, 0f);
+		
+		var cameras = gameObject.GetComponentsInChildren<Camera>();
+		
+		foreach (var cam in cameras)
+		{
+			cam.transform.localRotation *= Quaternion.Euler(-xRot, 0f, 0f);
+		}
+		
 	
 		UpdateCursorLock();
 	}
