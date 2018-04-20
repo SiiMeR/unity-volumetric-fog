@@ -61,15 +61,22 @@ using UnityEngine.Rendering;
 		[SerializeField] [Range(0,1)] private float _AmbientFog;
 		
 		[SerializeField] [Range(0,10)] private float _LightIntensity = 1;
+		
 
 		[Header("Debug")] 
 		
+		[SerializeField]
+		private NoiseSource _NoiseSource = NoiseSource.Texture2D;
+
 		[SerializeField] private bool _AddSceneColor;
 		[SerializeField] private bool _BlurEnabled;
 		[SerializeField] private bool _ShadowsEnabled;
 		[SerializeField] private bool _HeightFogEnabled;
 
 		[SerializeField] private bool _Test;
+
+
+		[Range(0,2)] public float  _NoiseStrength;
 		
 		private Material _DownscaleDepthMaterial;//TODO
 		private Material _ApplyBlurMaterial;
@@ -83,6 +90,12 @@ using UnityEngine.Rendering;
 			Off
 		}
 
+		public enum NoiseSource
+		{
+			Texture2D,
+			Texture3D,
+			SimplexNoise
+		}
 
 		public Material ApplyFogMaterial
 		{
@@ -187,7 +200,7 @@ using UnityEngine.Rendering;
 
 		private Texture3D _FogTexture3D;
 
-		
+		[ImageEffectOpaque]
 		void OnRenderImage (RenderTexture source, RenderTexture destination)
 		{
 			if (!_FogTexture2D ||
@@ -202,7 +215,7 @@ using UnityEngine.Rendering;
 
 			if (!_FogTexture3D)
 			{
-			//	_FogTexture3D = TextureUtilites.CreateTexture3DFrom2DSlices(_FogTexture2D, 128);
+				_FogTexture3D = TextureUtilities.CreateTexture3DFrom2DSlices(_FogTexture2D, 128);
 			}
 
 			
@@ -292,18 +305,42 @@ using UnityEngine.Rendering;
 					break;
 			}
 
+			switch (_NoiseSource)
+			{
+					case NoiseSource.SimplexNoise:
+						ToggleShaderKeyword(CalculateFogMaterial, "SNOISE", true);
+						ToggleShaderKeyword(CalculateFogMaterial, "NOISE2D", false);
+						ToggleShaderKeyword(CalculateFogMaterial, "NOISE3D", false);
+						break;
+					
+					case NoiseSource.Texture2D:
+	
+						CalculateFogMaterial.SetTexture ("_NoiseTexture", _FogTexture2D);
+						ToggleShaderKeyword(CalculateFogMaterial, "SNOISE", false);
+						ToggleShaderKeyword(CalculateFogMaterial, "NOISE2D", true);
+						ToggleShaderKeyword(CalculateFogMaterial, "NOISE3D", false);
+						break;
+					
+					case NoiseSource.Texture3D:
+						CalculateFogMaterial.SetTexture("_NoiseTex3D", _FogTexture3D);
+						ToggleShaderKeyword(CalculateFogMaterial, "SNOISE", false);
+						ToggleShaderKeyword(CalculateFogMaterial, "NOISE2D", false);
+						ToggleShaderKeyword(CalculateFogMaterial, "NOISE3D", true);
+						
+						break;
+					
+			}
+			
 			//		CalculateFogMaterial.SetVector("ExpRL", new Vector3((float)6.55e-6,(float)1.73e-5, (float)2.30e-5));
 			
 		//	CalculateFogMaterial.SetTexture ("LowResDepth", lowresDepthRT); TODO
-			CalculateFogMaterial.SetTexture ("_NoiseTexture", _FogTexture2D);
-			CalculateFogMaterial.SetTexture("_NoiseTex3D", _FogTexture3D);
 			
 			CalculateFogMaterial.SetFloat("_RaymarchSteps", _RayMarchSteps);
 			CalculateFogMaterial.SetFloat("_InterleavedSamplingSQRSize", _SQRSize);
 
 
 			CalculateFogMaterial.SetFloat ("_FogDensity", _FogDensityCoef);
-			
+			CalculateFogMaterial.SetFloat("_noiseStrength", _NoiseStrength);
 
 			CalculateFogMaterial.SetFloat ("_ExtinctionCoef", _ExtinctionCoef);
 			CalculateFogMaterial.SetFloat("_Anisotropy", _Anisotropy);
@@ -363,7 +400,11 @@ using UnityEngine.Rendering;
 	
 			}
 
-
+			if (_Test)
+			{
+				Graphics.Blit(fogRT1, (RenderTexture) null);
+				return;
+			}
 
 			if (_AddSceneColor)
 			{

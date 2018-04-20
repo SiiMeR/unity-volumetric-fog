@@ -1,10 +1,10 @@
 ﻿Shader "Hidden/CalculateFogDensity"
 {
+
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 	}
-	
 	CGINCLUDE
 	        
             #include "UnityCG.cginc"
@@ -21,6 +21,9 @@
             #pragma shader_feature __ CS_SCATTERING
             #pragma shader_feature __ LIMITFOGSIZE
             #pragma shader_feature __ INTERLEAVED_SAMPLING
+            #pragma shader_feature __ NOISE2D
+            #pragma shader_feature __ NOISE3D
+            #pragma shader_feature __ SNOISE
             
 
             UNITY_DECLARE_SHADOWMAP(ShadowMap);
@@ -173,6 +176,17 @@
                 return (1 - gsq) / denom;
 			}
 			
+			// from https://github.com/Flafla2/Volumetrics-Unity/blob/master/Assets/Shader/VolumetricLight.shader
+			fixed4 getFixedHenyeyGreenstein(float cosTheta){
+			
+				float n = 1 - _Anisotropy; // 1 - g
+                float c = cosTheta; // cos(x)
+                float d = 1 + _Anisotropy * _Anisotropy - 2 * _Anisotropy * c; // 1 + g^2 - 2g*cos(x)
+                return n * n / (4 * pi * pow(d, 1.5));
+                
+			
+			}
+			
 		    fixed4 getRayleighPhase(float cosTheta){
 		        return (3.0 / (16.0 * pi)) * (1 + (cosTheta * cosTheta));
 		    }
@@ -225,6 +239,9 @@
             float3 ExpRL = float3(6.55e-6, 1.73e-5, 2.30e-5); 
             float3 ExpHG = float3(2e-6.xxx);
 			
+			#include "noiseSimplex.cginc"
+			
+			float _noiseStrength;
 			fixed4 frag (v2f i) : SV_Target
 			{
 
@@ -244,15 +261,19 @@
                 
                 float3 worldPos = mul(InverseViewMatrix, viewPos).xyz;	
                     
-                            
+             
                 // ray direction in world space
                 float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
+                
+                
                 float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
                 
                 //calculate step size for raymarching
                 float stepSize = rayDistance / STEPS;
              //  float stepSize = rayDistance * STEPSIZE; 
               //  float3 currentPos = worldPos.xyz;
+            //    float3 currentPos = _WorldSpaceCameraPos.xyz;
+            
                 float3 currentPos = _WorldSpaceCameraPos.xyz;
                         
                         
@@ -267,7 +288,8 @@
 #else 
 
                 currentPos +=  rayDir.xyz; 
-
+               // if(true) return float4(currentPos + (rayDir * rayDistance) ,1);
+                
 #endif                
                 
                 
@@ -301,9 +323,24 @@
                     
 
                         float2 noiseUV = currentPos.xz;
-         
-                        float noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(10*noiseUV + 0.5*rand(noiseUV), 0, 0)));
-                                     
+                        
+                      //  float noiseValue = saturate(tex2Dlod(_NoiseTexture, 0.5 * float4(10*noiseUV + 0.5*rand(noiseUV), 0, 0)));
+                      //  float noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(0.5 * noiseUV, 0, 0)));
+                     //   float noiseValue = saturate(tex3Dlod(_NoiseTex3D, float4(10 * currentPos.xyz, 0)));
+                    //    float noiseValue = saturate(tex3Dlod(_NoiseTex3D, float4(snoise(currentPos), 0)));
+                        float noiseValue = 0;
+#if defined(SNOISE)
+                        noiseValue = saturate(snoise(float4(currentPos, _Time.y)) * (i / STEPS) + 0.5);    
+                        noiseValue += saturate(snoise(currentPos * 0.3) * (i / STEPS) + 0.5);
+                        noiseValue *= 0.5;    
+#elif defined(NOISE2D)
+                        noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(0.5 * noiseUV, 0, 0)));
+#elif defined(NOISE3D)
+                        
+                        noiseValue = saturate(tex3Dlod(_NoiseTex3D, float4(10 * currentPos.xyz, 0)));
+#endif
+          
+                        noiseValue = lerp(1, noiseValue, _noiseStrength);
                         //modulate fog density by a noise value to make it more interesting
                         float fogDensity = noiseValue * _FogDensity;
                         
@@ -323,7 +360,7 @@
                         float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
                         float3 cameraDir = normalize(_WorldSpaceCameraPos.xyz - currentPos);
                         
-                        float cosTheta = dot(rayDir, -lightDir);
+                        float cosTheta = dot(rayDir, lightDir);
                         
                         
                         // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
@@ -336,6 +373,7 @@
 #endif
 
 #if defined(HG_SCATTERING)
+                    //    float HGscattering = getFixedHenyeyGreenstein(cosTheta) * _MieScatteringCoef * fogDensity;
                         float HGscattering = getHenyeyGreenstein(cosTheta) * _MieScatteringCoef * fogDensity;
                        // float3 HGscattering = getHenyeyGreenstein(cosTheta) * ExpHG * fogDensity;
                 
@@ -366,7 +404,8 @@
                         
                         //accumulate light
                         result += inScattering * transmittance * stepSize * fColor;
-   
+                        
+                        
                     }
                     // TODO : STEP BY DISTANCE FIELD SAMPLE IF NOT IN CUBE
 
@@ -377,6 +416,9 @@
 
                 }
                                 
+			    if(lindepth > 0.99){
+					transmittance = lerp(transmittance, 1, 0.1);
+				}
                 return float4(result, transmittance);        
 
                 } 
@@ -386,9 +428,10 @@
 	
 	SubShader
 	{
-	    Tags { "Queue" = "Transparent" }
+	    Tags {"RenderType"="Opaque"}
+
 		// No culling or depth
-		Cull Off ZWrite Off ZTest Always
+		Cull Off ZWrite Off ZTest Off
 
 		Pass
 		{
