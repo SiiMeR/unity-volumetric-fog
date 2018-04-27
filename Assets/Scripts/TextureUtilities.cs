@@ -4,32 +4,32 @@ using UnityEngine;
 
 public static class TextureUtilities {
 
-	public static Texture3D CreateTexture3DFrom2DSlices(Texture2D tex, int size)
+	public static Texture3D CreateTexture3DFrom2DSlices(Texture2D tex, int width, int height, int depth)
 	{
-		Texture2D readableTexture2D = getReadableTexture(tex);
+		Texture2D readableTexture2D = GetReadableTexture(tex);
 
-		Color[] colors = new Color[size * size * size];
+		Color[] colors = new Color[width * height * depth];
 
 		int idx = 0;
         
-		for (int z = 0; z < size; ++z)
+		for (int z = 0; z < depth; ++z)
 		{
-			for (int y = 0; y < size; ++y)
+			for (int y = 0; y < height; ++y)
 			{
-				for (int x = 0; x < size; ++x, ++idx)
+				for (int x = 0; x < width; ++x, ++idx)
 				{
-					colors[idx] = readableTexture2D.GetPixel(x + z * size, y);
+					colors[idx] = readableTexture2D.GetPixel(x + z * depth, y);
 				}
 			}
 		}
 
-		Texture3D texture3D = new Texture3D(size, size, size, TextureFormat.RGBA32, true);
+		Texture3D texture3D = new Texture3D(width, height, depth, TextureFormat.RGB24, true);
 		texture3D.SetPixels(colors);
 		texture3D.Apply();
 		return texture3D;
 	}
 	// https://support.unity3d.com/hc/en-us/articles/206486626-How-can-I-get-pixels-from-unreadable-textures-
-	public static Texture2D getReadableTexture(Texture2D texture)
+	public static Texture2D GetReadableTexture(Texture2D texture)
 	{
 		// Create a temporary RenderTexture of the same size as the texture
         

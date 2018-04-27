@@ -10,17 +10,15 @@
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
             #include "DistanceFunc.cginc"
-           // #include "UnityShadowLibrary.cginc"
+            #include "noiseSimplex.cginc"
             
             // compile multiple variants of shaders so switching at runtime is faster
-            
             #pragma multi_compile SHADOWS_ON SHADOWS_OFF
             #pragma shader_feature __ HEIGHTFOG
             #pragma shader_feature __ RAYLEIGH_SCATTERING
             #pragma shader_feature __ HG_SCATTERING
             #pragma shader_feature __ CS_SCATTERING
             #pragma shader_feature __ LIMITFOGSIZE
-            #pragma shader_feature __ INTERLEAVED_SAMPLING
             #pragma shader_feature __ NOISE2D
             #pragma shader_feature __ NOISE3D
             #pragma shader_feature __ SNOISE
@@ -39,7 +37,9 @@
                               
             uniform float3    _ShadowColor,
                               _LightColor,
-                              _FogWorldPosition;
+                              _FogColor,
+                              _FogWorldPosition,
+                              _LightDir;
                               
             uniform float     _FogDensity,
                               _RayleighScatteringCoef,
@@ -48,11 +48,11 @@
                               _Anisotropy,
                               _LightIntensity,
                               _FogSize,
-                              _InterleavedSamplingSQRSize,
                               _RaymarchSteps,
                               _AmbientFog,
                               _BaseHeightDensity,
-                              _HeightDensityCoef;
+                              _HeightDensityCoef,
+                              _NoiseStrength;
                               
             uniform float4x4  InverseViewMatrix,                   
                               InverseProjectionMatrix;
@@ -60,8 +60,6 @@
 
             #define STEPS _RaymarchSteps
             #define STEPSIZE 1/STEPS
-            #define GRID_SIZE _InterleavedSamplingSQRSize
-            #define GRID_SIZE_SQR_RCP (1.0/(GRID_SIZE*GRID_SIZE))
             
             #define e 2.71828
             #define pi 3.1415
@@ -81,7 +79,6 @@
                 
                 //transform clip pos to view space
                 float4 clipPos = float4( v.texcoord * 2.0 - 1.0, 1.0, 1.0); 
-               // float4 clipPos = float4( v.texcoord * 2.0 - 1.0, 1.0, 1.0); 
                 float4 cameraRay = mul(InverseProjectionMatrix, clipPos);
                 
                 o.ray = cameraRay / cameraRay.w;
@@ -90,7 +87,7 @@
 			}
 			
 			
-				// http://byteblacksmith.com/improvements-to-the-canonical-one-liner-glsl-rand-for-opengl-es-2-0/
+			// http://byteblacksmith.com/improvements-to-the-canonical-one-liner-glsl-rand-for-opengl-es-2-0/
 	        float rand(float2 co) {
                 float a = 12.9898;
                 float b = 78.233;
@@ -144,25 +141,7 @@
 			    if(weights[3] == 1){
 			        shadowCoord += mul(unity_WorldToShadow[3], worldPos).xyz; 
 			    }
-			    
-			  
-			
-			     //calculate shadow at this sample position
-			     /* ALTERNATE
-                float3 shadowCoord0 = mul(unity_WorldToShadow[0], worldPos).xyz; 
-                float3 shadowCoord1 = mul(unity_WorldToShadow[1], worldPos).xyz;                      
-                float3 shadowCoord2 = mul(unity_WorldToShadow[2], worldPos).xyz; 
-                float3 shadowCoord3 = mul(unity_WorldToShadow[3], worldPos).xyz;
-                           
-               
-                float4 shadowCoord = float4(shadowCoord0 * weights[0] + 
-                                            shadowCoord1 * weights[1] + 
-                                            shadowCoord2 * weights[2] +
-                                            shadowCoord3 * weights[3],
-                                            1); 
-                */
-            //    shadowCoord = mul(unity_WorldToShadow[(int)dot(weights, float4(1,1,1,1))], worldPos);
-                
+			   
                 return float4(shadowCoord,1);            
 			} 
 			
@@ -191,21 +170,6 @@
 		        return (3.0 / (16.0 * pi)) * (1 + (cosTheta * cosTheta));
 		    }
 		    
-		    
-		    // as per https://developer.nvidia.com/sites/default/files/akamai/gameworks/downloads/papers/NVVL/Fast_Flexible_Physically-Based_Volumetric_Light_Scattering.pdf
-		    fixed4 mieHazy(float cosTheta){
-		    
-		        float cosThetaPow = pow(((1 + cosTheta) / 2),8);
-		        return (1 / 4 * pi) * (0.5 + ((9/2) * cosThetaPow));
-		    }
-		    
-		    fixed4 mieMurky(float cosTheta){
-		    
-		        float cosThetaPow = pow(((1 + cosTheta) / 2),32);
-		        
-		        return (1 / 4 * pi) * (0.5 + ((33/2) * cosThetaPow));
-		    }
-			
 			
 			// gpu pro 6 p. 224
 			fixed4 getHeightDensity(float height){
@@ -227,34 +191,22 @@
 			     float term2 = (1 + cos2) / (pow((1 + g2 - 2 * _Anisotropy * cos2),3/2));
 			     
 			     return term1 * term2;
-			     
-			     
 			
 			}
 			
 			float getBeerLaw(float density, float stepSize){
 			    return saturate(exp( -density * stepSize)); //* (1.0 - exp(-density * 2.0));		
 			}
+	
 			
-            float3 ExpRL = float3(6.55e-6, 1.73e-5, 2.30e-5); 
-            float3 ExpHG = float3(2e-6.xxx);
-			
-			#include "noiseSimplex.cginc"
-			
-			float _noiseStrength;
 			fixed4 frag (v2f i) : SV_Target
 			{
-
-
                 
                // read depth and reconstruct world position
                 float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
                 
                 //linearise depth		
                 float lindepth = Linear01Depth (depth);
-                
-            
-              //  float lindepth = LinearEyeDepth(depth);
                 
                 //get view and then world positions		
                 float4 viewPos = float4(i.ray.xyz * lindepth,1);
@@ -265,53 +217,34 @@
                 // ray direction in world space
                 float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
                 
-                
+                // cosine between the camera direction and the light direction
+                float cosTheta = dot(rayDir, _LightDir);
+               
                 float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
                 
                 //calculate step size for raymarching
                 float stepSize = rayDistance / STEPS;
-             //  float stepSize = rayDistance * STEPSIZE; 
-              //  float3 currentPos = worldPos.xyz;
-            //    float3 currentPos = _WorldSpaceCameraPos.xyz;
             
                 float3 currentPos = _WorldSpaceCameraPos.xyz;
                         
-                        
-#if defined(INTERLEAVED_SAMPLING)
-                // Calculate the offsets on the ray according to the interleaved sampling pattern
-                float2 interleavedPos = fmod( float2(i.pos.x, _CameraDepthTexture_TexelSize.w - i.pos.y), GRID_SIZE );		
-              //  float2 interleavedPos = fmod(i.pos.xy, GRID_SIZE);		
-                float rayStartOffset = ( interleavedPos.y * GRID_SIZE + interleavedPos.x ) * ( STEPSIZE * GRID_SIZE_SQR_RCP ) ;
-                 
-                currentPos += rayStartOffset * rayDir.xyz; // TODO : figure this out or remove
-
-#else 
-
-                currentPos +=  rayDir.xyz; 
-               // if(true) return float4(currentPos + (rayDir * rayDistance) ,1);
-                
-#endif                
-                
-                
-                
-                float3 result = 0;
-                
+                currentPos +=  rayDir.xyz;             
+    
                 //calculate weights for cascade split selection  
                 float4 weights = getCascadeWeights(-viewPos.z);
                 
-               // if(true){ return  -viewPos.z < _LightSplitsFar;}
-                float3 litFogColor = _LightIntensity * _LightColor;
-             //   float3 litFogColor = _LightIntensity ;
+                float3 litFogColor = _LightIntensity * _FogColor;
                 
                 float transmittance = 1;
-                
-        
-                for(int i = 0 ; i < STEPS ; i++ )
+                float3 result = 0;
+       
+                [loop]
+                for(int i = 0; i < STEPS ; i++)
                 {	
                     			
                     if(transmittance < 0.01){
                         break;
                     }
+                    
                     
                     float2 distanceSample = 0;
                     
@@ -322,68 +255,53 @@
                     if(distanceSample.x < 0.0001){ // we are inside the predefined cube
                     
 
-                        float2 noiseUV = currentPos.xz;
-                        
-                      //  float noiseValue = saturate(tex2Dlod(_NoiseTexture, 0.5 * float4(10*noiseUV + 0.5*rand(noiseUV), 0, 0)));
-                      //  float noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(0.5 * noiseUV, 0, 0)));
-                     //   float noiseValue = saturate(tex3Dlod(_NoiseTex3D, float4(10 * currentPos.xyz, 0)));
-                    //    float noiseValue = saturate(tex3Dlod(_NoiseTex3D, float4(snoise(currentPos), 0)));
                         float noiseValue = 0;
 #if defined(SNOISE)
                         noiseValue = saturate(snoise(float4(currentPos, _Time.y)) * (i / STEPS) + 0.5);    
-                        noiseValue += saturate(snoise(currentPos * 0.3) * (i / STEPS) + 0.5);
-                        noiseValue *= 0.5;    
+              //          noiseValue += saturate(snoise(currentPos * 0.3) * (i / STEPS) + 0.5);
+              //         noiseValue *= 0.5;    
 #elif defined(NOISE2D)
-                        noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(0.5 * noiseUV, 0, 0)));
-#elif defined(NOISE3D)
-                        
-                        noiseValue = saturate(tex3Dlod(_NoiseTex3D, float4(10 * currentPos.xyz, 0)));
+                        noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(0.5 * currentPos.xz, 0, 0)));
+#elif defined(NOISE3D)                        
+                        noiseValue = tex3Dlod(_NoiseTex3D, float4(0.5 * currentPos.xyz, 0));
+
 #endif
-          
-                        noiseValue = lerp(1, noiseValue, _noiseStrength);
+                        noiseValue = lerp(1, noiseValue, _NoiseStrength);
+                        
                         //modulate fog density by a noise value to make it more interesting
                         float fogDensity = noiseValue * _FogDensity;
+                        
                         
 #if defined(HEIGHTFOG)
                         float heightDensity = getHeightDensity(currentPos.y);  
                         fogDensity *= saturate(heightDensity);
-#endif                        
-                        
-                        
+#endif                            
+               
                        // float scattering =  _ScatteringCoef * fogDensity;
                         float extinction = _ExtinctionCoef * fogDensity;
                         
                          //calculate transmittance by applying Beer law
                         transmittance *= getBeerLaw(extinction, stepSize);
 
-                        // WSlightpos0 for directional light == light direction
-                        float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
                         float3 cameraDir = normalize(_WorldSpaceCameraPos.xyz - currentPos);
-                        
-                        float cosTheta = dot(rayDir, lightDir);
-                        
-                        
+                                      
                         // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
                         float inScattering = 0; 
-                        
+                       
+                       
 #if defined(RAYLEIGH_SCATTERING)
                         float Rayleighscattering = getRayleighPhase(cosTheta) * _RayleighScatteringCoef * fogDensity;
-                     //   float Rayleighscattering = getRayleighPhase(cosTheta) * ExpRL * fogDensity;
                         inScattering += Rayleighscattering;
 #endif
 
 #if defined(HG_SCATTERING)
-                    //    float HGscattering = getFixedHenyeyGreenstein(cosTheta) * _MieScatteringCoef * fogDensity;
                         float HGscattering = getHenyeyGreenstein(cosTheta) * _MieScatteringCoef * fogDensity;
-                       // float3 HGscattering = getHenyeyGreenstein(cosTheta) * ExpHG * fogDensity;
-                
-                   //    
                         inScattering += HGscattering;
                             
 #elif defined(CS_SCATTERING) 
                         float CSscattering = getCornetteShanks(cosTheta) * _MieScatteringCoef * fogDensity;
                         inScattering += CSscattering;
-#endif                    
+#endif                  
                         
 
 #if SHADOWS_ON
@@ -392,7 +310,7 @@
                         //do shadow test and store the result				
                         float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);				
 
-                        //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas
+                        //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas,
                         //add a bit of ambient fog so shadowed areas get some fog too
                         float3 fColor = lerp(_ShadowColor, litFogColor, shadowTerm + _AmbientFog);         
                                  
@@ -407,17 +325,24 @@
                         
                         
                     }
+                    else
+                    {
+                    
+                     //   currentPos += distanceSample.x * rayDir;
+                        result += _LightColor * _LightIntensity;
+                    }
                     // TODO : STEP BY DISTANCE FIELD SAMPLE IF NOT IN CUBE
+                    
 
                     
                     //raymarch along the ray
                     currentPos += rayDir * stepSize;
                     
 
-                }
-                                
+                }           
+
 			    if(lindepth > 0.99){
-					transmittance = lerp(transmittance, 1, 0.1);
+			//		transmittance = lerp(transmittance, 1, 0.1);
 				}
                 return float4(result, transmittance);        
 
@@ -428,10 +353,9 @@
 	
 	SubShader
 	{
-	    Tags {"RenderType"="Opaque"}
 
 		// No culling or depth
-		Cull Off ZWrite Off ZTest Off
+		Cull Off ZWrite Off ZTest Always
 
 		Pass
 		{

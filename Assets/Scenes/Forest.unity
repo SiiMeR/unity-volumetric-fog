@@ -139,7 +139,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
-  m_Color: {r: 0.44117647, g: 0.237591, b: 0.14597751, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_Intensity: 1.1
   m_Range: 10
   m_SpotAngle: 30
@@ -216,15 +216,15 @@ Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 675763304}
-  m_LocalRotation: {x: -0, y: 0.30324405, z: -0, w: 0.9529129}
-  m_LocalPosition: {x: 67.4, y: 3.3, z: 87.27}
+  m_LocalRotation: {x: -0, y: -0.97711986, z: 0, w: -0.21268934}
+  m_LocalPosition: {x: 85.2, y: 3.3, z: 87.27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1993150403}
   - {fileID: 1097241483}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 35.305, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -204.56, z: 0}
 --- !u!1 &1095410650
 GameObject:
   m_ObjectHideFlags: 0
@@ -349,9 +349,7 @@ MonoBehaviour:
   _FogWorldPosition: {x: 111.61, y: 3, z: 100}
   _FogSize: 86
   _RenderTextureResDivision: 1
-  _RayMarchSteps: 256
-  _UseInterleavedSampling: 1
-  _SQRSize: 8
+  _RayMarchSteps: 64
   _UseRayleighScattering: 1
   _RayleighScatteringCoef: 0.2
   _MieScatteringCoef: 0.2
@@ -365,16 +363,17 @@ MonoBehaviour:
   _BlurDepthFalloff: 97.96
   _BlurOffsets: {x: 1, y: 2, z: 3}
   _BlurWeights: {x: 0.2, y: 0.1, z: 0.05}
-  _ShadowColor: {r: 0.06742001, g: 0.21015531, b: 0.491, a: 1}
-  _LightColor: {r: 0.44117647, g: 0.237591, b: 0.14597751, a: 0}
+  _FogInShadowColor: {r: 0.0627451, g: 0.20784314, b: 0.49019608, a: 1}
+  _FogInLightColor: {r: 0.39607844, g: 0.2509804, b: 0.13725491, a: 1}
   _AmbientFog: 0.2
   _LightIntensity: 1.1
+  _NoiseSource: 1
   _AddSceneColor: 1
   _BlurEnabled: 1
   _ShadowsEnabled: 1
-  _HeightFogEnabled: 0
+  _HeightFogEnabled: 1
   _Test: 0
-  _test: 0.1
+  _NoiseStrength: 0.06
 --- !u!124 &1097241485
 Behaviour:
   m_ObjectHideFlags: 0
