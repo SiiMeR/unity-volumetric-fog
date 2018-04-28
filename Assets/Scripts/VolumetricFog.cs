@@ -180,9 +180,15 @@ class VolumetricFog : MonoBehaviour
     {
         // TODO : SUPPORT MULTIPLE LIGHTS 
 
-        Light sunLight;
+        Light sunLight = null;
+        if (SunLight)
+        {
+            sunLight = SunLight.GetComponent<Light>();
+        }
+       
 
-        if (_AfterShadowPass != null && (sunLight = SunLight.GetComponent<Light>()) != null)
+        
+        if (_AfterShadowPass != null && sunLight != null)
         {
             sunLight.RemoveCommandBuffer(LightEvent.AfterShadowMap, _AfterShadowPass);
         }

@@ -51,6 +51,7 @@ public class Player : MonoBehaviour
 	//
 	// CODE BELOW IS FROM UNITY STANDARD ASSETS MouseLook.cs
 	//
+
 	
 	public void UpdateCursorLock()
 	{
