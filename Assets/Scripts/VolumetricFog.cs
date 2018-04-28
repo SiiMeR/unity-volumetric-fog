@@ -212,7 +212,7 @@ class VolumetricFog : MonoBehaviour
                !CalculateFogMaterial || !_CalculateFogShader ||
                !ApplyBlurMaterial || !_ApplyBlurShader;
     }	
-  //  [ImageEffectOpaque]
+    [ImageEffectOpaque]
     void OnRenderImage (RenderTexture source, RenderTexture destination)
     {
 

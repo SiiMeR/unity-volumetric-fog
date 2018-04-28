@@ -256,14 +256,15 @@
                     
 
                         float noiseValue = 0;
+                        
+                        float4 samplePoint = float4(currentPos, _Time.y);
 #if defined(SNOISE)
-                        noiseValue = saturate(snoise(float4(currentPos, _Time.y)) * (i / STEPS) + 0.5);    
-              //          noiseValue += saturate(snoise(currentPos * 0.3) * (i / STEPS) + 0.5);
-              //         noiseValue *= 0.5;    
+                        noiseValue = snoise(samplePoint) * (i / STEPS) + 0.5;    
+ 
 #elif defined(NOISE2D)
-                        noiseValue = saturate(tex2Dlod(_NoiseTexture, float4(0.5 * currentPos.xz, 0, 0)));
+                        noiseValue = tex2Dlod(_NoiseTexture, samplePoint) * (i / STEPS) + 0.5;
 #elif defined(NOISE3D)                        
-                        noiseValue = tex3Dlod(_NoiseTex3D, float4(0.5 * currentPos.xyz, 0));
+                        noiseValue = tex3Dlod(_NoiseTex3D, samplePoint) * (i / STEPS) + 0.5;
 
 #endif
                         noiseValue = lerp(1, noiseValue, _NoiseStrength);
@@ -282,9 +283,7 @@
                         
                          //calculate transmittance by applying Beer law
                         transmittance *= getBeerLaw(extinction, stepSize);
-
-                        float3 cameraDir = normalize(_WorldSpaceCameraPos.xyz - currentPos);
-                                      
+      
                         // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
                         float inScattering = 0; 
                        
