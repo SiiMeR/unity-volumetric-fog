@@ -37,8 +37,9 @@ public class Benchmark : MonoBehaviour
         _triplets = new Dictionary<float, List<Triplet>>();
         
         _animator = GetComponent<Animator>();
-		 
-        StartCoroutine(StartBench(Camera.main.gameObject.GetComponent<VolumetricFog>()._NoiseSource.ToString()));
+
+        VolumetricFog fog = Camera.main.gameObject.GetComponent<VolumetricFog>();
+        StartCoroutine(StartBench("64 steps"));
 
     }
     
@@ -46,7 +47,16 @@ public class Benchmark : MonoBehaviour
     private IEnumerator StartBench(string runName, bool writeToCSV = true)
     {
 
-        yield return new WaitForSeconds(5.0f);
+        float timer = 0;
+
+        while ((timer += Time.deltaTime) < 2.0f)
+        {
+            _timeSpent += (Time.unscaledDeltaTime - _timeSpent) * 0.1f;
+            
+            yield return new WaitForSeconds(Time.deltaTime);
+            
+        }
+        
 
         float time = Time.time;
         
@@ -57,7 +67,7 @@ public class Benchmark : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
         
-        _timeSpent = 0;
+        
 
         yield return new WaitUntil(() =>
         {
@@ -102,18 +112,18 @@ public class Benchmark : MonoBehaviour
         if (!File.Exists(fileName))
         {
             File.WriteAllText(fileName,
-                "Time since start(s)" + "," + "Frame time(ms)" + "," + "FPS" + Environment.NewLine);
+                "Time since start(s)" + "." + "FPS" + "." +  "Frame time(ms)" + Environment.NewLine);
         }
 
 
         foreach (var triplet in _triplets)
         {
             
-            string ms = triplet.Value.Average(val => val.ms).ToString().Replace(",", ".");
-            string fps = triplet.Value.Average(val => val.fps).ToString().Replace(",", ".");
+            string ms = triplet.Value.Average(val => val.ms).ToString();
+            string fps = triplet.Value.Average(val => val.fps).ToString();
             string time = triplet.Key.ToString();
 			
-            File.AppendAllText(fileName, $"{time},{ms},{fps}" + Environment.NewLine);
+            File.AppendAllText(fileName, $"{time}.{fps}.{ms}" + Environment.NewLine);
         }
 
     }

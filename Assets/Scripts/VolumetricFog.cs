@@ -82,10 +82,8 @@ class VolumetricFog : MonoBehaviour
     [SerializeField] private bool _ShadowsEnabled;
     [SerializeField] private bool _HeightFogEnabled;
 
-    [SerializeField] private bool _Test;
-
-
-    [Range(0,2)] public float  _NoiseStrength;
+    private bool _Test;
+    [Range(0,2)] private float  _NoiseStrength;
 		
     private Material _ApplyBlurMaterial;
     private Material _CalculateFogMaterial;
