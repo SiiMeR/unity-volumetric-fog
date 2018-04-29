@@ -427,8 +427,8 @@ MonoBehaviour:
     m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: ms, fps
 --- !u!222 &902842587
@@ -579,7 +579,7 @@ MonoBehaviour:
   _FogInLightColor: {r: 0.39607844, g: 0.2509804, b: 0.13725491, a: 1}
   _AmbientFog: 0.2
   _LightIntensity: 1.1
-  _NoiseSource: 0
+  _NoiseSource: 2
   _AddSceneColor: 1
   _BlurEnabled: 1
   _ShadowsEnabled: 1

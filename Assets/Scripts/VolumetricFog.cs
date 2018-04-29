@@ -74,8 +74,8 @@ class VolumetricFog : MonoBehaviour
 
     [Header("Debug")] 
 		
-    [SerializeField]
-    private NoiseSource _NoiseSource = NoiseSource.Texture2D;
+   // [SerializeField]
+    public NoiseSource _NoiseSource = NoiseSource.Texture2D;
 
     [SerializeField] private bool _AddSceneColor;
     [SerializeField] private bool _BlurEnabled;

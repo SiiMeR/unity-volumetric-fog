@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.UI;
@@ -10,15 +11,17 @@ public class Benchmark : MonoBehaviour
 {
 
     [SerializeField] private Text _text;
-    private struct Pair
+    private struct Triplet
     {
         public float ms;
         public float fps;
+        public float time;
 
-        public Pair(float ms, float fps)
+        public Triplet(float ms, float fps, float time)
         {
             this.ms = ms;
             this.fps = fps;
+            this.time = time;
         }
 
 
@@ -26,72 +29,93 @@ public class Benchmark : MonoBehaviour
 	
     private Animator _animator;
     private float _timeSpent;
-
-    private List<Pair> _pairs;
+    private bool _isRunning;
+    private Dictionary<float, List<Triplet>> _triplets;
     // Use this for initialization
     void Awake ()
     {
-        _pairs = new List<Pair>();
-		
+        _triplets = new Dictionary<float, List<Triplet>>();
+        
         _animator = GetComponent<Animator>();
-		
-        Profiler.enabled = true;
-        //	Profiler.logFile = Application.persistentDataPath + "/volumetricfog_" + DateTime.Now.ToFileTimeUtc() + ".txt";
-        //	Profiler.enableBinaryLog = true;
-
-        StartCoroutine(StartBench());
+		 
+        StartCoroutine(StartBench(Camera.main.gameObject.GetComponent<VolumetricFog>()._NoiseSource.ToString()));
 
     }
+    
 
-
-    private IEnumerator StartBench()
+    private IEnumerator StartBench(string runName, bool writeToCSV = true)
     {
-        //Profiler.BeginSample("Volumetric Fog Benchmark");
 
-        	yield return new WaitUntil(() =>
-            {
-                _timeSpent += (Time.unscaledDeltaTime - _timeSpent) * 0.1f;	
+        yield return new WaitForSeconds(5.0f);
+
+        float time = Time.time;
+        
+        _animator.SetTrigger("StartBench");
+        
+        while(!_animator.GetCurrentAnimatorStateInfo(0).IsName("Benchmark"))
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+        
+        _timeSpent = 0;
+
+        yield return new WaitUntil(() =>
+        {
+            _timeSpent += (Time.unscaledDeltaTime - _timeSpent) * 0.1f;	
            
     
-                float ms = 1000.0f * _timeSpent;
-                float fps = 1.0f / _timeSpent;
+            float ms = 1000.0f * _timeSpent;
+            float fps = 1.0f / _timeSpent;
+            float timeSinceStart = Mathf.Round(Time.time - time);
+
+            List<Triplet> list;
+            _triplets.TryGetValue(timeSinceStart, out list);
+            
+            if (list == null)
+            {
+                _triplets[timeSinceStart] = new List<Triplet>();
+            }
+            
+            _triplets[timeSinceStart].Add(new Triplet(ms, fps,timeSinceStart));
+
+            _text.text = $"{ms:0.0} ms ({fps:0.} fps), time elapsed: {timeSinceStart} - {runName}";
                 
-                _pairs.Add(new Pair(ms, fps));
-                
-                _text.text = $"{ms:0.0} ms ({fps:0.} fps)";
-                
-                return !_animator.GetCurrentAnimatorStateInfo(0).IsName("Benchmark");
-            });
+            return !_animator.GetCurrentAnimatorStateInfo(0).IsName("Benchmark");
+        });
 		
 		
-        //Profiler.EndSample();
-
-
-        WriteToCSV();
-	
+        if (writeToCSV)
+        {
+            WriteToCSV(runName);
+        }
+       
+        
         Application.Quit();
-
+        
     }
 
-    private void WriteToCSV()
+    private void WriteToCSV(string runName)
     {
-        string fileName = Application.persistentDataPath + "/volumetricfog_" + DateTime.Now.ToFileTimeUtc() + ".csv";
+        string fileName = Application.persistentDataPath + "/volumetricfog_" + runName + "_" +
+                          DateTime.Now.ToFileTimeUtc() + ".csv";
 
         if (!File.Exists(fileName))
         {
-            File.WriteAllText(fileName, "Frame time(ms)" + "," + "FPS" + Environment.NewLine);
+            File.WriteAllText(fileName,
+                "Time since start(s)" + "," + "Frame time(ms)" + "," + "FPS" + Environment.NewLine);
         }
-		
-       // _pairs.RemoveRange(0,4);
-		
-        _pairs.ForEach(pair =>
-        {	
-	
-            string ms = pair.ms.ToString().Replace(",", ".");
-            string fps = pair.fps.ToString().Replace(",", ".");
+
+
+        foreach (var triplet in _triplets)
+        {
+            
+            string ms = triplet.Value.Average(val => val.ms).ToString().Replace(",", ".");
+            string fps = triplet.Value.Average(val => val.fps).ToString().Replace(",", ".");
+            string time = triplet.Key.ToString();
 			
-            File.AppendAllText(fileName, $"{ms},{fps}" + Environment.NewLine);
-        });
+            File.AppendAllText(fileName, $"{time},{ms},{fps}" + Environment.NewLine);
+        }
+
     }
 
     // Update is called once per frame
