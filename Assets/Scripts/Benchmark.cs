@@ -39,7 +39,7 @@ public class Benchmark : MonoBehaviour
         _animator = GetComponent<Animator>();
 
         VolumetricFog fog = Camera.main.gameObject.GetComponent<VolumetricFog>();
-        StartCoroutine(StartBench("64 steps"));
+        StartCoroutine(StartBench("Base"));
 
     }
     

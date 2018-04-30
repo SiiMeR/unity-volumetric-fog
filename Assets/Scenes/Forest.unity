@@ -123,7 +123,6 @@ GameObject:
   m_Component:
   - component: {fileID: 597845561}
   - component: {fileID: 597845560}
-  - component: {fileID: 597845562}
   m_Layer: 0
   m_Name: Sun
   m_TagString: Untagged
@@ -180,18 +179,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 1235.504, y: -199.173, z: -169.97}
---- !u!114 &597845562
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 597845559}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c85d8cf57c4d2954faac44596b6fe6bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RotateSpeed: 50
 --- !u!1 &675763304
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,14 +247,14 @@ Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 675763304}
-  m_LocalRotation: {x: 0.015134434, y: -0.9810603, z: -0.085831694, w: -0.17298728}
+  m_LocalRotation: {x: -0, y: -0.9848078, z: 0, w: -0.17364807}
   m_LocalPosition: {x: 38, y: 3, z: 188}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1097241483}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: -10, y: -200, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -200, z: 0}
 --- !u!1 &689099847
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,12 +547,12 @@ MonoBehaviour:
   _FogWorldPosition: {x: 111.61, y: 3, z: 100}
   _FogSize: 86
   _RenderTextureResDivision: 1
-  _RayMarchSteps: 64
+  _RayMarchSteps: 256
   _UseRayleighScattering: 1
   _RayleighScatteringCoef: 0.2
   _MieScatteringCoef: 0.2
   _MieScatteringApproximation: 1
-  _FogDensityCoef: 0.15
+  _FogDensityCoef: 0.2
   _ExtinctionCoef: 0.1
   _Anisotropy: 0.4
   _HeightDensityCoef: 0.1
@@ -578,7 +565,7 @@ MonoBehaviour:
   _FogInLightColor: {r: 0.39607844, g: 0.2509804, b: 0.13725491, a: 1}
   _AmbientFog: 0.2
   _LightIntensity: 1.1
-  _NoiseSource: 0
+  _NoiseSource: 1
   _AddSceneColor: 1
   _BlurEnabled: 1
   _ShadowsEnabled: 1
