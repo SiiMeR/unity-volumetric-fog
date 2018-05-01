@@ -20,7 +20,6 @@ public enum NoiseSource
 class VolumetricFog : MonoBehaviour
 {
 		
-
     [Header("Required assets")]
 		
     [SerializeField] private Shader _CalculateFogShader;
@@ -205,7 +204,6 @@ class VolumetricFog : MonoBehaviour
         {
             sunLight.AddCommandBuffer(LightEvent.AfterShadowMap, _AfterShadowPass);
         }
-
     }
 
 
@@ -238,12 +236,10 @@ class VolumetricFog : MonoBehaviour
             Shader.EnableKeyword("SHADOWS_OFF");
         }
 			
-			
- //       SunLight.GetComponent<Light>().color = _FogInLightColor;
         SunLight.GetComponent<Light>().intensity = _LightIntensity;
 
         RenderTextureFormat format = RenderTextureFormat.ARGBHalf;
-        // float4 : 1: A , 2: R, 3 : G, 4 : B
+        // float4 : 1: A , 2: R, 3: G, 4: B
 			
         int fogRTWidth= source.width / _RenderTextureResDivision;
         int fogRTHeight= source.height / _RenderTextureResDivision;
@@ -425,7 +421,5 @@ class VolumetricFog : MonoBehaviour
         }
     }
 
-		
-		
-		
 }
+

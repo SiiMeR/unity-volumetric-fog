@@ -217,8 +217,7 @@
                 // ray direction in world space
                 float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
                 
-                // cosine between the camera direction and the light direction
-                float cosTheta = dot(rayDir, _LightDir);
+                
                
                 float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
                 
@@ -287,6 +286,8 @@
                         // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
                         float inScattering = 0; 
                        
+                       // cosine between the camera direction and the light direction
+                        float cosTheta = dot(rayDir, _LightDir);
                        
 #if defined(RAYLEIGH_SCATTERING)
                         float Rayleighscattering = getRayleighPhase(cosTheta) * _RayleighScatteringCoef * fogDensity;
@@ -320,8 +321,10 @@
 #endif
                         
                         //accumulate light
-                        result += inScattering * transmittance * stepSize * fColor;
-                        
+                       result += saturate(inScattering) * transmittance * stepSize * fColor;
+                     
+                      // fColor = lerp(_ShadowColor, litFogColor, shadowTerm);
+                       //result += fColor * stepSize; 
                         
                     }
                     else
@@ -340,9 +343,6 @@
 
                 }           
 
-			    if(lindepth > 0.99){
-			//		transmittance = lerp(transmittance, 1, 0.1);
-				}
                 return float4(result, transmittance);        
 
                 } 
