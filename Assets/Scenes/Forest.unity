@@ -550,7 +550,7 @@ MonoBehaviour:
   _RayMarchSteps: 128
   _UseRayleighScattering: 1
   _RayleighScatteringCoef: 0.2
-  _MieScatteringCoef: 0.2
+  _MieScatteringCoef: 0.08
   _MieScatteringApproximation: 1
   _FogDensityCoef: 0.2
   _ExtinctionCoef: 0.1

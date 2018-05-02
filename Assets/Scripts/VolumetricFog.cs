@@ -73,16 +73,12 @@ class VolumetricFog : MonoBehaviour
 
     [Header("Debug")] 
 		
-   // [SerializeField]
-    public NoiseSource _NoiseSource = NoiseSource.Texture2D;
+    [SerializeField] public NoiseSource _NoiseSource = NoiseSource.Texture2D;
 
     [SerializeField] private bool _AddSceneColor;
     [SerializeField] private bool _BlurEnabled;
     [SerializeField] private bool _ShadowsEnabled;
     [SerializeField] private bool _HeightFogEnabled;
-
-    private bool _Test;
-    [Range(0,2)] private float  _NoiseStrength;
 		
     private Material _ApplyBlurMaterial;
     private Material _CalculateFogMaterial;
@@ -175,7 +171,6 @@ class VolumetricFog : MonoBehaviour
     // based on https://interplayoflight.wordpress.com/2015/07/03/adventures-in-postprocessing-with-unity/    
     private void RemoveLightCommandBuffer()
     {
-        // TODO : SUPPORT MULTIPLE LIGHTS 
 
         Light sunLight = null;
         if (SunLight)
@@ -324,7 +319,6 @@ class VolumetricFog : MonoBehaviour
         CalculateFogMaterial.SetFloat("_RaymarchSteps", _RayMarchSteps);
 
         CalculateFogMaterial.SetFloat ("_FogDensity", _FogDensityCoef);
-        CalculateFogMaterial.SetFloat("_NoiseStrength", _NoiseStrength);
 
         CalculateFogMaterial.SetFloat ("_ExtinctionCoef", _ExtinctionCoef);
         CalculateFogMaterial.SetFloat("_Anisotropy", _Anisotropy);
@@ -385,20 +379,12 @@ class VolumetricFog : MonoBehaviour
 	
         }
 
-        if (_Test)
-        {
-            Graphics.Blit(fogRT1, (RenderTexture) null);
-            return;
-        }
-
         if (_AddSceneColor)
         {
             //apply fog to main scene
-			
             ApplyFogMaterial.SetTexture ("FogRendertargetPoint", fogRT1);
             ApplyFogMaterial.SetTexture ("FogRendertargetLinear", fogRT1);
 			
-            //	ApplyFogMaterial.SetTexture ("LowResDepthTexture", lowresDepthRT);
             //apply to main rendertarget
             Graphics.Blit (source, destination, ApplyFogMaterial);
         }

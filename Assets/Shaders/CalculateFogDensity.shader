@@ -101,11 +101,10 @@
 			// This is the distance field function.  The distance field represents the closest distance to the surface
 			// of any object we put in the scene.  If the given point (point p) is inside of an object, we return a
 			// negative answer.
-			// return.x: result of distance field
-			// return.y: material data for closest object
-			float2 map(float3 p) {
+			// return : result of distance field
+			float map(float3 p) {
 			                                                               
-				float2 d_box = float2(sdBox(p - float3(_FogWorldPosition), _FogSize), 0.5);			
+				float d_box = sdBox(p - float3(_FogWorldPosition), _FogSize);			
 				return d_box;
 			}		
 			
@@ -144,25 +143,15 @@
 			   
                 return float4(shadowCoord,1);            
 			} 
-			
-			// from unity adam demo volumetric fog
-			fixed4 getHenyeyGreenstein(float cosTheta){
-                float g = _Anisotropy;
-                float gsq = g*g;
-                float denom = 1 + gsq - 2.0 * g * cosTheta;
-                denom = denom * denom * denom;
-                denom = sqrt(max(0, denom));
-                return (1 - gsq) / denom;
-			}
+		
 			
 			// from https://github.com/Flafla2/Volumetrics-Unity/blob/master/Assets/Shader/VolumetricLight.shader
-			fixed4 getFixedHenyeyGreenstein(float cosTheta){
+			fixed4 getHenyeyGreenstein(float cosTheta){
 			
 				float n = 1 - _Anisotropy; // 1 - g
                 float c = cosTheta; // cos(x)
                 float d = 1 + _Anisotropy * _Anisotropy - 2 * _Anisotropy * c; // 1 + g^2 - 2g*cos(x)
-                return n * n / (4 * pi * pow(d, 1.5));
-                
+                return n * n / (4 * pi * pow(d, 1.5));      
 			
 			}
 			
@@ -195,7 +184,7 @@
 			}
 			
 			float getBeerLaw(float density, float stepSize){
-			    return saturate(exp( -density * stepSize)); //* (1.0 - exp(-density * 2.0));		
+			    return saturate(exp( -density * stepSize));	
 			}
 	
 			
@@ -216,9 +205,8 @@
              
                 // ray direction in world space
                 float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
-                
-                
-               
+                  
+            
                 float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
                 
                 //calculate step size for raymarching
@@ -245,13 +233,13 @@
                     }
                     
                     
-                    float2 distanceSample = 0;
+                    float distanceSample = 0;
                     
 #if defined(LIMITFOGSIZE)
                     distanceSample = map(currentPos); // sample distance field at current position
 #endif                    
 
-                    if(distanceSample.x < 0.0001){ // we are inside the predefined cube
+                    if(distanceSample < 0.0001){ // we are inside the predefined cube
                     
 
                         float noiseValue = 0;
@@ -322,21 +310,16 @@
                         
                         //accumulate light
                        result += saturate(inScattering) * transmittance * stepSize * fColor;
-                     
-                      // fColor = lerp(_ShadowColor, litFogColor, shadowTerm);
-                       //result += fColor * stepSize; 
                         
                     }
                     else
                     {
                     
-                     //   currentPos += distanceSample.x * rayDir;
                         result += _LightColor * _LightIntensity;
                     }
                     // TODO : STEP BY DISTANCE FIELD SAMPLE IF NOT IN CUBE
                     
 
-                    
                     //raymarch along the ray
                     currentPos += rayDir * stepSize;
                     
