@@ -265,7 +265,6 @@
                         fogDensity *= saturate(heightDensity);
 #endif                            
                
-                       // float scattering =  _ScatteringCoef * fogDensity;
                         float extinction = _ExtinctionCoef * fogDensity;
                         
                          //calculate transmittance by applying Beer law
@@ -310,6 +309,8 @@
                         
                         //accumulate light
                        result += saturate(inScattering) * transmittance * stepSize * fColor;
+                       //raymarch along the ray
+                       
                         
                     }
                     else
@@ -317,15 +318,18 @@
                     
                         result += _LightColor * _LightIntensity;
                     }
-                    // TODO : STEP BY DISTANCE FIELD SAMPLE IF NOT IN CUBE
+                    
+                    
+                    currentPos += rayDir * stepSize;
+                    
                     
 
-                    //raymarch along the ray
-                    currentPos += rayDir * stepSize;
+                    
                     
 
                 }           
 
+                
                 return float4(result, transmittance);        
 
                 } 

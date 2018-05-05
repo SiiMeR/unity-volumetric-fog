@@ -29,9 +29,6 @@ Shader "Hidden/ApplyBlur"
 	uniform float2 BlurDir; 
 	
 	
-//	const float _BlurOffsets[4] = { 0,1,2,3 };
-//	const float _BlurWeights[4] = { 0.266, 0.213, 0.17, 0.036 };
-	
 	v2f vert( appdata_img v ) 
 	{
 		v2f o; 
@@ -83,7 +80,6 @@ Shader "Hidden/ApplyBlur"
 	{
 		 Pass 
 		 {
-			//  ZTest Always Cull Off ZWrite Off
 			  ZTest Always Cull Off ZWrite Off
 
 			  CGPROGRAM
