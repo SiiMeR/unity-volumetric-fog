@@ -17,7 +17,6 @@
 			
 
             uniform sampler2D FogRendertargetLinear,
-                              FogRendertargetPoint,
                               _CameraDepthTexture,
                               _MainTex;
             

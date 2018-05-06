@@ -8,6 +8,9 @@ Shader "Hidden/ApplyBlur"
 	}
 	
 	CGINCLUDE
+	
+	#pragma shader_feature __ BILATERAL_FILTERING
+	
 	#include "UnityCG.cginc"
 	#include "AutoLight.cginc"
 	
@@ -28,6 +31,8 @@ Shader "Hidden/ApplyBlur"
 		
 	uniform float2 BlurDir; 
 	
+	
+	 
 	
 	v2f vert( appdata_img v ) 
 	{
@@ -53,17 +58,17 @@ Shader "Hidden/ApplyBlur"
 		for (int i = 1; i < 4; i++) 
 		{
 			float depth = Linear01Depth(tex2D(_CameraDepthTexture, (input.uv + BlurDir * _BlurOffsets[i] * _MainTex_TexelSize.xy )));	
+					
+			float w = abs(depth-centralDepth)* _BlurDepthFalloff;					  	
+            w = exp(-w*w);
 			
-			float w = abs(depth-centralDepth)* _BlurDepthFalloff;			
-			w = exp(-w*w);
-		
 			result += tex2D(_MainTex, ( input.uv + BlurDir * _BlurOffsets[i] * _MainTex_TexelSize.xy )) * w * _BlurWeights[i];
 			
 			totalWeight += w * _BlurWeights[i];
 	 
             depth = Linear01Depth(tex2D(_CameraDepthTexture, (input.uv - BlurDir * _BlurOffsets[i] * _MainTex_TexelSize.xy )));
-     
-            w = abs(depth-centralDepth)* _BlurDepthFalloff;
+     		
+            w = abs(depth-centralDepth)* _BlurDepthFalloff;			
             w = exp(-w*w);
      
             result += tex2D(_MainTex, ( input.uv - BlurDir * _BlurOffsets[i] * _MainTex_TexelSize.xy )) * w * _BlurWeights[i];
