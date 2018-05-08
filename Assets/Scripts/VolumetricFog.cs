@@ -91,6 +91,7 @@ class VolumetricFog : MonoBehaviour
 
     private Benchmark _benchmark;
     
+    
     public Texture3D FogTexture3D
     {
         get

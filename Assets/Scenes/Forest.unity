@@ -124,6 +124,7 @@ GameObject:
   - component: {fileID: 451326369}
   - component: {fileID: 451326371}
   - component: {fileID: 451326370}
+  - component: {fileID: 451326372}
   m_Layer: 5
   m_Name: Text (1)
   m_TagString: Untagged
@@ -161,7 +162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -181,19 +182,33 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Total frame time: 0,1621 ms
+  m_Text: 'Total frame time: 0,1126 ms
 
-    Calculate Density 0,020 ms (12,2%)
+    Calculate Density 0,014 ms (12,1%)
 
-    Apply Blur: 0,031 ms (19,4%)
+    Apply Blur: 0,025 ms (22,6%)
 
-    Apply To Scene: 0,008 ms (4,6%)'
+    Apply To Scene: 0,006 ms (5,1%)'
 --- !u!222 &451326371
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 451326368}
+--- !u!114 &451326372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 451326368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.79607844}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &597845559
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,6 +458,7 @@ GameObject:
   - component: {fileID: 902842585}
   - component: {fileID: 902842587}
   - component: {fileID: 902842586}
+  - component: {fileID: 902842588}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -480,7 +496,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -490,7 +506,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 20
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
@@ -507,6 +523,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 902842584}
+--- !u!114 &902842588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 902842584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.79607844}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1095410650
 GameObject:
   m_ObjectHideFlags: 0

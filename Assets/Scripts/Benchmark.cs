@@ -18,40 +18,53 @@ public class Benchmark : MonoBehaviour
         public readonly float Ms;
         public readonly float Fps;
         public float Time;
-        public float fogdensitycalcTime;
-        public float applyblurTime;
-        public float applysceneTime;
-
-        public BenchmarkData(float ms, float fps, float time, float fogdensitycalcTime, float applyblurTime, float applysceneTime)
-        {
-            Ms = ms;
-            Fps = fps;
-            Time = time;
-            this.fogdensitycalcTime = fogdensitycalcTime;
-            this.applyblurTime = applyblurTime;
-            this.applysceneTime = applysceneTime;
-        }
 
         public BenchmarkData(float ms, float fps, float timeSinceStart)
         {
             this.Ms = ms;
             this.Fps = fps;
             this.Time = timeSinceStart;
-
-            fogdensitycalcTime = 0;
-            applyblurTime = 0;
-            applysceneTime = 0;
         }
     }
-    public Dictionary<float, List<BenchmarkData>> Data;
+
+    public struct CSVData
+    {
+        public FrameData FrameData;
+        public BenchmarkData BenchmarkData;
+
+        public CSVData(FrameData frameData, BenchmarkData benchmarkData)
+        {
+            FrameData = frameData;
+            BenchmarkData = benchmarkData;
+        }
+    }
+
+    public struct FrameData
+    {
+        public readonly double fogDensityShaderTime;
+        public readonly double applyBlurTime;
+        public readonly double applySceneTime;
+        public readonly double totalFrameTime;
+
+        public FrameData(double fogDensityShaderTime, double applyBlurTime, double applySceneTime, double totalFrameTime)
+        {
+            this.fogDensityShaderTime = fogDensityShaderTime;
+            this.applyBlurTime = applyBlurTime;
+            this.applySceneTime = applySceneTime;
+            this.totalFrameTime = totalFrameTime;
+        }
+    }
     
+    public Dictionary<float, List<CSVData>> Data;
+
+    private FrameData _currentFrameData;
     private Animator _animator;
     public float TimeSpent;
     
     // Use this for initialization
     void Awake ()
     {
-        Data = new Dictionary<float, List<BenchmarkData>>();
+        Data = new Dictionary<float, List<CSVData>>();
         
         _animator = GetComponent<Animator>();
 
@@ -63,12 +76,14 @@ public class Benchmark : MonoBehaviour
 
     public void SetFrameInfo(double fogDensityTime, double applyBlurTime, double applySceneTime, double totalTime)
     {
+        _currentFrameData = new FrameData(fogDensityTime, applyBlurTime, applySceneTime, totalTime);
+        
         var densityProc = fogDensityTime / totalTime * 100f;
         var blurProc = applyBlurTime / totalTime * 100f;
         var applyToSceneProc = applySceneTime / totalTime * 100f;
         
         Text2.text = $"Total frame time: {totalTime} ms\n" +
-                     $"Calculate Density {fogDensityTime:0.000} ms ({densityProc:0.0}%)\n" +
+                     $"Calculate Density: {fogDensityTime:0.000} ms ({densityProc:0.0}%)\n" +
                      $"Apply Blur: {applyBlurTime:0.000} ms ({blurProc:0.0}%)\n" +
                      $"Apply To Scene: {applySceneTime:0.000} ms ({applyToSceneProc:0.0}%)";
     }
@@ -92,7 +107,7 @@ public class Benchmark : MonoBehaviour
 
 
         TimeSpent = 0;
-        Data = new Dictionary<float, List<BenchmarkData>>();
+        Data = new Dictionary<float, List<CSVData>>();
 
         float timer = 0;
         while ((timer += Time.deltaTime) < 2.0f)
@@ -118,17 +133,19 @@ public class Benchmark : MonoBehaviour
             float fps = 1.0f / TimeSpent;
             float timeSinceStart = Mathf.Round(Time.time - time);
 
-            List<BenchmarkData> list;
+            List<CSVData> list;
             Data.TryGetValue(timeSinceStart, out list);
             
             if (list == null)
             {
-                Data[timeSinceStart] = new List<BenchmarkData>();
+                Data[timeSinceStart] = new List<CSVData>();
             }
+            var benchMarkD = new BenchmarkData(ms, fps, timeSinceStart);
+            var frameD = _currentFrameData;
             
-            Data[timeSinceStart].Add(new BenchmarkData(ms, fps,timeSinceStart));
+            Data[timeSinceStart].Add(new CSVData(frameD, benchMarkD));
 
-            Text.text = $"{ms:0.0} ms ({fps:0.} fps), time elapsed: {timeSinceStart} - {runName} ";
+            Text.text = $"{fps:0.0} fps ({ms:0.} ms), time elapsed: {timeSinceStart} - {runName} ";
                 
             return !_animator.GetCurrentAnimatorStateInfo(0).IsName("Benchmark");
         });
@@ -138,9 +155,6 @@ public class Benchmark : MonoBehaviour
         {
             WriteToCSV(runName);
         }
-       
-        
-       
         
     }
 
@@ -152,18 +166,23 @@ public class Benchmark : MonoBehaviour
         if (!File.Exists(fileName))
         {
             File.WriteAllText(fileName,
-                "Time since start(s)" + "." + "FPS" + "." +  "Frame time(ms)" + Environment.NewLine);
+                "Time since start(s)" + "." + "FPS" + "." +  "Total Frame time(ms)" + "." + "Fog density shader time(ms)" +
+                "." + "Apply blur time(ms)" + "." + "Apply scene time(ms)" + Environment.NewLine);
         }
 
 
         foreach (var data in Data)
         {
             
-            string ms = data.Value.Average(val => val.Ms).ToString();
-            string fps = data.Value.Average(val => val.Fps).ToString();
+            string totaltime = data.Value.Sum(val => val.FrameData.totalFrameTime).ToString();
+            string fogdensitytime = data.Value.Sum(val => val.FrameData.fogDensityShaderTime).ToString();
+            string applyblurtime = data.Value.Sum(val => val.FrameData.applyBlurTime).ToString();
+            string applyscenetime = data.Value.Sum(val => val.FrameData.applySceneTime).ToString();
+            
+            string fps = data.Value.Average(val => val.BenchmarkData.Fps).ToString();
             string time = data.Key.ToString();
 			
-            File.AppendAllText(fileName, $"{time}.{fps}.{ms}" + Environment.NewLine);
+            File.AppendAllText(fileName, $"{time}.{fps}.{totaltime}.{fogdensitytime}.{applyblurtime}.{applyscenetime}" + Environment.NewLine);
         }
 
     }
