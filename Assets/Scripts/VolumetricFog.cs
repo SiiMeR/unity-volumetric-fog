@@ -223,8 +223,7 @@ class VolumetricFog : MonoBehaviour
     void OnRenderImage (RenderTexture source, RenderTexture destination)
     {
 
-        var frameStart = Stopwatch.StartNew();
-        
+
 		if(CheckRequirements())	
         {
             Debug.Log("Not rendering image effect");
@@ -309,31 +308,17 @@ class VolumetricFog : MonoBehaviour
 
         //render fog
 
-        var calculateFogTimer = Stopwatch.StartNew();
         Graphics.Blit (source, fogRT1, CalculateFogMaterial);
-        var calculateFogEnd = calculateFogTimer.Elapsed.TotalMilliseconds;
 
 
-
-        var applyBlurTimer = Stopwatch.StartNew();
-        
         BlurFog(fogRT1, fogRT2);
-
-        var applyBlurEnd = applyBlurTimer.Elapsed.TotalMilliseconds;
-
-        
-        
-        var applyToSceneStart = Stopwatch.StartNew();
 
         BlendWithScene(source, destination, fogRT1);
 
-        var applyToSceneEnd = applyToSceneStart.Elapsed.TotalMilliseconds;
-        
+
         RenderTexture.ReleaseTemporary(fogRT1);
         RenderTexture.ReleaseTemporary(fogRT2);
 
-        var frameEnd = frameStart.Elapsed.TotalMilliseconds;
-        _benchmark.SetFrameInfo(calculateFogEnd, applyBlurEnd, applyToSceneEnd, frameEnd);
         
     }
 
