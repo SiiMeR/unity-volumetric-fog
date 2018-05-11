@@ -250,7 +250,9 @@ class VolumetricFog : MonoBehaviour
         int fogRTWidth= source.width / _RenderTextureResDivision;
         int fogRTHeight= source.height / _RenderTextureResDivision;
 
-
+        // Get the rendertexture from the pool that fits the height, width and format. 
+        // This increases performance, because rendertextures do not need to be recreated when asking them again the next frame.
+        // 2 rendertextures are needed to iteratively blur an image
         RenderTexture fogRT1 = RenderTexture.GetTemporary (fogRTWidth, fogRTHeight, 0, format);
         RenderTexture fogRT2 = RenderTexture.GetTemporary (fogRTWidth, fogRTHeight, 0, format);
 
@@ -278,8 +280,6 @@ class VolumetricFog : MonoBehaviour
         SetMieScattering();
         SetNoiseSource();
 			
-
-
         
         Shader.SetGlobalMatrix("InverseViewMatrix", CurrentCamera.cameraToWorldMatrix);
         Shader.SetGlobalMatrix("InverseProjectionMatrix", CurrentCamera.projectionMatrix.inverse);
@@ -307,15 +307,16 @@ class VolumetricFog : MonoBehaviour
 
 
         //render fog
-
         Graphics.Blit (source, fogRT1, CalculateFogMaterial);
 
-
+        // blur fog
         BlurFog(fogRT1, fogRT2);
 
+        // blend fog 
         BlendWithScene(source, destination, fogRT1);
 
 
+        // release textures to avoid high memory usage
         RenderTexture.ReleaseTemporary(fogRT1);
         RenderTexture.ReleaseTemporary(fogRT2);
 

@@ -110,6 +110,8 @@ public class Benchmark : MonoBehaviour
         Data = new Dictionary<float, List<CSVData>>();
 
         float timer = 0;
+        
+        // warmup to let the fps stabilize
         while ((timer += Time.deltaTime) < 2.0f)
         {
             TimeSpent += (Time.unscaledDeltaTime - TimeSpent) * 0.1f;
@@ -122,6 +124,7 @@ public class Benchmark : MonoBehaviour
         
         _animator.SetTrigger("StartBench");
 
+        // wait for the animation to start
         yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).IsName("Benchmark"));
 
         yield return new WaitUntil(() =>
@@ -166,23 +169,19 @@ public class Benchmark : MonoBehaviour
         if (!File.Exists(fileName))
         {
             File.WriteAllText(fileName,
-                "Time since start(s)" + "." + "FPS" + "." +  "Total Frame time(ms)" + "." + "Fog density shader time(ms)" +
-                "." + "Apply blur time(ms)" + "." + "Apply scene time(ms)" + Environment.NewLine);
+                "Time since start(s)" + "." + "FPS" + "." + "MS" + Environment.NewLine);
         }
 
 
         foreach (var data in Data)
         {
-            
-            string totaltime = data.Value.Sum(val => val.FrameData.totalFrameTime).ToString();
-            string fogdensitytime = data.Value.Sum(val => val.FrameData.fogDensityShaderTime).ToString();
-            string applyblurtime = data.Value.Sum(val => val.FrameData.applyBlurTime).ToString();
-            string applyscenetime = data.Value.Sum(val => val.FrameData.applySceneTime).ToString();
+        
             
             string fps = data.Value.Average(val => val.BenchmarkData.Fps).ToString();
+            string ms = data.Value.Average(val => val.BenchmarkData.Ms).ToString();
             string time = data.Key.ToString();
 			
-            File.AppendAllText(fileName, $"{time}.{fps}.{totaltime}.{fogdensitytime}.{applyblurtime}.{applyscenetime}" + Environment.NewLine);
+            File.AppendAllText(fileName, $"{time}.{fps}.{ms}" + Environment.NewLine);
         }
 
     }
