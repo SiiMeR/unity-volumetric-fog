@@ -9,7 +9,7 @@ Volumetric fog implementation in Unity. Made as a part of my Bachelors thesis.
 5. Fog settings can be changed by selecting the 'CameraAndFog' gameobject, which is a child of the 'Player' gameobject in the scene hierarchy
 
 # Enabling benchmark mode
-To enable benchmark mode, enable the Animator and Benchmark components under the 'Player' gameobject and disable the Player script. In addition, enable the 'Text' gameobject under the 'Canvas' gameobject. Benchmark results are saved to AppData/LocalLow/DefaultCompany/unity-volumetric-fog on Windows.
+To enable benchmark mode, enable the Animator and Benchmark components under the 'Player' gameobject and disable the Player script. Additionally, enable the 'Text' gameobject under the 'Canvas' gameobject. Benchmark results are saved to AppData/LocalLow/DefaultCompany/unity-volumetric-fog on Windows.
 
 # Default controls
 W,S,A,D - Fly around
