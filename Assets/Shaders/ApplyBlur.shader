@@ -47,7 +47,8 @@ Shader "Hidden/ApplyBlur"
 	float4 frag(v2f input) : SV_Target 
 	{		
 
-
+        
+        // depth of the center pixel
 		float centralDepth = Linear01Depth(tex2D(_CameraDepthTexture, input.uv));
 				
 		float4 result = tex2D(_MainTex, input.uv) * _BlurWeights[0];
@@ -57,12 +58,17 @@ Shader "Hidden/ApplyBlur"
 		[unroll]
 		for (int i = 1; i < 4; i++) 
 		{
+		       
+		    // add pixel contribution of both sides of the main pixel
 			float depth = Linear01Depth(tex2D(_CameraDepthTexture, (input.uv + BlurDir * _BlurOffsets[i] * _MainTex_TexelSize.xy )));	
 					
+			// calculate if the pixel is on edge or not
 			float w = abs(depth-centralDepth)* _BlurDepthFalloff;					  	
             w = exp(-w*w);
 			
+			// add to result
 			result += tex2D(_MainTex, ( input.uv + BlurDir * _BlurOffsets[i] * _MainTex_TexelSize.xy )) * w * _BlurWeights[i];
+			
 			
 			totalWeight += w * _BlurWeights[i];
 	 
@@ -77,6 +83,7 @@ Shader "Hidden/ApplyBlur"
 
 		}
 			
+		// normalize the result according to the total weight
 		return result / totalWeight;
 	}
 	
