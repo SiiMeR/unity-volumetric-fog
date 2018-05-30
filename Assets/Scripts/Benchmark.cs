@@ -92,9 +92,9 @@ public class Benchmark : MonoBehaviour
     {
         Screen.SetResolution(1920, 1080, true);
         yield return StartCoroutine(StartBench("1080p"));
-        Screen.SetResolution(1280, 720, true);
+    //    Screen.SetResolution(1280, 720, true);
         yield return StartCoroutine(StartBench("720p"));
-        Screen.SetResolution(640, 480, true);
+     //   Screen.SetResolution(640, 480, true);
         yield return StartCoroutine(StartBench("480p"));
         
         Application.Quit();
@@ -112,7 +112,7 @@ public class Benchmark : MonoBehaviour
         float timer = 0;
         
         // warmup to let the fps stabilize
-        while ((timer += Time.deltaTime) < 2.0f)
+        while ((timer += Time.deltaTime) < 4.0f)
         {
             TimeSpent += (Time.unscaledDeltaTime - TimeSpent) * 0.1f;
             

@@ -25,63 +25,62 @@ class VolumetricFog : MonoBehaviour
 		
     [Header("Required assets")]
 		
-    [SerializeField] private Shader _CalculateFogShader;
-    [SerializeField] private Shader _ApplyBlurShader;
-    [SerializeField] private Shader _ApplyFogShader;
-    [SerializeField] private Transform SunLight;
-    [SerializeField] private Texture2D _FogTexture2D;
+    public Shader _CalculateFogShader;
+    public Shader _ApplyBlurShader;
+    public Shader _ApplyFogShader;
+    public Transform SunLight;
+    public Texture2D _FogTexture2D;
 
     [Header("Position and size(in m³)")] 
 		
-    [SerializeField] private bool _LimitFogInSize = true;
-    [SerializeField] private Vector3 _FogWorldPosition;
-    [SerializeField] private float _FogSize = 10.0f;
+    public bool _LimitFogInSize = true;
+    public Vector3 _FogWorldPosition;
+    public float _FogSize = 10.0f;
 
     [Header("Performance")]
 		
-    [SerializeField] [Range(1, 8)] private int _RenderTextureResDivision = 2;
-    [SerializeField] [Range(16, 256)] private int _RayMarchSteps = 128;
+    [Range(1, 8)] public int _RenderTextureResDivision = 2;
+    [Range(16, 256)] public int _RayMarchSteps = 128;
 
     [Header("Physical coefficients")] 
 		
-    [SerializeField] private bool _UseRayleighScattering = true;
-    [SerializeField] private float _RayleighScatteringCoef = 0.25f;
+    public bool _UseRayleighScattering = true;
+    public float _RayleighScatteringCoef = 0.25f;
 
-    [SerializeField] private float _MieScatteringCoef = 0.25f;
+    public float _MieScatteringCoef = 0.25f;
 
-    [SerializeField]
-    private MieScatteringApproximation _MieScatteringApproximation = MieScatteringApproximation.HenyeyGreenstein;
+    public MieScatteringApproximation _MieScatteringApproximation = MieScatteringApproximation.HenyeyGreenstein;
 		
-    [SerializeField] private float _FogDensityCoef = 0.3f;
-    [SerializeField] private float _ExtinctionCoef = 0.01f;
-    [SerializeField] [Range(-1,1)]  private float _Anisotropy = 0.5f;
-    [SerializeField] private float _HeightDensityCoef = 0.5f;
-    [SerializeField] private float _BaseHeightDensity = 0.5f;
+    public float _FogDensityCoef = 0.3f;
+    public float _ExtinctionCoef = 0.01f;
+    [Range(-1,1)]  public float _Anisotropy = 0.5f;
+    public float _HeightDensityCoef = 0.5f;
+    public float _BaseHeightDensity = 0.5f;
 		
     [Header("Blur")]
 		
-    [SerializeField] [Range(1, 8)] private int _BlurIterations = 4;
-    [SerializeField] private float _BlurDepthFalloff = 0.5f;
-    [SerializeField] private Vector3 _BlurOffsets = new Vector3(1, 2, 3);
-    [SerializeField] private Vector3 _BlurWeights = new Vector3(0.213f, 0.17f, 0.036f);
+    [Range(1, 8)] public int _BlurIterations = 4;
+    public float _BlurDepthFalloff = 0.5f;
+    public Vector3 _BlurOffsets = new Vector3(1, 2, 3);
+    public Vector3 _BlurWeights = new Vector3(0.213f, 0.17f, 0.036f);
 		
     [Header("Color")]
 		
-    [SerializeField] private Color _FogInShadowColor = Color.black;
-    [SerializeField] private Color _FogInLightColor = Color.white;
-    [SerializeField] [Range(0,1)] private float _AmbientFog;
+    public Color _FogInShadowColor = Color.black;
+    public Color _FogInLightColor = Color.white;
+    [Range(0,1)] public float _AmbientFog;
 		
-    [SerializeField] [Range(0,10)] private float _LightIntensity = 1;
+    [Range(0,10)] public float _LightIntensity = 1;
 		
 
     [Header("Debug")] 
 		
-    [SerializeField] public NoiseSource _NoiseSource = NoiseSource.Texture2D;
+    public NoiseSource _NoiseSource = NoiseSource.Texture2D;
 
-    [SerializeField] private bool _AddSceneColor;
-    [SerializeField] private bool _BlurEnabled;
-    [SerializeField] private bool _ShadowsEnabled;
-    [SerializeField] private bool _HeightFogEnabled;
+    public bool _AddSceneColor;
+    public bool _BlurEnabled;
+    public bool _ShadowsEnabled;
+    public bool _HeightFogEnabled;
 		
     private Material _ApplyBlurMaterial;
     private Material _CalculateFogMaterial;
