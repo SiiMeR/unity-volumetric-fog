@@ -19,16 +19,16 @@ public class UIController : MonoBehaviour
 	}
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetButtonDown("Cancel"))
-		{
-			UIPanel.SetActive(!UIPanel.activeInHierarchy);
-
-			if (_player)
-			{
-				_player.enabled = !UIPanel.activeInHierarchy;
-			}
-			
-		}
+//		if (Input.GetButtonDown("Cancel"))
+//		{
+//			UIPanel.SetActive(!UIPanel.activeInHierarchy);
+//
+//			if (_player)
+//			{
+//				_player.enabled = !UIPanel.activeInHierarchy;
+//			}
+//			
+//		}
 	}
 
 	public void OnSliderValueChanged(Slider target)
