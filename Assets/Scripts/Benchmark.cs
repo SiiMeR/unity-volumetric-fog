@@ -12,6 +12,8 @@ public class Benchmark : MonoBehaviour
 
     public Text Text;
     public Text Text2;
+
+    public bool BenchMark;
     
     public struct BenchmarkData
     {
@@ -69,9 +71,37 @@ public class Benchmark : MonoBehaviour
         _animator = GetComponent<Animator>();
 
         VolumetricFog fog = Camera.main.gameObject.GetComponent<VolumetricFog>();
-        
-        StartCoroutine(StartBenchMarks());
 
+        if (!BenchMark)
+        {
+            StartCoroutine(StartBenchMarks());
+        }
+        else
+        {
+            StartCoroutine(Fps());
+        }
+        
+       
+
+    }
+
+    private IEnumerator Fps()
+    {
+        while (true)
+        {
+            var time = Time.time;
+            TimeSpent += (Time.unscaledDeltaTime - TimeSpent) * 0.1f;	
+                   
+            
+            float ms = 1000.0f * TimeSpent;
+            float fps = 1.0f / TimeSpent;
+            float timeSinceStart = Mathf.Round(Time.time - time);
+
+            Text.text = $"{fps:0.0} fps ({ms:0.} ms)";
+
+            yield return null;
+
+        }
     }
 
     public void SetFrameInfo(double fogDensityTime, double applyBlurTime, double applySceneTime, double totalTime)
