@@ -4,6 +4,7 @@ using UnityEngine;
 
 public static class TextureUtilities {
 
+	
 	public static Texture3D CreateTexture3DFrom2DSlices(Texture2D tex, int width, int height, int depth)
 	{
 		Texture2D readableTexture2D = GetReadableTexture(tex);

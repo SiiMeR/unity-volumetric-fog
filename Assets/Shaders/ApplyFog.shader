@@ -20,10 +20,9 @@
                               _CameraDepthTexture,
                               _MainTex;
             
-            uniform float4 _CameraDepthTexture_TexelSize,
-                   _MainTex_TexelSize;
+            uniform float4    _CameraDepthTexture_TexelSize,
+                              _MainTex_TexelSize;
             
-            float DepthThreshold = 1;
             
             uniform float4x4  InverseViewMatrix,                         
                               InverseProjectionMatrix;	                       
@@ -40,16 +39,14 @@
             float4 frag(v2f input) : SV_Target 
             {			
 
-                float4 fogSample = tex2Dlod(FogRendertargetLinear, float4(input.uv,0,0));
+                float4 fogSample = tex2D(FogRendertargetLinear, input.uv);
                 float4 colorSample = tex2D(_MainTex, input.uv);
                 
                 float4 result = float4(colorSample.rgb * fogSample.a + fogSample,colorSample.a);
                 
                 return result;
             }
-	            
-	                 
-                          
+                  
 			    
 	ENDCG
 	SubShader

@@ -1,12 +1,11 @@
-﻿using System.Diagnostics;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
-using Debug = UnityEngine.Debug;
 
 public enum MieScatteringApproximation
 {
     HenyeyGreenstein,
     CornetteShanks,
+    Schlick,
     Off
 }
 
@@ -48,7 +47,6 @@ class VolumetricFog : MonoBehaviour
     public float _RayleighScatteringCoef = 0.25f;
 
     public float _MieScatteringCoef = 0.25f;
-
     public MieScatteringApproximation _MieScatteringApproximation = MieScatteringApproximation.HenyeyGreenstein;
 		
     public float _FogDensityCoef = 0.3f;
@@ -87,8 +85,7 @@ class VolumetricFog : MonoBehaviour
     private Material _ApplyFogMaterial;
 
     private Texture3D _fogTexture3D;
-
-    private Benchmark _benchmark;
+    private float _kFactor;
     
     
     public Texture3D FogTexture3D
@@ -165,10 +162,13 @@ class VolumetricFog : MonoBehaviour
     void Start()
     {
         AddLightCommandBuffer();
-
-        _benchmark = FindObjectOfType<Benchmark>();
     }
-    
+
+    private void CalculateKFactor()
+    {
+        _kFactor = 1.55f * _Anisotropy - (0.55f * Mathf.Pow(_Anisotropy, 3));
+    }
+
     void OnDestroy()
     {
         RemoveLightCommandBuffer();
@@ -380,21 +380,41 @@ class VolumetricFog : MonoBehaviour
             case MieScatteringApproximation.HenyeyGreenstein:
                 ToggleShaderKeyword(CalculateFogMaterial, "HG_SCATTERING", true);
                 ToggleShaderKeyword(CalculateFogMaterial, "CS_SCATTERING", false);
+                ToggleShaderKeyword(CalculateFogMaterial, "SCHLICK_HG_SCATTERING", false);
                 CalculateFogMaterial.SetFloat("_MieScatteringCoef", _MieScatteringCoef);
                 break;
         
             case MieScatteringApproximation.CornetteShanks:
         
                 ToggleShaderKeyword(CalculateFogMaterial, "CS_SCATTERING", true);
+                ToggleShaderKeyword(CalculateFogMaterial, "SCHLICK_HG_SCATTERING", false);
                 ToggleShaderKeyword(CalculateFogMaterial, "HG_SCATTERING", false);
         
                 CalculateFogMaterial.SetFloat("_MieScatteringCoef", _MieScatteringCoef);
                 break;
         
+            case MieScatteringApproximation.Schlick:
+                
+                CalculateKFactor();
+                
+                ToggleShaderKeyword(CalculateFogMaterial, "SCHLICK_HG_SCATTERING", true);
+                ToggleShaderKeyword(CalculateFogMaterial, "HG_SCATTERING", false);
+                ToggleShaderKeyword(CalculateFogMaterial, "CS_SCATTERING", false);
+        
+                CalculateFogMaterial.SetFloat("_kFactor", _kFactor);
+                CalculateFogMaterial.SetFloat("_MieScatteringCoef", _MieScatteringCoef);
+                break;
+            
             case MieScatteringApproximation.Off:
+                ToggleShaderKeyword(CalculateFogMaterial, "SCHLICK_HG_SCATTERING", false);
                 ToggleShaderKeyword(CalculateFogMaterial, "HG_SCATTERING", false);
                 ToggleShaderKeyword(CalculateFogMaterial, "CS_SCATTERING", false);
                 break;
+            
+            default:
+                Debug.LogWarning($"Mie scattering approximation {_MieScatteringApproximation} is not handled by SetMieScattering()");
+                break;
+            
         }
     }
 

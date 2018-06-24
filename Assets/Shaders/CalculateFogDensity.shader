@@ -18,6 +18,7 @@
             #pragma shader_feature __ RAYLEIGH_SCATTERING
             #pragma shader_feature __ HG_SCATTERING
             #pragma shader_feature __ CS_SCATTERING
+            #pragma shader_feature __ SCHLICK_HG_SCATTERING
             #pragma shader_feature __ LIMITFOGSIZE
             #pragma shader_feature __ NOISE2D
             #pragma shader_feature __ NOISE3D
@@ -46,6 +47,7 @@
                               _MieScatteringCoef,
                               _ExtinctionCoef,
                               _Anisotropy,
+                              _kFactor,
                               _LightIntensity,
                               _FogSize,
                               _RaymarchSteps,
@@ -63,6 +65,7 @@
             
             #define e 2.71828
             #define pi 3.1415
+            
             
 			struct v2f
 			{
@@ -126,7 +129,7 @@
 			 
 			    float3 shadowCoord = float3(0,0,0);
 			    
-			    // find which cascades need sampling and then take the positions to light space using worldtoshadow
+			    // find which cascades need sampling and then transform the positions to light space using worldtoshadow
 			    
 			    if(weights[0] == 1){
 			        shadowCoord += mul(unity_WorldToShadow[0], worldPos).xyz; 
@@ -145,13 +148,13 @@
 			} 
 		
 			
-			// from https://github.com/Flafla2/Volumetrics-Unity/blob/master/Assets/Shader/VolumetricLight.shader
+			// https://cs.dartmouth.edu/~wjarosz/publications/dissertation/chapter4.pdf
 			fixed4 getHenyeyGreenstein(float cosTheta){
 			
-				float n = 1 - _Anisotropy; // 1 - g
+				float n = 1 - (_Anisotropy * _Anisotropy); // 1 - (g * g)
                 float c = cosTheta; // cos(x)
                 float d = 1 + _Anisotropy * _Anisotropy - 2 * _Anisotropy * c; // 1 + g^2 - 2g*cos(x)
-                return n * n / (4 * pi * pow(d, 1.5));      
+                return n / (4 * pi * pow(d, 1.5));      
 			
 			}
 			
@@ -183,8 +186,20 @@
 			
 			}
 			
+			// https://media.contentapi.ea.com/content/dam/eacom/frostbite/files/s2016-pbs-frostbite-sky-clouds-new.pdf
+			float getSchlickScattering(float costheta){
+			     
+			     float o1 = 1 - (_kFactor * _kFactor);
+			     
+			     float sqr = (1 + _kFactor * costheta) * (1 + _kFactor * costheta);
+			     
+			     float o2 = 4 * pi * sqr;
+			     
+			     return o1/o2;
+			}
+			
 			float getBeerLaw(float density, float stepSize){
-			    return saturate(exp( -density * stepSize));	
+			    return saturate(exp(-density * stepSize));	
 			}
 	
 			
@@ -281,7 +296,11 @@
                         inScattering += Rayleighscattering;
 #endif
 
-#if defined(HG_SCATTERING)
+#if defined(SCHLICK_HG_SCATTERING)
+                        float Schlickscattering = getSchlickScattering(cosTheta) * _MieScatteringCoef * fogDensity;
+                        inScattering += Schlickscattering;
+
+#elif defined(HG_SCATTERING)
                         float HGscattering = getHenyeyGreenstein(cosTheta) * _MieScatteringCoef * fogDensity;
                         inScattering += HGscattering;
                             
@@ -308,10 +327,8 @@
 #endif
                         
                         //accumulate light
-                       result += saturate(inScattering) * transmittance * stepSize * fColor;
-                       //raymarch along the ray
-                       
-                        
+                        result += saturate(inScattering) * transmittance * stepSize * fColor;
+                                              
                     }
                     else
                     {
