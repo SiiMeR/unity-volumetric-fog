@@ -12,6 +12,6 @@ Volumetric fog implementation in Unity. Made as a part of my Bachelors thesis.
 To enable benchmark mode, enable the Animator and Benchmark components under the 'Player' gameobject and disable the Player script. Additionally, enable the 'Text' gameobject under the 'Canvas' gameobject. Benchmark results are saved to AppData/LocalLow/DefaultCompany/unity-volumetric-fog on Windows.
 
 # Default controls
-W,S,A,D - Fly around
-Mouse look - Look around
-Shift - Sprint
+W,S,A,D - Fly around  
+Mouse look - Look around  
+Shift - Sprint  
