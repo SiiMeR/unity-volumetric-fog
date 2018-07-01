@@ -79,7 +79,11 @@ class VolumetricFog : MonoBehaviour
     public bool _BlurEnabled;
     public bool _ShadowsEnabled;
     public bool _HeightFogEnabled;
-		
+    
+    [Range(-100,100)] public float _NoiseOctave = 0f;	
+    
+    
+    
     private Material _ApplyBlurMaterial;
     private Material _CalculateFogMaterial;
     private Material _ApplyFogMaterial;
@@ -286,7 +290,9 @@ class VolumetricFog : MonoBehaviour
         CalculateFogMaterial.SetFloat("_RaymarchSteps", _RayMarchSteps);
 
         CalculateFogMaterial.SetFloat ("_FogDensity", _FogDensityCoef);
-
+        CalculateFogMaterial.SetFloat("_NoiseOctave", _NoiseOctave);
+        
+        
         CalculateFogMaterial.SetFloat ("_ExtinctionCoef", _ExtinctionCoef);
         CalculateFogMaterial.SetFloat("_Anisotropy", _Anisotropy);
         CalculateFogMaterial.SetFloat("_BaseHeightDensity", _BaseHeightDensity);
@@ -421,6 +427,7 @@ class VolumetricFog : MonoBehaviour
 
     void SetNoiseSource()
     {
+        
         switch (_NoiseSource)
         {
             case NoiseSource.SimplexNoise:

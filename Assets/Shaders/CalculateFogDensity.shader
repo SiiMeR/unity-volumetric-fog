@@ -54,7 +54,7 @@
                               _AmbientFog,
                               _BaseHeightDensity,
                               _HeightDensityCoef,
-                              _NoiseStrength;
+                              _NoiseOctave;
                               
             uniform float4x4  InverseViewMatrix,                   
                               InverseProjectionMatrix;
@@ -202,6 +202,24 @@
 			    return saturate(exp(-density * stepSize));	
 			}
 	
+	
+	        float sampleNoise(float4 position){
+	        
+	            position *= _NoiseOctave;
+	            
+	            float noiseValue = 0;
+   
+#if defined(SNOISE)
+                noiseValue = snoise(position);   
+#elif defined(NOISE2D)
+                noiseValue = tex2Dlod(_NoiseTexture, position);
+#elif defined(NOISE3D)                        
+                noiseValue = tex3Dlod(_NoiseTex3D, position);
+#endif
+                          
+                return noiseValue;   
+                            
+	        }
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -257,24 +275,11 @@
                     if(distanceSample < 0.0001){ // we are inside the predefined cube
                     
 
-                        float noiseValue = 0;
-                        
-                        float4 samplePoint = float4(currentPos, _Time.y);
-#if defined(SNOISE)
-                        noiseValue = snoise(samplePoint) * (i / STEPS) + 0.5;    
- 
-#elif defined(NOISE2D)
-                        noiseValue = tex2Dlod(_NoiseTexture, samplePoint) * (i / STEPS) + 0.5;
-#elif defined(NOISE3D)                        
-                        noiseValue = tex3Dlod(_NoiseTex3D, samplePoint) * (i / STEPS) + 0.5;
-
-#endif
-                        noiseValue = lerp(1, noiseValue, _NoiseStrength);
+                        float noiseValue = sampleNoise(float4(currentPos.xyz,_Time.z));
                         
                         //modulate fog density by a noise value to make it more interesting
                         float fogDensity = noiseValue * _FogDensity;
-                        
-                        
+   
 #if defined(HEIGHTFOG)
                         float heightDensity = getHeightDensity(currentPos.y);  
                         fogDensity *= saturate(heightDensity);
@@ -332,24 +337,16 @@
                     }
                     else
                     {
-                    
                         result += _LightColor * _LightIntensity;
                     }
-                    
-                    
+  
                     currentPos += rayDir * stepSize;
-                    
-                    
 
-                    
-                    
+                } // raymarch loop           
 
-                }           
+            return float4(result, transmittance);        
 
-                
-                return float4(result, transmittance);        
-
-                } 
+            }  // frag
 				
 	
 	ENDCG

@@ -589,6 +589,7 @@ MonoBehaviour:
   _BlurEnabled: 1
   _ShadowsEnabled: 1
   _HeightFogEnabled: 1
+  _NoiseOctave: 1
 --- !u!124 &1097241485
 Behaviour:
   m_ObjectHideFlags: 0
