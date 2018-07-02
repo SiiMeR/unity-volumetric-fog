@@ -82,11 +82,11 @@ public static class TextureUtilities
             volumeDepth = dimensions.z,
             dimension = TextureDimension.Tex3D,
             enableRandomWrite = true,
-            name = "FogLUT3D"
+            name = "FogLUT3DFrom2D"
         };
         fogLut3D.Create();
         
-        shader.SetTexture(kernel, "_FogLUT3D", fogLut3D);
+        shader.SetTexture(kernel, "_FogLUT3DFrom2D", fogLut3D);
         shader.SetTexture(kernel, "_FogTexture2D", fogTexture);
         shader.Dispatch(kernel, dimensions.x, dimensions.y, dimensions.z);
         
@@ -104,11 +104,11 @@ public static class TextureUtilities
             volumeDepth = dimensions.z,
             dimension = TextureDimension.Tex3D,
             enableRandomWrite = true,
-            name = "FogLUT3D"
+            name = "FogLUT3DSnoise"
         };
         fogLut3D.Create();
         
-        shader.SetTexture(kernel, "_FogLUT3D", fogLut3D);
+        shader.SetTexture(kernel, "_FogLUT3DSNoise", fogLut3D);
         shader.Dispatch(kernel, dimensions.x, dimensions.y, dimensions.z);
         
         return fogLut3D;

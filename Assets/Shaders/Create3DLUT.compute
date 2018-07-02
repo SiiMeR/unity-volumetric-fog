@@ -4,7 +4,9 @@
 
 #include "noiseSimplex.cginc"
 
-RWTexture3D<float4> _FogLUT3D;
+RWTexture3D<float4> _FogLUT3DSNoise;
+RWTexture3D<float4> _FogLUT3DFrom2D;
+
 Texture2D _FogTexture2D;
 SamplerState sampler_FogTexture2D;
 
@@ -13,16 +15,16 @@ void Create3DLUTSimplexNoise (uint3 id : SV_DispatchThreadID)
 {
     float w,h,d;
     
-    _FogLUT3D.GetDimensions(w,h,d);
+    _FogLUT3DSNoise.GetDimensions(w,h,d);
     
     float3 coords = float3(id.x / (w - 1), id.y / (h - 1), id.z / (d - 1));
-	_FogLUT3D[id.xyz] = snoise(coords);
+	_FogLUT3DSNoise[id.xyz] = snoise(coords);
 }
 
 [numthreads(1,1,1)]
 void Create3DLUTFrom2D (uint3 id : SV_DispatchThreadID)
 {
-    
-    _FogLUT3D[id.xyz] = _FogTexture2D.SampleLevel(sampler_FogTexture2D, id.xyz,0);
+    float4 sample = _FogTexture2D.SampleLevel(sampler_FogTexture2D, id.xy,0);
+    _FogLUT3DFrom2D[id.xyz] = sample.xxxx;
 
 }

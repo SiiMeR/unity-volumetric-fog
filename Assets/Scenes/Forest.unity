@@ -585,13 +585,13 @@ MonoBehaviour:
   _FogInLightColor: {r: 0.39607844, g: 0.2509804, b: 0.13725491, a: 1}
   _AmbientFog: 0.2
   _LightIntensity: 1.1
-  _NoiseSource: 1
+  _NoiseSource: 2
   _AddSceneColor: 1
   _BlurEnabled: 1
   _ShadowsEnabled: 1
   _HeightFogEnabled: 1
   _NoiseOctave: 0.2
-  _3DNoiseTextureDimensions: {x: 64, y: 64, z: 128}
+  _3DNoiseTextureDimensions: {x: 32, y: 32, z: 64}
 --- !u!124 &1097241485
 Behaviour:
   m_ObjectHideFlags: 0
