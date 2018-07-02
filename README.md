@@ -1,3 +1,5 @@
+![Fog result image 1](docs/images/fogresult1.PNG?raw=true "")
+
 # Volumetric Fog
 Volumetric fog implementation in Unity. Made originally as a part of my Bachelors thesis. Now I am just improving it in my free time. Does not currently support the new HD render pipeline that came in Unity 2018.
 
@@ -15,3 +17,7 @@ To enable benchmark mode, enable the Animator and Benchmark components under the
 W,S,A,D - Fly around  
 Mouse look - Look around  
 Shift - Fly faster  
+
+# More screenshots
+![Fog result image 2](docs/images/fogresult2.PNG?raw=true "")
+![Fog result image 3](docs/images/fogresult3.PNG?raw=true "")
