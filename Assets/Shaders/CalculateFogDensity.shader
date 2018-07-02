@@ -215,8 +215,7 @@
                 noiseValue = tex2Dlod(_NoiseTexture, position);
 #elif defined(NOISE3D)                        
                 noiseValue = tex3Dlod(_NoiseTex3D, position);
-#endif
-                          
+#endif    
                 return noiseValue;   
                             
 	        }

@@ -560,6 +560,7 @@ MonoBehaviour:
   _CalculateFogShader: {fileID: 4800000, guid: f23c80f7a6f11ab4ca09d8bf57f45523, type: 3}
   _ApplyBlurShader: {fileID: 4800000, guid: dacc5cc659bad3b41b48782cae543e86, type: 3}
   _ApplyFogShader: {fileID: 4800000, guid: 234a6daa6de91c84abe7ad7b0909739f, type: 3}
+  _Create3DLUTShader: {fileID: 7200000, guid: 9ec5b97ad6003dd4d9006df2f588ae3a, type: 3}
   SunLight: {fileID: 597845561}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
   _LimitFogInSize: 0
@@ -571,7 +572,7 @@ MonoBehaviour:
   _RayleighScatteringCoef: 0.2
   _MieScatteringCoef: 0.2
   _MieScatteringApproximation: 1
-  _FogDensityCoef: 0.15
+  _FogDensityCoef: 0.2
   _ExtinctionCoef: 0.1
   _Anisotropy: 0.4
   _HeightDensityCoef: 0.1
@@ -584,12 +585,13 @@ MonoBehaviour:
   _FogInLightColor: {r: 0.39607844, g: 0.2509804, b: 0.13725491, a: 1}
   _AmbientFog: 0.2
   _LightIntensity: 1.1
-  _NoiseSource: 0
+  _NoiseSource: 1
   _AddSceneColor: 1
   _BlurEnabled: 1
   _ShadowsEnabled: 1
   _HeightFogEnabled: 1
-  _NoiseOctave: 1
+  _NoiseOctave: 0.2
+  _3DNoiseTextureDimensions: {x: 64, y: 64, z: 128}
 --- !u!124 &1097241485
 Behaviour:
   m_ObjectHideFlags: 0
