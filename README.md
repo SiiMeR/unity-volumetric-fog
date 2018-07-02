@@ -1,11 +1,11 @@
 # Volumetric Fog
-Volumetric fog implementation in Unity. Made as a part of my Bachelors thesis.
+Volumetric fog implementation in Unity. Made originally as a part of my Bachelors thesis. Now I am just improving it in my free time. Does not currently support the new HD render pipeline that came in Unity 2018.
 
 # How to run:
-1. Clone this repository
-2. Download Unity(tested on versions 2018.1, 2017.4, 2017.3)
+1. Clone this repository (`git clone https://github.com/SiiMeR/unity-volumetric-fog.git`)
+2. Download Unity (tested on versions 2018.1, 2017.4, 2017.3)
 3. Open the project in Unity
-4. Open the scene 'Forest' and press play
+4. Open the scene 'Forest' (under the 'Scenes' folder) and press play
 5. Fog settings can be changed by selecting the 'CameraAndFog' gameobject, which is a child of the 'Player' gameobject in the scene hierarchy
 
 # Enabling benchmark mode
@@ -14,4 +14,4 @@ To enable benchmark mode, enable the Animator and Benchmark components under the
 # Default controls
 W,S,A,D - Fly around  
 Mouse look - Look around  
-Shift - Sprint  
+Shift - Fly faster  
