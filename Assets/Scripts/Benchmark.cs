@@ -72,17 +72,7 @@ public class Benchmark : MonoBehaviour
 
         VolumetricFog fog = Camera.main.gameObject.GetComponent<VolumetricFog>();
 
-        if (!BenchMark)
-        {
-            StartCoroutine(StartBenchMarks());
-        }
-        else
-        {
-            StartCoroutine(Fps());
-        }
-        
-       
-
+        StartCoroutine(!BenchMark ? StartBenchMarks() : Fps());
     }
 
     private IEnumerator Fps()

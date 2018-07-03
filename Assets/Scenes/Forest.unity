@@ -172,13 +172,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 597845559}
-  m_LocalRotation: {x: -0.19415058, y: 0.18040587, z: -0.11942714, w: -0.9568158}
-  m_LocalPosition: {x: 65.9, y: 79.4, z: 81}
+  m_LocalRotation: {x: 0.21514922, y: -0.18143708, z: 0.12254273, w: 0.95172197}
+  m_LocalPosition: {x: 65.9, y: 71.4, z: 81}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 1235.504, y: -199.173, z: -169.97}
+  m_LocalEulerAnglesHint: {x: 1593, y: -199.173, z: -169.97}
 --- !u!1 &675763304
 GameObject:
   m_ObjectHideFlags: 0
@@ -251,14 +251,14 @@ Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 675763304}
-  m_LocalRotation: {x: -0, y: -0.9848078, z: 0, w: -0.17364807}
-  m_LocalPosition: {x: 38, y: 3, z: 188}
+  m_LocalRotation: {x: -0, y: -0.77714616, z: 0, w: -0.6293202}
+  m_LocalPosition: {x: 100.5, y: 3, z: 188}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1097241483}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: -200, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -258, z: 0}
 --- !u!1 &689099847
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,6 +562,8 @@ MonoBehaviour:
   _ApplyFogShader: {fileID: 4800000, guid: 234a6daa6de91c84abe7ad7b0909739f, type: 3}
   _Create3DLUTShader: {fileID: 7200000, guid: 9ec5b97ad6003dd4d9006df2f588ae3a, type: 3}
   SunLight: {fileID: 597845561}
+  FogLightCasters:
+  - {fileID: 597845560}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
   _LimitFogInSize: 0
   _FogWorldPosition: {x: 111.61, y: 3, z: 100}
@@ -585,12 +587,12 @@ MonoBehaviour:
   _FogInLightColor: {r: 0.39607844, g: 0.2509804, b: 0.13725491, a: 1}
   _AmbientFog: 0.2
   _LightIntensity: 1.1
-  _NoiseSource: 2
+  _NoiseSource: 4
   _AddSceneColor: 1
   _BlurEnabled: 1
   _ShadowsEnabled: 1
   _HeightFogEnabled: 1
-  _NoiseOctave: 0.2
+  _NoiseScale: 0.1
   _3DNoiseTextureDimensions: {x: 32, y: 32, z: 64}
 --- !u!124 &1097241485
 Behaviour:

@@ -54,7 +54,7 @@
                               _AmbientFog,
                               _BaseHeightDensity,
                               _HeightDensityCoef,
-                              _NoiseOctave;
+                              _NoiseScale;
                               
             uniform float4x4  InverseViewMatrix,                   
                               InverseProjectionMatrix;
@@ -205,7 +205,7 @@
 	
 	        float sampleNoise(float4 position){
 	        
-	            position *= _NoiseOctave;
+	            position *= _NoiseScale;
 	            
 	            float noiseValue = 0;
    
