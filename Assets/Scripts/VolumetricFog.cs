@@ -74,7 +74,11 @@ class VolumetricFog : MonoBehaviour
 
     [Range(0, 10)] public float _LightIntensity = 1;
 
-
+    [Header("Animation")]
+    
+    public Vector3 _WindDirection = Vector3.right;
+    public float _Speed = 1f;
+    
     [Header("Debug")] 
     
     public NoiseSource _NoiseSource = NoiseSource.Texture2D;
@@ -85,6 +89,8 @@ class VolumetricFog : MonoBehaviour
     public bool _HeightFogEnabled;
 
     [Range(-100, 100)] public float _NoiseScale = 0f;
+   // [Range(1, 16)] public float _NoiseOctaves = 1f; TODO
+    
     public Vector3Int _3DNoiseTextureDimensions = Vector3Int.one;
 
 
@@ -94,7 +100,7 @@ class VolumetricFog : MonoBehaviour
 
     private float _kFactor;
 
-    private RenderTexture _fogTexture3D;
+    private Texture3D _fogTexture3D;
     private RenderTexture _fogTexture3DCompute;
     private RenderTexture _fogTexture3DSimplex;
     
@@ -170,19 +176,18 @@ class VolumetricFog : MonoBehaviour
 
         if (!is3DSource) return;
        
-        var fogTexture = TextureUtilities.CreateFogLUT3D(_FogTexture2D, _NoiseSource, _3DNoiseTextureDimensions, _Create3DLUTShader);
         
         switch (_NoiseSource)
         {
             case NoiseSource.Texture3D:
-                _fogTexture3D = fogTexture;
+                _fogTexture3D = TextureUtilities.CreateFogLUT3DFrom2DSlices(_FogTexture2D, _3DNoiseTextureDimensions);
                 break;
             case NoiseSource.Texture3DCompute:
-                _fogTexture3DCompute = fogTexture;
+                _fogTexture3DCompute = TextureUtilities.CreateFogLUT3DFrom2DSlicesCompute(_FogTexture2D, _3DNoiseTextureDimensions, _Create3DLUTShader);
                 break;
 
             case NoiseSource.SimplexNoiseCompute:
-                _fogTexture3DSimplex = fogTexture;
+                _fogTexture3DSimplex = TextureUtilities.CreateFogLUT3DFromSimplexNoise(_3DNoiseTextureDimensions, _Create3DLUTShader);
                 break;
 
         }
@@ -329,6 +334,9 @@ class VolumetricFog : MonoBehaviour
 
         CalculateFogMaterial.SetVector("_LightDir", SunLight.GetComponent<Light>().transform.forward);
         CalculateFogMaterial.SetFloat("_AmbientFog", _AmbientFog);
+        
+        CalculateFogMaterial.SetVector("_FogDirection", _WindDirection);
+        CalculateFogMaterial.SetFloat("_FogSpeed", _Speed);
 
         Graphics.Blit(source, fogTarget1, CalculateFogMaterial);
     }

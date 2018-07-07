@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 public static class TextureUtilities
 {
-    /* public static RenderTexture CreateFogLUT3DFrom2DSlices(Texture2D tex, Vector3Int dimensions)
+     public static Texture3D CreateFogLUT3DFrom2DSlices(Texture2D tex, Vector3Int dimensions)
      {
          
          var readableTexture2D = GetReadableTexture(tex);
@@ -27,11 +27,12 @@ public static class TextureUtilities
          var texture3D = new Texture3D(dimensions.x, dimensions.y, dimensions.z, TextureFormat.RGBAHalf, true);
          texture3D.SetPixels(colors);
          texture3D.Apply();
+         
          return texture3D;
-     }*/
+     }
 
     // https://support.unity3d.com/hc/en-us/articles/206486626-How-can-I-get-pixels-from-unreadable-textures-
-    public static Texture2D GetReadableTexture(Texture2D texture)
+    private static Texture2D GetReadableTexture(Texture2D texture)
     {
         // Create a temporary RenderTexture of the same size as the texture
 
@@ -40,7 +41,7 @@ public static class TextureUtilities
             texture.height,
             0,
             RenderTextureFormat.Default,
-            RenderTextureReadWrite.Linear);
+            RenderTextureReadWrite.Linear); 
 
         // Blit the pixels on texture to the RenderTexture
         Graphics.Blit(texture, tmp);
@@ -54,29 +55,11 @@ public static class TextureUtilities
         return myTexture2D; 
     }
 
-    public static RenderTexture CreateFogLUT3D(Texture2D fogTexture, NoiseSource noiseSource, Vector3Int dimensions, ComputeShader shader)
-    {
-        switch (noiseSource)
-        {
-            case NoiseSource.SimplexNoiseCompute:
-                return CreateFogLUT3DFromSimplexNoise(dimensions, shader);
-
-            case NoiseSource.Texture3D:
-            case NoiseSource.Texture3DCompute:
-                return CreateFogLUT3DFrom2DSlicesCompute(fogTexture, dimensions, shader);
-
-            //    return CreateFogLUT3DFrom2DSlices(fogTexture, dimensions);//160, 90, 128
-
-            default:
-                throw new ArgumentOutOfRangeException(nameof(noiseSource), noiseSource, null);
-        }
-    }
-
-    private static RenderTexture CreateFogLUT3DFrom2DSlicesCompute(Texture2D fogTexture, Vector3Int dimensions, ComputeShader shader)
+    public static RenderTexture CreateFogLUT3DFrom2DSlicesCompute(Texture2D fogTexture, Vector3Int dimensions, ComputeShader shader)
     {
         var kernel = shader.FindKernel("Create3DLUTFrom2D");
         
-        var fogLut3D = new RenderTexture(dimensions.x, dimensions.y, 0, RenderTextureFormat.ARGBHalf,
+        var fogLut3D = new RenderTexture(dimensions.x, dimensions.y, 0, RenderTextureFormat.ARGB32,
             RenderTextureReadWrite.Linear)
         {
             volumeDepth = dimensions.z,
@@ -84,6 +67,7 @@ public static class TextureUtilities
             enableRandomWrite = true,
             name = "FogLUT3DFrom2D"
         };
+
         fogLut3D.Create();
         
         shader.SetTexture(kernel, "_FogLUT3DFrom2D", fogLut3D);
@@ -94,11 +78,11 @@ public static class TextureUtilities
     }
 
 
-    private static RenderTexture CreateFogLUT3DFromSimplexNoise(Vector3Int dimensions, ComputeShader shader)
+    public static RenderTexture CreateFogLUT3DFromSimplexNoise(Vector3Int dimensions, ComputeShader shader)
     {
         var kernel = shader.FindKernel("Create3DLUTSimplexNoise");
         
-        var fogLut3D = new RenderTexture(dimensions.x, dimensions.y, 0, RenderTextureFormat.ARGBHalf,
+        var fogLut3D = new RenderTexture(dimensions.x, dimensions.y, 0, RenderTextureFormat.RGBAUShort,
             RenderTextureReadWrite.Linear)
         {
             volumeDepth = dimensions.z,

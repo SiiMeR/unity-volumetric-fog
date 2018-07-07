@@ -40,7 +40,8 @@
                               _LightColor,
                               _FogColor,
                               _FogWorldPosition,
-                              _LightDir;
+                              _LightDir,
+                              _FogDirection;
                               
             uniform float     _FogDensity,
                               _RayleighScatteringCoef,
@@ -54,7 +55,8 @@
                               _AmbientFog,
                               _BaseHeightDensity,
                               _HeightDensityCoef,
-                              _NoiseScale;
+                              _NoiseScale,
+                              _FogSpeed;
                               
             uniform float4x4  InverseViewMatrix,                   
                               InverseProjectionMatrix;
@@ -201,20 +203,23 @@
 			float getBeerLaw(float density, float stepSize){
 			    return saturate(exp(-density * stepSize));	
 			}
+
 	
-	
-	        float sampleNoise(float4 position){
+	        float sampleNoise(float3 position){
 	        
+	            float3 offSet = float3(_Time.yyy) * _FogSpeed * _FogDirection;
+
 	            position *= _NoiseScale;
+	            position += offSet;
 	            
 	            float noiseValue = 0;
    
 #if defined(SNOISE)
                 noiseValue = snoise(position);   
 #elif defined(NOISE2D)
-                noiseValue = tex2Dlod(_NoiseTexture, position);
+                noiseValue = tex2D(_NoiseTexture, position);
 #elif defined(NOISE3D)                        
-                noiseValue = tex3Dlod(_NoiseTex3D, position);
+                noiseValue = tex3Dlod(_NoiseTex3D, float4(position,1));
 #endif    
                 return noiseValue;   
                             
@@ -272,9 +277,8 @@
 #endif                    
 
                     if(distanceSample < 0.0001){ // we are inside the predefined cube
-                    
 
-                        float noiseValue = sampleNoise(float4(currentPos.xyz,_Time.z));
+                        float noiseValue = sampleNoise(currentPos);
                         
                         //modulate fog density by a noise value to make it more interesting
                         float fogDensity = noiseValue * _FogDensity;
