@@ -206,7 +206,7 @@
 
 	
 	        float sampleNoise(float3 position){
-	        
+	            
 	            float3 offSet = float3(_Time.yyy) * _FogSpeed * _FogDirection;
 
 	            position *= _NoiseScale;
@@ -215,11 +215,15 @@
 	            float noiseValue = 0;
    
 #if defined(SNOISE)
-                noiseValue = snoise(position);   
+
+
+                noiseValue =   snoise(float4(position,_SinTime.y)) * 0.1;
+             //   noiseValue = snoise(position);   
+            //    noiseValue = snoise(position + snoise(position + snoise(position)));   
 #elif defined(NOISE2D)
                 noiseValue = tex2D(_NoiseTexture, position);
 #elif defined(NOISE3D)                        
-                noiseValue = tex3Dlod(_NoiseTex3D, float4(position,1));
+                noiseValue = tex3D(_NoiseTex3D, position);
 #endif    
                 return noiseValue;   
                             
@@ -243,7 +247,6 @@
                 // ray direction in world space
                 float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
                   
-            
                 float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
                 
                 //calculate step size for raymarching
@@ -251,7 +254,7 @@
             
                 float3 currentPos = _WorldSpaceCameraPos.xyz;
                         
-                currentPos +=  rayDir.xyz;             
+                currentPos += rayDir.xyz;             
     
                 //calculate weights for cascade split selection  
                 float4 weights = getCascadeWeights(-viewPos.z);
@@ -267,8 +270,7 @@
                     			
                     if(transmittance < 0.01){
                         break;
-                    }
-                    
+                    }  
                     
                     float distanceSample = 0;
                     
@@ -282,6 +284,8 @@
                         
                         //modulate fog density by a noise value to make it more interesting
                         float fogDensity = noiseValue * _FogDensity;
+                        
+                        fogDensity += 0.05; // experimental
    
 #if defined(HEIGHTFOG)
                         float heightDensity = getHeightDensity(currentPos.y);  
@@ -318,6 +322,7 @@
 #endif                  
                         
 
+                        
 #if SHADOWS_ON
                         float4 shadowCoord = getShadowCoord(float4(currentPos,1), weights);
     
@@ -326,8 +331,7 @@
 
                         //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas,
                         //add a bit of ambient fog so shadowed areas get some fog too
-                        float3 fColor = lerp(_ShadowColor, litFogColor, shadowTerm + _AmbientFog);         
-                                 
+                        float3 fColor = lerp(_ShadowColor, litFogColor, shadowTerm + _AmbientFog);               
 #endif
 
 #if SHADOWS_OFF
@@ -335,7 +339,7 @@
 #endif
                         
                         //accumulate light
-                        result += saturate(inScattering) * transmittance * stepSize * fColor;
+                        result+= saturate(inScattering) * transmittance * stepSize * fColor;
                                               
                     }
                     else

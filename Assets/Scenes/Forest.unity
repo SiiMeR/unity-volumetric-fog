@@ -589,12 +589,12 @@ MonoBehaviour:
   _LightIntensity: 1.1
   _WindDirection: {x: 1, y: 0, z: 0}
   _Speed: 1
-  _NoiseSource: 4
+  _NoiseSource: 8
   _AddSceneColor: 1
   _BlurEnabled: 1
   _ShadowsEnabled: 1
   _HeightFogEnabled: 1
-  _NoiseScale: 1
+  _NoiseScale: 0.05
   _3DNoiseTextureDimensions: {x: 48, y: 48, z: 64}
 --- !u!124 &1097241485
 Behaviour:
