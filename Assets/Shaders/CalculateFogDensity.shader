@@ -87,7 +87,7 @@
                 float4 cameraRay = mul(InverseProjectionMatrix, clipPos);
                 
                 o.ray = cameraRay / cameraRay.w;
-                
+
                 return o; 
 			}
 			
@@ -99,7 +99,7 @@
                 float c = 43758.5453;
                 float dt = dot(co.xy, float2(a, b));
                 float sn = fmod(dt, 3.14);
-        
+            
                 return 2.0 * frac(sin(sn) * c) - 1.0;
             }
 			
