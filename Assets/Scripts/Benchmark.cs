@@ -152,9 +152,9 @@ public class Benchmark : MonoBehaviour
             TimeSpent += (Time.unscaledDeltaTime - TimeSpent) * 0.1f;	
            
     
-            float ms = 1000.0f * TimeSpent;
-            float fps = 1.0f / TimeSpent;
-            float timeSinceStart = Mathf.Round(Time.time - time);
+            var ms = 1000.0f * TimeSpent;
+            var fps = 1.0f / TimeSpent;
+            var timeSinceStart = Mathf.Round(Time.time - time);
 
             List<CSVData> list;
             Data.TryGetValue(timeSinceStart, out list);

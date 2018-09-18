@@ -21,8 +21,16 @@ public enum NoiseSource
     SimplexNoiseCompute = 16,
 }
 
+public enum FPSTarget
+{
+    MAX_30,
+    MAX_60,
+    MAX_120,
+    UNLIMITED
+}
 
-[ExecuteInEditMode]
+
+//[ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
 class VolumetricFog : MonoBehaviour
 {
@@ -44,6 +52,9 @@ class VolumetricFog : MonoBehaviour
     
     public int _RenderTextureResDivision = 2;
     [Range(16, 256)] public int _RayMarchSteps = 128;
+
+    public bool _OptimizeSettingsFPS = false; // optimize raymarch steps according to fps
+    public FPSTarget _FPSTarget = FPSTarget.MAX_60;
 
     [Header("Physical coefficients")]
     
@@ -103,7 +114,7 @@ class VolumetricFog : MonoBehaviour
     private Texture3D _fogTexture3D;
     private RenderTexture _fogTexture3DCompute;
     private RenderTexture _fogTexture3DSimplex;
-    
+    private Benchmark _benchmark;
 
     public Material ApplyFogMaterial
     {
@@ -162,6 +173,7 @@ class VolumetricFog : MonoBehaviour
 
     private void Start()
     {
+        _benchmark = FindObjectOfType<Benchmark>();
         FogLightCasters.ForEach(AddLightCommandBuffer);
         Regenerate3DTexture();
     }
@@ -185,7 +197,6 @@ class VolumetricFog : MonoBehaviour
             case NoiseSource.Texture3DCompute:
                 _fogTexture3DCompute = TextureUtilities.CreateFogLUT3DFrom2DSlicesCompute(_FogTexture2D, _3DNoiseTextureDimensions, _Create3DLUTShader);
                 break;
-
             case NoiseSource.SimplexNoiseCompute:
                 _fogTexture3DSimplex = TextureUtilities.CreateFogLUT3DFromSimplexNoise(_3DNoiseTextureDimensions, _Create3DLUTShader);
                 break;
@@ -268,6 +279,7 @@ class VolumetricFog : MonoBehaviour
         var fogRTWidth = source.width / _RenderTextureResDivision;
         var fogRTHeight = source.height / _RenderTextureResDivision;
 
+       // Debug.Log($"Current fog resolution: {fogRTWidth} x {fogRTHeight}");
         // Get the rendertexture from the pool that fits the height, width and format. 
         // This increases performance, because rendertextures do not need to be recreated when asking them again the next frame.
         // 2 rendertextures are needed to iteratively blur an image
@@ -288,11 +300,10 @@ class VolumetricFog : MonoBehaviour
         RenderFog(fogRT1, source);
         // blur fog
         BlurFog(fogRT1, fogRT2);
-
         // blend fog 
         BlendWithScene(source, destination, fogRT1);
 
-        // release textures to avoid high memory usage
+        // release textures to avoid leaking memory
         RenderTexture.ReleaseTemporary(fogRT1);
         RenderTexture.ReleaseTemporary(fogRT2);
     }
@@ -313,7 +324,9 @@ class VolumetricFog : MonoBehaviour
         ToggleShaderKeyword(CalculateFogMaterial, "LIMITFOGSIZE", _LimitFogInSize);
         ToggleShaderKeyword(CalculateFogMaterial, "HEIGHTFOG", _HeightFogEnabled);
         
-        CalculateFogMaterial.SetFloat("_RaymarchSteps", _RayMarchSteps);
+
+        var performanceRatio = CalculateRaymarchStepRatio();
+        CalculateFogMaterial.SetFloat("_RaymarchSteps", _RayMarchSteps * Mathf.Pow(performanceRatio,2));
 
         CalculateFogMaterial.SetFloat("_FogDensity", _FogDensityCoef);
         CalculateFogMaterial.SetFloat("_NoiseScale", _NoiseScale);
@@ -340,6 +353,34 @@ class VolumetricFog : MonoBehaviour
 
         Graphics.Blit(source, fogTarget1, CalculateFogMaterial);
     }
+
+    private float CalculateRaymarchStepRatio()
+    {
+        if (!_OptimizeSettingsFPS) return 1;
+        
+        var currentFPS = 1.0f / _benchmark.TimeSpent;
+        var targetFPS = 30f;
+        switch (_FPSTarget)
+        {
+            case FPSTarget.MAX_30:
+                targetFPS = 30;
+                break;
+            case FPSTarget.MAX_60:
+                targetFPS = 60;
+                break;
+            case FPSTarget.MAX_120:
+                targetFPS = 120;
+                break;
+            case FPSTarget.UNLIMITED:
+                targetFPS = currentFPS; // do not optimize
+                break;
+            default:
+                Debug.Log($"FPS Target not found");
+                break;
+        }
+        return Mathf.Clamp01(currentFPS / targetFPS);
+    }
+
     private void BlurFog(RenderTexture fogTarget1, RenderTexture fogTarget2)
     {
         if (!_BlurEnabled) return;
