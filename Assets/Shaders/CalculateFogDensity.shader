@@ -216,10 +216,7 @@
    
 #if defined(SNOISE)
 
-
-                noiseValue =   snoise(float4(position,_SinTime.y)) * 0.1;
-             //   noiseValue = snoise(position);   
-            //    noiseValue = snoise(position + snoise(position + snoise(position)));   
+                noiseValue = snoise(float4(position,_SinTime.y)) * 0.1;
 #elif defined(NOISE2D)
                 noiseValue = tex2D(_NoiseTexture, position);
 #elif defined(NOISE3D)                        
@@ -228,6 +225,53 @@
                 return noiseValue;   
                             
 	        }
+			
+			// idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
+			float getMieScattering(float cosTheta){
+			
+			    float inScattering = 0;
+			    
+#if defined(SCHLICK_HG_SCATTERING)
+                float Schlickscattering = getSchlickScattering(cosTheta) * _MieScatteringCoef;
+                inScattering += Schlickscattering;
+
+#elif defined(HG_SCATTERING)
+                float HGscattering = getHenyeyGreenstein(cosTheta) * _MieScatteringCoef;
+                inScattering += HGscattering;
+                            
+#elif defined(CS_SCATTERING) 
+                float CSscattering = getCornetteShanks(cosTheta) * _MieScatteringCoef;
+                inScattering += CSscattering;
+#endif                  
+
+                return inScattering;
+                        
+			}
+			
+			float getRayleighScattering(float cosTheta){
+			
+			    float inScattering = 0;
+			    
+#if defined(RAYLEIGH_SCATTERING)
+                float Rayleighscattering = getRayleighPhase(cosTheta) * _RayleighScatteringCoef;
+                inScattering += Rayleighscattering;
+#endif
+
+                return inScattering;
+			}
+			
+			
+			float getScattering(float cosTheta){
+			    
+			    float inScattering = 0;
+			    
+			    inScattering += getMieScattering(cosTheta);
+			    
+			    inScattering += getRayleighScattering(cosTheta);
+			    
+			    return inScattering;
+			}
+			
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
@@ -262,12 +306,18 @@
                 float3 litFogColor = _LightIntensity * _FogColor;
                 
                 float transmittance = 1;
+                float extinction = 0;
                 float3 result = 0;
-       
+                        
+                // cosine between the ray direction and the light direction
+                // TODO : Will not work with non-directional lights
+                float cosTheta = dot(rayDir, _LightDir);
+                
+                
                 [loop]
                 for(int i = 0; i < STEPS ; i++)
                 {	
-                    			
+                                    			
                     if(transmittance < 0.01){
                         break;
                     }  
@@ -285,42 +335,20 @@
                         //modulate fog density by a noise value to make it more interesting
                         float fogDensity = noiseValue * _FogDensity;
                         
-                        fogDensity += 0.05; // experimental
    
 #if defined(HEIGHTFOG)
                         float heightDensity = getHeightDensity(currentPos.y);  
                         fogDensity *= saturate(heightDensity);
 #endif                            
-               
-                        float extinction = _ExtinctionCoef * fogDensity;
+
+                        extinction = _ExtinctionCoef * fogDensity;
                         
                          //calculate transmittance by applying Beer law
                         transmittance *= getBeerLaw(extinction, stepSize);
       
-                        // idea for inscattering : https://cboard.cprogramming.com/game-programming/116931-rayleigh-scattering-shader.html
-                        float inScattering = 0; 
-                       
-                       // cosine between the camera direction and the light direction
-                        float cosTheta = dot(rayDir, _LightDir);
-                       
-#if defined(RAYLEIGH_SCATTERING)
-                        float Rayleighscattering = getRayleighPhase(cosTheta) * _RayleighScatteringCoef * fogDensity;
-                        inScattering += Rayleighscattering;
-#endif
+                        float inScattering = getScattering(cosTheta); 
 
-#if defined(SCHLICK_HG_SCATTERING)
-                        float Schlickscattering = getSchlickScattering(cosTheta) * _MieScatteringCoef * fogDensity;
-                        inScattering += Schlickscattering;
-
-#elif defined(HG_SCATTERING)
-                        float HGscattering = getHenyeyGreenstein(cosTheta) * _MieScatteringCoef * fogDensity;
-                        inScattering += HGscattering;
-                            
-#elif defined(CS_SCATTERING) 
-                        float CSscattering = getCornetteShanks(cosTheta) * _MieScatteringCoef * fogDensity;
-                        inScattering += CSscattering;
-#endif                  
-                        
+                        inScattering *= fogDensity;
 
                         
 #if SHADOWS_ON
@@ -331,7 +359,7 @@
 
                         //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas,
                         //add a bit of ambient fog so shadowed areas get some fog too
-                        float3 fColor = lerp(_ShadowColor, litFogColor, shadowTerm + _AmbientFog);               
+                        float3 fColor = lerp(_ShadowColor, litFogColor, shadowTerm + _AmbientFog);                 
 #endif
 
 #if SHADOWS_OFF
@@ -339,19 +367,19 @@
 #endif
                         
                         //accumulate light
-                        result+= saturate(inScattering) * transmittance * stepSize * fColor;
+                        result += saturate(inScattering) * transmittance * stepSize * fColor;
                                               
                     }
                     else
                     {
                         result += _LightColor * _LightIntensity;
                     }
-  
-                    currentPos += rayDir * stepSize;
+   
+                    currentPos += rayDir * stepSize; // step forward along ray
 
                 } // raymarch loop           
-
-            return float4(result, transmittance);        
+            
+              return float4(result , transmittance);          
 
             }  // frag
 				

@@ -169,7 +169,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727, type: 3}
       propertyPath: _NoiseSource
-      value: 8
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727, type: 3}
       propertyPath: _OptimizeSettingsFPS
