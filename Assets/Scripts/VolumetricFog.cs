@@ -1,36 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public enum MieScatteringApproximation
-{
-    HenyeyGreenstein,
-    CornetteShanks,
-    Schlick,
-    Off
-}
-
-[Flags]
-public enum NoiseSource
-{
-    Texture2D = 1,
-    Texture3D = 2,
-    Texture3DCompute = 4,
-    SimplexNoise = 8,
-    SimplexNoiseCompute = 16,
-}
-
-public enum FPSTarget
-{
-    MAX_30,
-    MAX_60,
-    MAX_120,
-    UNLIMITED
-}
-
-
-//[ExecuteInEditMode]
+[ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
 class VolumetricFog : MonoBehaviour
 {
@@ -53,7 +25,7 @@ class VolumetricFog : MonoBehaviour
     public int _RenderTextureResDivision = 2;
     [Range(16, 256)] public int _RayMarchSteps = 128;
 
-    public bool _OptimizeSettingsFPS = false; // optimize raymarch steps according to fps
+    public bool _OptimizeSettingsFPS; // optimize raymarch steps according to fps
     public FPSTarget _FPSTarget = FPSTarget.MAX_60;
 
     [Header("Physical coefficients")]
@@ -202,9 +174,7 @@ class VolumetricFog : MonoBehaviour
                 break;
 
         }
-
-    
-        
+ 
     }
 
     private void CalculateKFactor()
@@ -221,7 +191,6 @@ class VolumetricFog : MonoBehaviour
     // based on https://interplayoflight.wordpress.com/2015/07/03/adventures-in-postprocessing-with-unity/    
     private void RemoveLightCommandBuffer(Light light)
     {
-
         if (_AfterShadowPass != null && light)
         {
             light.RemoveCommandBuffer(LightEvent.AfterShadowMap, _AfterShadowPass);
@@ -236,7 +205,6 @@ class VolumetricFog : MonoBehaviour
         _AfterShadowPass.SetGlobalTexture("ShadowMap",
             new RenderTargetIdentifier(BuiltinRenderTextureType.CurrentActive));
 
-
         if (light)
         {
             light.AddCommandBuffer(LightEvent.AfterShadowMap, _AfterShadowPass);
@@ -244,19 +212,19 @@ class VolumetricFog : MonoBehaviour
     }
 
 
-    private bool CheckRequirements()
+    private bool HasRequiredAssets()
     {
-        return !_FogTexture2D ||
-               !ApplyFogMaterial || !_ApplyFogShader ||
-               !CalculateFogMaterial || !_CalculateFogShader ||
-               !ApplyBlurMaterial || !_ApplyBlurShader;
+        return _FogTexture2D ||
+               ApplyFogMaterial || _ApplyFogShader ||
+               CalculateFogMaterial || _CalculateFogShader ||
+               ApplyBlurMaterial || _ApplyBlurShader;
     }
 
 
     [ImageEffectOpaque]
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (CheckRequirements())
+        if (HasRequiredAssets() == false)
         {
             Debug.Log("Not rendering image effect");
             Graphics.Blit(source, destination); // do nothing
@@ -279,7 +247,6 @@ class VolumetricFog : MonoBehaviour
         var fogRTWidth = source.width / _RenderTextureResDivision;
         var fogRTHeight = source.height / _RenderTextureResDivision;
 
-       // Debug.Log($"Current fog resolution: {fogRTWidth} x {fogRTHeight}");
         // Get the rendertexture from the pool that fits the height, width and format. 
         // This increases performance, because rendertextures do not need to be recreated when asking them again the next frame.
         // 2 rendertextures are needed to iteratively blur an image
@@ -308,7 +275,7 @@ class VolumetricFog : MonoBehaviour
         RenderTexture.ReleaseTemporary(fogRT2);
     }
     
-    private void RenderFog(RenderTexture fogTarget1, RenderTexture source)
+    private void RenderFog(RenderTexture fogRenderTexture, RenderTexture source)
     {
         
         if (_UseRayleighScattering)
@@ -351,7 +318,7 @@ class VolumetricFog : MonoBehaviour
         CalculateFogMaterial.SetVector("_FogDirection", _WindDirection);
         CalculateFogMaterial.SetFloat("_FogSpeed", _Speed);
 
-        Graphics.Blit(source, fogTarget1, CalculateFogMaterial);
+        Graphics.Blit(source, fogRenderTexture, CalculateFogMaterial);
     }
 
     private float CalculateRaymarchStepRatio()
