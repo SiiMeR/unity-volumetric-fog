@@ -348,9 +348,7 @@
       
                         float inScattering = getScattering(cosTheta); 
 
-                        inScattering *= fogDensity;
-
-                        
+                        inScattering *= fogDensity;      
 #if SHADOWS_ON
                         float4 shadowCoord = getShadowCoord(float4(currentPos,1), weights);
     
@@ -367,7 +365,9 @@
 #endif
                         
                         //accumulate light
-                        result += saturate(inScattering) * transmittance * stepSize * fColor;
+                       // result += saturate(inScattering) * transmittance * stepSize * fColor;
+                        result += inScattering  * 1/STEPS * fColor;
+                       // result += inScattering * transmittance * 1/STEPS * fColor; PREMULTIPLIED ALPHA?
                                               
                     }
                     else

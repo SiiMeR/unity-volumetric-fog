@@ -20,9 +20,8 @@ class VolumetricFog : MonoBehaviour
     public Vector3 _FogWorldPosition;
     public float _FogSize = 10.0f;
 
-    [Header("Performance")] [Range(1, 8)] 
-    
-    public int _RenderTextureResDivision = 2;
+    [Header("Performance")] 
+    [Range(0, 8)] public int _RenderTextureResDivision;
     [Range(16, 256)] public int _RayMarchSteps = 128;
 
     public bool _OptimizeSettingsFPS; // optimize raymarch steps according to fps
@@ -49,8 +48,8 @@ class VolumetricFog : MonoBehaviour
     public Vector3 _BlurOffsets = new Vector3(1, 2, 3);
     public Vector3 _BlurWeights = new Vector3(0.213f, 0.17f, 0.036f);
 
-    [Header("Color")]
-    
+    [Header("Color")] 
+    public bool _UseLightColorForFog = false;
     public Color _FogInShadowColor = Color.black;
     public Color _FogInLightColor = Color.white;
     [Range(0, 1)] public float _AmbientFog;
@@ -244,12 +243,12 @@ class VolumetricFog : MonoBehaviour
 
         SunLight.GetComponent<Light>().intensity = _LightIntensity;
 
-        var fogRTWidth = source.width / _RenderTextureResDivision;
-        var fogRTHeight = source.height / _RenderTextureResDivision;
+        var fogRTWidth = source.width >> _RenderTextureResDivision;
+        var fogRTHeight = source.height >> _RenderTextureResDivision;
 
         // Get the rendertexture from the pool that fits the height, width and format. 
-        // This increases performance, because rendertextures do not need to be recreated when asking them again the next frame.
-        // 2 rendertextures are needed to iteratively blur an image
+        // This increases performance, because Rendertextures do not need to be recreated when asking them again the next frame.
+        // 2 Rendertextures are needed to iteratively blur an image
         var fogRT1 = RenderTexture.GetTemporary(fogRTWidth, fogRTHeight, 0, FORMAT_FOGRENDERTEXTURE);
         var fogRT2 = RenderTexture.GetTemporary(fogRTWidth, fogRTHeight, 0, FORMAT_FOGRENDERTEXTURE);
 
@@ -310,7 +309,7 @@ class VolumetricFog : MonoBehaviour
 
         CalculateFogMaterial.SetColor("LightColor", SunLight.GetComponent<Light>().color);
         CalculateFogMaterial.SetColor("_ShadowColor", _FogInShadowColor);
-        CalculateFogMaterial.SetColor("_FogColor", _FogInLightColor);
+        CalculateFogMaterial.SetColor("_FogColor", _UseLightColorForFog? SunLight.GetComponent<Light>().color : _FogInLightColor);
 
         CalculateFogMaterial.SetVector("_LightDir", SunLight.GetComponent<Light>().transform.forward);
         CalculateFogMaterial.SetFloat("_AmbientFog", _AmbientFog);

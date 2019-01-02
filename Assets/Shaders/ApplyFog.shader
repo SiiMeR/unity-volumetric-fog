@@ -38,12 +38,12 @@
             
             float4 frag(v2f input) : SV_Target 
             {			
-
                 float4 fogSample = tex2D(FogRendertargetLinear, input.uv);
                 float4 colorSample = tex2D(_MainTex, input.uv);
                 
-                float4 result = float4(colorSample.rgb * fogSample.a + fogSample,colorSample.a);
-                
+               // float4 result = float4(colorSample.rgb * fogSample.a + fogSample,colorSample.a);
+               // float4 result = fogSample.aaaa * fogSample + (float4(1.0, 1.0, 1.0, 1.0) - fogSample.aaaa) * colorSample;
+                float4 result = float4(1.0, 1.0, 1.0, 1.0) * fogSample + float4(1.0, 1.0, 1.0, 1.0) * colorSample; //additive blending
                 return result;
             }
                   
@@ -53,7 +53,6 @@
 	{
 		// No culling or depth writes
 		Cull Off ZWrite Off ZTest Always
-        
 		Pass
 		{
 			CGPROGRAM
