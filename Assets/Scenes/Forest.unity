@@ -190,7 +190,7 @@ PrefabInstance:
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
       propertyPath: _UseLightColorForFog
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
@@ -200,7 +200,7 @@ PrefabInstance:
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
       propertyPath: _BlurEnabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
@@ -230,12 +230,12 @@ PrefabInstance:
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
       propertyPath: _FogInLightColor.g
-      value: 0.8997226
+      value: 0.9507965
       objectReference: {fileID: 0}
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
       propertyPath: _FogInLightColor.b
-      value: 0.3443396
+      value: 0.6839622
       objectReference: {fileID: 0}
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
@@ -267,6 +267,11 @@ PrefabInstance:
       propertyPath: _BlurDepthFalloff
       value: 75
       objectReference: {fileID: 0}
+    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
+        type: 3}
+      propertyPath: _HeightFogEnabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1c135b10b7692ea4383285d4f646a727, type: 3}
 --- !u!1 &597845559
@@ -296,7 +301,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
-  m_Color: {r: 0.9827286, g: 1, b: 0.5707547, a: 1}
+  m_Color: {r: 0.9919868, g: 1, b: 0.7783019, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
