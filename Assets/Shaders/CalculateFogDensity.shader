@@ -280,7 +280,7 @@
                 float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
                 
                 //linearise depth		
-                float lindepth = Linear01Depth (depth);
+                float lindepth = Linear01Depth(depth);
                 
                 //get view and then world positions		
                 float4 viewPos = float4(i.ray.xyz * lindepth,1);
@@ -298,7 +298,7 @@
             
                 float3 currentPos = _WorldSpaceCameraPos.xyz;
                         
-                currentPos += rayDir.xyz;             
+                currentPos += rayDir.xyz * _ProjectionParams.y; // start at camera's near plane             
     
                 //calculate weights for cascade split selection  
                 float4 weights = getCascadeWeights(-viewPos.z);
@@ -318,7 +318,7 @@
                 for(int i = 0; i < STEPS ; i++)
                 {	
                                     			
-                    if(transmittance < 0.01){
+                    if(transmittance < 0.001){
                         break;
                     }  
                     
@@ -350,6 +350,7 @@
 
                         inScattering *= fogDensity;      
 #if SHADOWS_ON
+                
                         float4 shadowCoord = getShadowCoord(float4(currentPos,1), weights);
     
                         //do shadow test and store the result				
@@ -366,7 +367,7 @@
                         
                         //accumulate light
                        // result += saturate(inScattering) * transmittance * stepSize * fColor;
-                        result += inScattering  * 1/STEPS * fColor;
+                        result += inScattering  * stepSize * fColor;
                        // result += inScattering * transmittance * 1/STEPS * fColor; PREMULTIPLIED ALPHA?
                                               
                     }
