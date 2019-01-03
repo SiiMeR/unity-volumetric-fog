@@ -271,8 +271,7 @@
 			    
 			    return inScattering;
 			}
-			
-			
+				
 			fixed4 frag (v2f i) : SV_Target
 			{
                 
@@ -300,6 +299,7 @@
                         
                 currentPos += rayDir.xyz * _ProjectionParams.y; // start at camera's near plane             
     
+                currentPos.z += 0.05 * rand(rand(_Time.yz));
                 //calculate weights for cascade split selection  
                 float4 weights = getCascadeWeights(-viewPos.z);
                 
@@ -343,11 +343,11 @@
 
                         extinction = _ExtinctionCoef * fogDensity;
                         
+                        
                          //calculate transmittance by applying Beer law
                         transmittance *= getBeerLaw(extinction, stepSize);
-      
+                        
                         float inScattering = getScattering(cosTheta); 
-
                         inScattering *= fogDensity;      
 #if SHADOWS_ON
                 
@@ -373,7 +373,7 @@
                     }
                     else
                     {
-                        result += _LightColor * _LightIntensity;
+                        result += _FogColor * _LightIntensity;
                     }
    
                     currentPos += rayDir * stepSize; // step forward along ray
@@ -383,7 +383,8 @@
               return float4(result , transmittance);          
 
             }  // frag
-				
+            
+
 	
 	ENDCG
 	
