@@ -185,7 +185,7 @@ PrefabInstance:
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
       propertyPath: _UseRayleighScattering
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
@@ -287,6 +287,11 @@ PrefabInstance:
       propertyPath: _BlueNoiseTexture2D
       value: 
       objectReference: {fileID: 2800000, guid: e27671804ab5acf4c85490a01943c961, type: 3}
+    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
+        type: 3}
+      propertyPath: _ShadowsEnabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1c135b10b7692ea4383285d4f646a727, type: 3}
 --- !u!1 &597845559

@@ -66,9 +66,8 @@
             #define STEPS _RaymarchSteps
             #define STEPSIZE 1/STEPS
             
-            #define e 2.71828
-            #define pi 3.1415
-            
+            #define e 2.718281828459
+            #define pi 3.14159265358
             
 			struct v2f
 			{
@@ -87,6 +86,7 @@
                 float4 clipPos = float4( v.texcoord * 2.0 - 1.0, 1.0, 1.0); 
                 float4 cameraRay = mul(InverseProjectionMatrix, clipPos);
                 
+                //o.ray = mul(unity_ObjectToWorld, v.vertex);
                 o.ray = cameraRay / cameraRay.w;
 
                 return o; 
@@ -114,6 +114,41 @@
 				return d_box;
 			}		
 			
+			
+            //-----------------------------------------------------------------------------------------
+            // GetCascadeWeights_SplitSpheres
+            // from https://github.com/SlightlyMad/VolumetricLights/blob/master/Assets/Shaders/VolumetricLight.shader 
+            //-----------------------------------------------------------------------------------------
+            inline fixed4 GetCascadeWeights_SplitSpheres(float3 wpos)
+            {
+                float3 fromCenter0 = wpos.xyz - unity_ShadowSplitSpheres[0].xyz;
+                float3 fromCenter1 = wpos.xyz - unity_ShadowSplitSpheres[1].xyz;
+                float3 fromCenter2 = wpos.xyz - unity_ShadowSplitSpheres[2].xyz;
+                float3 fromCenter3 = wpos.xyz - unity_ShadowSplitSpheres[3].xyz;
+                float4 distances2 = float4(dot(fromCenter0, fromCenter0), dot(fromCenter1, fromCenter1), dot(fromCenter2, fromCenter2), dot(fromCenter3, fromCenter3));
+    
+                fixed4 weights = float4(distances2 < unity_ShadowSplitSqRadii);
+                weights.yzw = saturate(weights.yzw - weights.xyz);
+                return weights;
+            }
+            
+                        //-----------------------------------------------------------------------------------------
+            // GetCascadeShadowCoord
+            //-----------------------------------------------------------------------------------------
+            inline float4 GetCascadeShadowCoord(float4 wpos, fixed4 cascadeWeights)
+            {
+                float3 sc0 = mul(unity_WorldToShadow[0], wpos).xyz;
+                float3 sc1 = mul(unity_WorldToShadow[1], wpos).xyz;
+                float3 sc2 = mul(unity_WorldToShadow[2], wpos).xyz;
+                float3 sc3 = mul(unity_WorldToShadow[3], wpos).xyz;
+                
+                float4 shadowMapCoordinate = float4(sc0 * cascadeWeights[0] + sc1 * cascadeWeights[1] + sc2 * cascadeWeights[2] + sc3 * cascadeWeights[3], 1);
+#if defined(UNITY_REVERSED_Z)
+                float  noCascadeWeights = 1 - dot(cascadeWeights, float4(1, 1, 1, 1));
+                shadowMapCoordinate.z += noCascadeWeights;
+#endif
+                return shadowMapCoordinate;
+            }
 	        
 	        // https://docs.unity3d.com/Manual/DirLightShadows.html
 	        // get the coefficients of each shadow cascade
@@ -286,24 +321,30 @@
                 float4 viewPos = float4(i.ray.xyz * lindepth,1);
                 
                 float3 worldPos = mul(InverseViewMatrix, viewPos).xyz;	
-                    
+                
+                //calculate weights for cascade split selection  
+                float4 weights = getCascadeWeights(-viewPos.z);
              
                 // ray direction in world space
                 float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
+                //float3 rayDir = i.ray - _WorldSpaceCameraPos;
+                //rayDir *= lindepth;  
                   
                 float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
+               // float rayDistance = length(rayDir);
                 
                 //calculate step size for raymarching
                 float stepSize = rayDistance / STEPS;
             
                 float3 currentPos = _WorldSpaceCameraPos.xyz;
                         
-                currentPos += rayDir.xyz * _ProjectionParams.y; // start at camera's near plane             
+              //  currentPos += _ProjectionParams.y; // start at camera's near plane             
     
-                float2 interleavedPosition = (fmod(floor(i.pos.xy), 4.0));
-              //  float offset = tex2D(
-                //calculate weights for cascade split selection  
-                float4 weights = getCascadeWeights(-viewPos.z);
+                // https://github.com/SlightlyMad/VolumetricLights/blob/master/Assets/Shaders/VolumetricLight.shader
+                float2 interleavedPosition = (fmod(floor(i.pos.xy), 8.0));
+                float offset = tex2D(_BlueNoiseTexture, interleavedPosition / 8.0 + float2(0.5/8.0, 0.5/8.0)).w;
+                
+                currentPos += stepSize * rayDir * offset;
                 
                 float3 litFogColor = _LightIntensity * _FogColor;
                 
@@ -354,7 +395,12 @@
                         inScattering *= fogDensity;      
 #if SHADOWS_ON
                 
+                     //   float4 weights = GetCascadeWeights_SplitSpheres(currentPos);
+                     
+
+                       
                         float4 shadowCoord = getShadowCoord(float4(currentPos,1), weights);
+                       // float4 shadowCoord = GetCascadeShadowCoord(float4(currentPos,1), weights);
     
                         //do shadow test and store the result				
                         float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);				
