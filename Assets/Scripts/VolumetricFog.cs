@@ -15,6 +15,7 @@ class VolumetricFog : MonoBehaviour
     public Transform SunLight;
     public List<Light> FogLightCasters;
     public Texture2D _FogTexture2D;
+    public Texture2D _BlueNoiseTexture2D;
 
     [Header("Position and size(in m³)")] public bool _LimitFogInSize = true;
     public Vector3 _FogWorldPosition;
@@ -141,6 +142,38 @@ class VolumetricFog : MonoBehaviour
     }
 
     private CommandBuffer _AfterShadowPass;
+    
+    // cached shader property references to save some performance
+    private static readonly int BlueNoiseTexture = Shader.PropertyToID("_BlueNoiseTexture");
+    private static readonly int FogSpeed = Shader.PropertyToID("_FogSpeed");
+    private static readonly int FogDirection = Shader.PropertyToID("_FogDirection");
+    private static readonly int AmbientFog = Shader.PropertyToID("_AmbientFog");
+    private static readonly int LightDir = Shader.PropertyToID("_LightDir");
+    private static readonly int FogColor = Shader.PropertyToID("_FogColor");
+    private static readonly int ShadowColor = Shader.PropertyToID("_ShadowColor");
+    private static readonly int LightColor = Shader.PropertyToID("LightColor");
+    private static readonly int LightIntensity = Shader.PropertyToID("_LightIntensity");
+    private static readonly int FogSize = Shader.PropertyToID("_FogSize");
+    private static readonly int FogWorldPosition = Shader.PropertyToID("_FogWorldPosition");
+    private static readonly int HeightDensityCoef = Shader.PropertyToID("_HeightDensityCoef");
+    private static readonly int BaseHeightDensity = Shader.PropertyToID("_BaseHeightDensity");
+    private static readonly int Anisotropy = Shader.PropertyToID("_Anisotropy");
+    private static readonly int ExtinctionCoef = Shader.PropertyToID("_ExtinctionCoef");
+    private static readonly int NoiseScale = Shader.PropertyToID("_NoiseScale");
+    private static readonly int FogDensity = Shader.PropertyToID("_FogDensity");
+    private static readonly int RaymarchSteps = Shader.PropertyToID("_RaymarchSteps");
+    private static readonly int RayleighScatteringCoef = Shader.PropertyToID("_RayleighScatteringCoef");
+    private static readonly int BlurDepthFalloff = Shader.PropertyToID("_BlurDepthFalloff");
+    private static readonly int Offsets = Shader.PropertyToID("_BlurOffsets");
+    private static readonly int BlurWeights = Shader.PropertyToID("_BlurWeights");
+    private static readonly int BlurDir = Shader.PropertyToID("BlurDir");
+    private static readonly int FogRendertargetLinear = Shader.PropertyToID("FogRendertargetLinear");
+    private static readonly int MieScatteringCoef = Shader.PropertyToID("_MieScatteringCoef");
+    private static readonly int KFactor = Shader.PropertyToID("_kFactor");
+    private static readonly int NoiseTexture = Shader.PropertyToID("_NoiseTexture");
+    private static readonly int NoiseTex3D = Shader.PropertyToID("_NoiseTex3D");
+    private static readonly int InverseProjectionMatrix = Shader.PropertyToID("InverseProjectionMatrix");
+    private static readonly int InverseViewMatrix = Shader.PropertyToID("InverseViewMatrix");
 
     private void Start()
     {
@@ -259,8 +292,8 @@ class VolumetricFog : MonoBehaviour
         SetMieScattering();
         SetNoiseSource();
 
-        Shader.SetGlobalMatrix("InverseViewMatrix", CurrentCamera.cameraToWorldMatrix);
-        Shader.SetGlobalMatrix("InverseProjectionMatrix", CurrentCamera.projectionMatrix.inverse);
+        Shader.SetGlobalMatrix(InverseViewMatrix, CurrentCamera.cameraToWorldMatrix);
+        Shader.SetGlobalMatrix(InverseProjectionMatrix, CurrentCamera.projectionMatrix.inverse);
     
         // render fog 
         RenderFog(fogRT1, source);
@@ -280,7 +313,7 @@ class VolumetricFog : MonoBehaviour
         if (_UseRayleighScattering)
         {
             CalculateFogMaterial.EnableKeyword("RAYLEIGH_SCATTERING");
-            CalculateFogMaterial.SetFloat("_RayleighScatteringCoef", _RayleighScatteringCoef);
+            CalculateFogMaterial.SetFloat(RayleighScatteringCoef, _RayleighScatteringCoef);
         }
         else
         {
@@ -292,30 +325,32 @@ class VolumetricFog : MonoBehaviour
         
 
         var performanceRatio = CalculateRaymarchStepRatio();
-        CalculateFogMaterial.SetFloat("_RaymarchSteps", _RayMarchSteps * Mathf.Pow(performanceRatio,2));
+        CalculateFogMaterial.SetFloat(RaymarchSteps, _RayMarchSteps * Mathf.Pow(performanceRatio,2));
 
-        CalculateFogMaterial.SetFloat("_FogDensity", _FogDensityCoef);
-        CalculateFogMaterial.SetFloat("_NoiseScale", _NoiseScale);
+        CalculateFogMaterial.SetFloat(FogDensity, _FogDensityCoef);
+        CalculateFogMaterial.SetFloat(NoiseScale, _NoiseScale);
 
 
-        CalculateFogMaterial.SetFloat("_ExtinctionCoef", _ExtinctionCoef);
-        CalculateFogMaterial.SetFloat("_Anisotropy", _Anisotropy);
-        CalculateFogMaterial.SetFloat("_BaseHeightDensity", _BaseHeightDensity);
-        CalculateFogMaterial.SetFloat("_HeightDensityCoef", _HeightDensityCoef);
+        CalculateFogMaterial.SetFloat(ExtinctionCoef, _ExtinctionCoef);
+        CalculateFogMaterial.SetFloat(Anisotropy, _Anisotropy);
+        CalculateFogMaterial.SetFloat(BaseHeightDensity, _BaseHeightDensity);
+        CalculateFogMaterial.SetFloat(HeightDensityCoef, _HeightDensityCoef);
 
-        CalculateFogMaterial.SetVector("_FogWorldPosition", _FogWorldPosition);
-        CalculateFogMaterial.SetFloat("_FogSize", _FogSize);
-        CalculateFogMaterial.SetFloat("_LightIntensity", _LightIntensity);
+        CalculateFogMaterial.SetVector(FogWorldPosition, _FogWorldPosition);
+        CalculateFogMaterial.SetFloat(FogSize, _FogSize);
+        CalculateFogMaterial.SetFloat(LightIntensity, _LightIntensity);
 
-        CalculateFogMaterial.SetColor("LightColor", SunLight.GetComponent<Light>().color);
-        CalculateFogMaterial.SetColor("_ShadowColor", _FogInShadowColor);
-        CalculateFogMaterial.SetColor("_FogColor", _UseLightColorForFog? SunLight.GetComponent<Light>().color : _FogInLightColor);
+        CalculateFogMaterial.SetColor(LightColor, SunLight.GetComponent<Light>().color);
+        CalculateFogMaterial.SetColor(ShadowColor, _FogInShadowColor);
+        CalculateFogMaterial.SetColor(FogColor, _UseLightColorForFog? SunLight.GetComponent<Light>().color : _FogInLightColor);
 
-        CalculateFogMaterial.SetVector("_LightDir", SunLight.GetComponent<Light>().transform.forward);
-        CalculateFogMaterial.SetFloat("_AmbientFog", _AmbientFog);
+        CalculateFogMaterial.SetVector(LightDir, SunLight.GetComponent<Light>().transform.forward);
+        CalculateFogMaterial.SetFloat(AmbientFog, _AmbientFog);
         
-        CalculateFogMaterial.SetVector("_FogDirection", _WindDirection);
-        CalculateFogMaterial.SetFloat("_FogSpeed", _Speed);
+        CalculateFogMaterial.SetVector(FogDirection, _WindDirection);
+        CalculateFogMaterial.SetFloat(FogSpeed, _Speed);
+        
+        CalculateFogMaterial.SetTexture(BlueNoiseTexture, _BlueNoiseTexture2D);
 
         Graphics.Blit(source, fogRenderTexture, CalculateFogMaterial);
     }
@@ -352,41 +387,45 @@ class VolumetricFog : MonoBehaviour
         if (!_BlurEnabled) return;
         
         
-        ApplyBlurMaterial.SetFloat("_BlurDepthFalloff", _BlurDepthFalloff);
+        ApplyBlurMaterial.SetFloat(BlurDepthFalloff, _BlurDepthFalloff);
 
-        var BlurOffsets = new Vector4(0, // initial sample is always at the center 
+        var blurOffsets = new Vector4(0, // initial sample is always at the center 
             _BlurOffsets.x,
             _BlurOffsets.y,
             _BlurOffsets.z);
 
-        ApplyBlurMaterial.SetVector("_BlurOffsets", BlurOffsets);
+        ApplyBlurMaterial.SetVector(Offsets, blurOffsets);
 
         // x is sum of all weights
-        var BlurWeightsWithTotal = new Vector4(_BlurWeights.x + _BlurWeights.y + _BlurWeights.z,
+        var blurWeightsWithTotal = new Vector4(_BlurWeights.x + _BlurWeights.y + _BlurWeights.z,
             _BlurWeights.x,
             _BlurWeights.y,
             _BlurWeights.z);
 
-        ApplyBlurMaterial.SetVector("_BlurWeights", BlurWeightsWithTotal);
+        ApplyBlurMaterial.SetVector(BlurWeights, blurWeightsWithTotal);
 
         for (var i = 0; i < _BlurIterations; i++)
         {
             // vertical blur 
-            ApplyBlurMaterial.SetVector("BlurDir", new Vector2(0, 1));
+            ApplyBlurMaterial.SetVector(BlurDir, new Vector2(0, 1));
             Graphics.Blit(fogTarget1, fogTarget2, ApplyBlurMaterial);
 
             // horizontal blur
-            ApplyBlurMaterial.SetVector("BlurDir", new Vector2(1, 0));
+            ApplyBlurMaterial.SetVector(BlurDir, new Vector2(1, 0));
             Graphics.Blit(fogTarget2, fogTarget1, ApplyBlurMaterial);
         }
     }
 
     private void BlendWithScene(RenderTexture source, RenderTexture destination, RenderTexture fogTarget)
     {
-        if (!_AddSceneColor) return;
+        if (!_AddSceneColor)
+        {
+            Graphics.Blit(fogTarget,destination);
+            return;
+        };
         
         //send fog texture
-        ApplyFogMaterial.SetTexture("FogRendertargetLinear", fogTarget);
+        ApplyFogMaterial.SetTexture(FogRendertargetLinear, fogTarget);
 
         //apply to main rendertarget
         Graphics.Blit(source, destination, ApplyFogMaterial);
@@ -402,13 +441,13 @@ class VolumetricFog : MonoBehaviour
         {
             case MieScatteringApproximation.HenyeyGreenstein:
                 ToggleShaderKeyword(CalculateFogMaterial, "HG_SCATTERING", true);
-                CalculateFogMaterial.SetFloat("_MieScatteringCoef", _MieScatteringCoef);
+                CalculateFogMaterial.SetFloat(MieScatteringCoef, _MieScatteringCoef);
                 break;
 
             case MieScatteringApproximation.CornetteShanks:
 
                 ToggleShaderKeyword(CalculateFogMaterial, "CS_SCATTERING", true);
-                CalculateFogMaterial.SetFloat("_MieScatteringCoef", _MieScatteringCoef);
+                CalculateFogMaterial.SetFloat(MieScatteringCoef, _MieScatteringCoef);
                 break;
 
             case MieScatteringApproximation.Schlick:
@@ -416,8 +455,8 @@ class VolumetricFog : MonoBehaviour
                 CalculateKFactor();
 
                 ToggleShaderKeyword(CalculateFogMaterial, "SCHLICK_HG_SCATTERING", true);
-                CalculateFogMaterial.SetFloat("_kFactor", _kFactor);
-                CalculateFogMaterial.SetFloat("_MieScatteringCoef", _MieScatteringCoef);
+                CalculateFogMaterial.SetFloat(KFactor, _kFactor);
+                CalculateFogMaterial.SetFloat(MieScatteringCoef, _MieScatteringCoef);
                 break;
 
             case MieScatteringApproximation.Off:
@@ -443,22 +482,23 @@ class VolumetricFog : MonoBehaviour
                 ToggleShaderKeyword(CalculateFogMaterial, "SNOISE", true);
                 break;
             case NoiseSource.Texture2D:
-                CalculateFogMaterial.SetTexture("_NoiseTexture", _FogTexture2D);
+                CalculateFogMaterial.SetTexture(NoiseTexture, _FogTexture2D);
                 ToggleShaderKeyword(CalculateFogMaterial, "NOISE2D", true);
                 break;
             case NoiseSource.Texture3D:
-                CalculateFogMaterial.SetTexture("_NoiseTex3D", _fogTexture3D);
+                CalculateFogMaterial.SetTexture(NoiseTex3D, _fogTexture3D);
                 ToggleShaderKeyword(CalculateFogMaterial, "NOISE3D", true);
                 break;
             case NoiseSource.SimplexNoiseCompute:
-                CalculateFogMaterial.SetTexture("_NoiseTex3D", _fogTexture3DSimplex);
+                CalculateFogMaterial.SetTexture(NoiseTex3D, _fogTexture3DSimplex);
                 ToggleShaderKeyword(CalculateFogMaterial, "NOISE3D", true);
                 break;
             case NoiseSource.Texture3DCompute:
-                CalculateFogMaterial.SetTexture("_NoiseTex3D", _fogTexture3DCompute);
+                CalculateFogMaterial.SetTexture(NoiseTex3D, _fogTexture3DCompute);
                 ToggleShaderKeyword(CalculateFogMaterial, "NOISE3D", true);
                 break;
         }
+        
     }
 
     private void ToggleShaderKeyword(Material shaderMat, string keyword, bool enabled)

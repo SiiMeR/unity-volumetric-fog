@@ -29,7 +29,8 @@
             
             uniform sampler2D _MainTex,
                               _CameraDepthTexture,
-                              _NoiseTexture;
+                              _NoiseTexture,
+                              _BlueNoiseTexture;
                               
             uniform sampler3D _NoiseTex3D;
                               
@@ -299,7 +300,8 @@
                         
                 currentPos += rayDir.xyz * _ProjectionParams.y; // start at camera's near plane             
     
-                currentPos.z += 0.05 * rand(rand(_Time.yz));
+                float2 interleavedPosition = (fmod(floor(i.pos.xy), 4.0));
+              //  float offset = tex2D(
                 //calculate weights for cascade split selection  
                 float4 weights = getCascadeWeights(-viewPos.z);
                 
@@ -313,9 +315,10 @@
                 // TODO : Will not work with non-directional lights
                 float cosTheta = dot(rayDir, _LightDir);
                 
+                int currentSteps = 0;
                 
                 [loop]
-                for(int i = 0; i < STEPS ; i++)
+                for(; currentSteps < STEPS ; currentSteps++)
                 {	
                                     			
                     if(transmittance < 0.001){
@@ -378,8 +381,11 @@
    
                     currentPos += rayDir * stepSize; // step forward along ray
 
-                } // raymarch loop           
-            
+                } // raymarch loop   
+                
+              if(true){
+             //   return tex2D(_BlueNoiseTexture, i.uv);
+              }        
               return float4(result , transmittance);          
 
             }  // frag
