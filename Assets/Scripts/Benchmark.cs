@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 public class Benchmark : MonoBehaviour
@@ -13,7 +12,7 @@ public class Benchmark : MonoBehaviour
     public Text Text;
     public Text Text2;
 
-    public bool BenchMark;
+    public bool benchmarkModeEnabled;
     
     public struct BenchmarkData
     {
@@ -23,9 +22,9 @@ public class Benchmark : MonoBehaviour
 
         public BenchmarkData(float ms, float fps, float timeSinceStart)
         {
-            this.Ms = ms;
-            this.Fps = fps;
-            this.Time = timeSinceStart;
+            Ms = ms;
+            Fps = fps;
+            Time = timeSinceStart;
         }
     }
 
@@ -69,13 +68,11 @@ public class Benchmark : MonoBehaviour
         Data = new Dictionary<float, List<CSVData>>();
         
         _animator = GetComponent<Animator>();
-
-        VolumetricFog fog = Camera.main.gameObject.GetComponent<VolumetricFog>();
-
-        StartCoroutine(!BenchMark ? StartBenchMarks() : Fps());
+        
+        StartCoroutine(benchmarkModeEnabled ? DisplayFps() : RunBenchmarks());
     }
 
-    private IEnumerator Fps()
+    private IEnumerator DisplayFps()
     {
         while (true)
         {
@@ -108,13 +105,13 @@ public class Benchmark : MonoBehaviour
                      $"Apply To Scene: {applySceneTime:0.000} ms ({applyToSceneProc:0.0}%)";
     }
     
-    private IEnumerator StartBenchMarks()
+    private IEnumerator RunBenchmarks()
     {
         Screen.SetResolution(1920, 1080, true);
         yield return StartCoroutine(StartBench("1080p"));
-    //    Screen.SetResolution(1280, 720, true);
+        Screen.SetResolution(1280, 720, true);
         yield return StartCoroutine(StartBench("720p"));
-     //   Screen.SetResolution(640, 480, true);
+        Screen.SetResolution(640, 480, true);
         yield return StartCoroutine(StartBench("480p"));
         
         Application.Quit();
@@ -123,9 +120,6 @@ public class Benchmark : MonoBehaviour
     
     private IEnumerator StartBench(string runName, bool writeToCSV = true)
     {
-
-
-
         TimeSpent = 0;
         Data = new Dictionary<float, List<CSVData>>();
 
@@ -176,12 +170,12 @@ public class Benchmark : MonoBehaviour
 		
         if (writeToCSV)
         {
-            WriteToCSV(runName);
+            WriteToCsv(runName);
         }
         
     }
 
-    private void WriteToCSV(string runName)
+    private void WriteToCsv(string runName)
     {
         string fileName = Application.persistentDataPath + "/volumetricfog_" + runName + "_" +
                           DateTime.Now.ToFileTimeUtc() + ".csv";
@@ -195,19 +189,12 @@ public class Benchmark : MonoBehaviour
 
         foreach (var data in Data)
         {
-        
-            
             string fps = data.Value.Average(val => val.BenchmarkData.Fps).ToString();
             string ms = data.Value.Average(val => val.BenchmarkData.Ms).ToString();
             string time = data.Key.ToString();
 			
             File.AppendAllText(fileName, $"{time}.{fps}.{ms}" + Environment.NewLine);
         }
-
-    }
-
-    // Update is called once per frame
-    void Update () {
 
     }
 }
