@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Benchmark : MonoBehaviour
 {
 
-    public Text Text;
-    public Text Text2;
+    [SerializeField] private TextMeshProUGUI _fpsText;
+    [SerializeField] private TextMeshProUGUI _frametimeText;
 
     public bool benchmarkModeEnabled;
     
@@ -69,40 +71,23 @@ public class Benchmark : MonoBehaviour
         
         _animator = GetComponent<Animator>();
         
-        StartCoroutine(benchmarkModeEnabled ? DisplayFps() : RunBenchmarks());
+        StartCoroutine(benchmarkModeEnabled ? RunBenchmarks() : DisplayFps());
     }
 
     private IEnumerator DisplayFps()
     {
         while (true)
         {
-            var time = Time.time;
             TimeSpent += (Time.unscaledDeltaTime - TimeSpent) * 0.1f;	
-                   
             
-            float ms = 1000.0f * TimeSpent;
-            float fps = 1.0f / TimeSpent;
-            float timeSinceStart = Mathf.Round(Time.time - time);
+            var ms = 1000.0f * TimeSpent;
+            var fps = 1.0f / TimeSpent;
 
-            Text.text = $"{fps:0.0} fps ({ms:0.} ms)";
+            _fpsText.SetText($"FPS: {fps:0.0}");
+            _frametimeText.SetText($"Frametime: {ms:0.00}ms");
 
             yield return null;
-
         }
-    }
-
-    public void SetFrameInfo(double fogDensityTime, double applyBlurTime, double applySceneTime, double totalTime)
-    {
-        _currentFrameData = new FrameData(fogDensityTime, applyBlurTime, applySceneTime, totalTime);
-        
-        var densityProc = fogDensityTime / totalTime * 100f;
-        var blurProc = applyBlurTime / totalTime * 100f;
-        var applyToSceneProc = applySceneTime / totalTime * 100f;
-        
-        Text2.text = $"Total frame time: {totalTime} ms\n" +
-                     $"Calculate Density: {fogDensityTime:0.000} ms ({densityProc:0.0}%)\n" +
-                     $"Apply Blur: {applyBlurTime:0.000} ms ({blurProc:0.0}%)\n" +
-                     $"Apply To Scene: {applySceneTime:0.000} ms ({applyToSceneProc:0.0}%)";
     }
     
     private IEnumerator RunBenchmarks()
@@ -118,7 +103,7 @@ public class Benchmark : MonoBehaviour
     }
 
     
-    private IEnumerator StartBench(string runName, bool writeToCSV = true)
+    private IEnumerator StartBench(string runName, bool writeToCsv = true)
     {
         TimeSpent = 0;
         Data = new Dictionary<float, List<CSVData>>();
@@ -161,14 +146,15 @@ public class Benchmark : MonoBehaviour
             var frameD = _currentFrameData;
             
             Data[timeSinceStart].Add(new CSVData(frameD, benchMarkD));
-
-            Text.text = $"{fps:0.0} fps ({ms:0.} ms), time elapsed: {timeSinceStart} - {runName} ";
-                
+            
+            _fpsText.SetText($"{fps:0.0} FPS");
+            _frametimeText.SetText($"{ms:0.} ms, time elapsed: {timeSinceStart} - {runName}");
+            
             return !_animator.GetCurrentAnimatorStateInfo(0).IsName("Benchmark");
         });
 		
 		
-        if (writeToCSV)
+        if (writeToCsv)
         {
             WriteToCsv(runName);
         }
@@ -177,8 +163,8 @@ public class Benchmark : MonoBehaviour
 
     private void WriteToCsv(string runName)
     {
-        string fileName = Application.persistentDataPath + "/volumetricfog_" + runName + "_" +
-                          DateTime.Now.ToFileTimeUtc() + ".csv";
+        var fileName = Application.persistentDataPath + "/volumetricfog_" + runName + "_" +
+                       DateTime.Now.ToFileTimeUtc() + ".csv";
 
         if (!File.Exists(fileName))
         {
@@ -189,9 +175,9 @@ public class Benchmark : MonoBehaviour
 
         foreach (var data in Data)
         {
-            string fps = data.Value.Average(val => val.BenchmarkData.Fps).ToString();
-            string ms = data.Value.Average(val => val.BenchmarkData.Ms).ToString();
-            string time = data.Key.ToString();
+            var fps = data.Value.Average(val => val.BenchmarkData.Fps).ToString(CultureInfo.InvariantCulture);
+            var ms = data.Value.Average(val => val.BenchmarkData.Ms).ToString(CultureInfo.InvariantCulture);
+            var time = data.Key.ToString(CultureInfo.InvariantCulture);
 			
             File.AppendAllText(fileName, $"{time}.{fps}.{ms}" + Environment.NewLine);
         }
