@@ -38,3 +38,5 @@ sysinfo.txt
 /Assets/Plugins/*
 /Assets/Plugins.meta
 
+/Assets/3rdParty/*
+/Assets/3rdParty.meta
