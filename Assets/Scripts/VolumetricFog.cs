@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Enum;
 using UnityEngine;
@@ -7,7 +6,7 @@ using UnityEngine.Rendering;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Camera))]
-class VolumetricFog : MonoBehaviour
+public class VolumetricFog : MonoBehaviour
 {
     private const RenderTextureFormat FORMAT_FOGRENDERTEXTURE = RenderTextureFormat.ARGBHalf;
 
@@ -33,19 +32,20 @@ class VolumetricFog : MonoBehaviour
     public FPSTarget _FPSTarget = FPSTarget.MAX_60;
 
     [Header("Physical coefficients")] public bool _UseRayleighScattering = true;
-    public float _RayleighScatteringCoef = 0.25f;
+    [Range(-1, 256)] public float _RayleighScatteringCoef = 0.01f;
 
-    public float _MieScatteringCoef = 0.25f;
+    [Range(-1, 256)] public float _MieScatteringCoef = 0.05f;
     public MieScatteringApproximation _MieScatteringApproximation = MieScatteringApproximation.HenyeyGreenstein;
 
-    public float _FogDensityCoef = 0.3f;
-    public float _ExtinctionCoef = 0.01f;
+    [Range(0, 10000f)] public float _FogDensityCoef = 0.3f;
+    [Range(0, 10000f)] public float _ExtinctionCoef = 0.05f;
     [Range(-1, 1)] public float _Anisotropy = 0.5f;
-    public float _HeightDensityCoef = 0.5f;
-    public float _BaseHeightDensity = 0.5f;
+    [Range(0, 1)] public float _HeightDensityCoef = 0.5f;
+    [Range(0, 10000)] public float _BaseHeightDensity = 0.5f;
 
-    [Header("Blur")] [Range(1, 8)] public int _BlurIterations = 4;
-    public float _BlurDepthFalloff = 0.5f;
+    [Header("Blur")]
+    [Range(1, 8)] public int _BlurIterations = 4;
+    [Range(0, 2000)] public float _BlurDepthFalloff = 75f;
     public Vector3 _BlurOffsets = new Vector3(1, 2, 3);
     public Vector3 _BlurWeights = new Vector3(0.213f, 0.17f, 0.036f);
 
@@ -124,6 +124,7 @@ class VolumetricFog : MonoBehaviour
     }
 
     private Camera _currentCamera;
+
     public Camera CurrentCamera
     {
         get
@@ -175,6 +176,7 @@ class VolumetricFog : MonoBehaviour
     private void OnEnable()
     {
         sunLight = FindObjectsOfType<Light>().First(l => l.type == LightType.Directional);
+        FogLightCasters.Add(sunLight);
     }
 
     private void Start()

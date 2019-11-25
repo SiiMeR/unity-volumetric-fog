@@ -128,13 +128,13 @@ MonoBehaviour:
   _FogWorldPosition: {x: 111.61, y: 3, z: 100}
   _FogSize: 86
   _RenderTextureResDivision: 0
-  _RayMarchSteps: 256
+  _RayMarchSteps: 128
   _OptimizeSettingsFPS: 0
   _FPSTarget: 1
   _UseRayleighScattering: 0
   _RayleighScatteringCoef: 0.01
   _MieScatteringCoef: 0.1
-  _MieScatteringApproximation: 2
+  _MieScatteringApproximation: 0
   _FogDensityCoef: 2
   _ExtinctionCoef: 0.05
   _Anisotropy: 0.19
@@ -151,11 +151,11 @@ MonoBehaviour:
   _LightIntensity: 1
   _WindDirection: {x: 1, y: 0, z: 0}
   _Speed: 0.5
-  _NoiseSource: 4
+  _NoiseSource: 1
   _AddSceneColor: 1
-  _BlurEnabled: 0
+  _BlurEnabled: 1
   _ShadowsEnabled: 1
-  _HeightFogEnabled: 0
+  _HeightFogEnabled: 1
   _NoiseScale: 0.05
   _3DNoiseTextureDimensions: {x: 48, y: 48, z: 64}
 --- !u!1 &1512003169963242

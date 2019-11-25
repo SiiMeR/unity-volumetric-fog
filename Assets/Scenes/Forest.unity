@@ -204,7 +204,32 @@ PrefabInstance:
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
       propertyPath: _OptimizeSettingsFPS
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
+        type: 3}
+      propertyPath: _NoiseSource
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
+        type: 3}
+      propertyPath: _HeightFogEnabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
+        type: 3}
+      propertyPath: _ShadowsEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
+        type: 3}
+      propertyPath: _BlurEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
+        type: 3}
+      propertyPath: _NoiseScale
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 224416662048640022, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
@@ -321,7 +346,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 5.314e-42, y: 6e-44, z: 6.6e-43, w: 0.9041276}
+  m_BoundingSphereOverride: {x: 1.5e-44, y: 0, z: 1, w: 4e-45}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
