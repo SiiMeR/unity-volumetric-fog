@@ -29,7 +29,7 @@ public class VolumetricFog : MonoBehaviour
     [Range(16, 256)] public int _RayMarchSteps = 128;
 
     public bool _OptimizeSettingsFPS; // optimize raymarch steps according to fps
-    public FPSTarget _FPSTarget = FPSTarget.MAX_60;
+    public FPSTarget _FPSTarget = FPSTarget.Max60;
 
     [Header("Physical coefficients")] public bool _UseRayleighScattering = true;
     [Range(-1, 256)] public float _RayleighScatteringCoef = 0.01f;
@@ -368,16 +368,16 @@ public class VolumetricFog : MonoBehaviour
         var targetFps = 30f;
         switch (_FPSTarget)
         {
-            case FPSTarget.MAX_30:
+            case FPSTarget.Max30:
                 targetFps = 30;
                 break;
-            case FPSTarget.MAX_60:
+            case FPSTarget.Max60:
                 targetFps = 60;
                 break;
-            case FPSTarget.MAX_120:
+            case FPSTarget.Max120:
                 targetFps = 120;
                 break;
-            case FPSTarget.UNLIMITED:
+            case FPSTarget.Unlimited:
                 targetFps = currentFps; // do not optimize
                 break;
             default:

@@ -59,7 +59,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 2000
+  far clip plane: 1999
   field of view: 70
   orthographic: 0
   orthographic size: 5
@@ -67,12 +67,12 @@ Camera:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: 1
+  m_RenderingPath: 3
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -121,43 +121,44 @@ MonoBehaviour:
   _Create3DLUTShader: {fileID: 7200000, guid: 9ec5b97ad6003dd4d9006df2f588ae3a, type: 3}
   FogLightCasters:
   - {fileID: 0}
+  - {fileID: 0}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
-  _BlueNoiseTexture2D: {fileID: 2800000, guid: e27671804ab5acf4c85490a01943c961, type: 3}
+  _BlueNoiseTexture2D: {fileID: 2800000, guid: 23d5ea4373b861b408ef7ed28d0e3a97, type: 3}
   sunLight: {fileID: 0}
   _LimitFogInSize: 0
   _FogWorldPosition: {x: 111.61, y: 3, z: 100}
   _FogSize: 86
   _RenderTextureResDivision: 0
-  _RayMarchSteps: 128
+  _RayMarchSteps: 256
   _OptimizeSettingsFPS: 0
-  _FPSTarget: 1
-  _UseRayleighScattering: 0
+  _FPSTarget: 2
+  _UseRayleighScattering: 1
   _RayleighScatteringCoef: 0.01
-  _MieScatteringCoef: 0.1
+  _MieScatteringCoef: 0.05
   _MieScatteringApproximation: 0
-  _FogDensityCoef: 2
-  _ExtinctionCoef: 0.05
-  _Anisotropy: 0.19
-  _HeightDensityCoef: 0.17
-  _BaseHeightDensity: 30.62
-  _BlurIterations: 4
-  _BlurDepthFalloff: 75
+  _FogDensityCoef: 4
+  _ExtinctionCoef: 0.04
+  _Anisotropy: -0.1
+  _HeightDensityCoef: 0.49
+  _BaseHeightDensity: 52
+  _BlurIterations: 6
+  _BlurDepthFalloff: 100
   _BlurOffsets: {x: 1, y: 2, z: 3}
   _BlurWeights: {x: 0.2, y: 0.1, z: 0.05}
-  _UseLightColorForFog: 1
+  _UseLightColorForFog: 0
   _FogInShadowColor: {r: 0.0627451, g: 0.20784314, b: 0.49019608, a: 1}
-  _FogInLightColor: {r: 1, g: 0.9507965, b: 0.6839622, a: 1}
-  _AmbientFog: 0.3
+  _FogInLightColor: {r: 1, g: 0.27764452, b: 0.09800005, a: 1}
+  _AmbientFog: 0.15
   _LightIntensity: 1
   _WindDirection: {x: 1, y: 0, z: 0}
-  _Speed: 0.5
-  _NoiseSource: 1
+  _Speed: 0
+  _NoiseSource: 2
   _AddSceneColor: 1
   _BlurEnabled: 1
   _ShadowsEnabled: 1
-  _HeightFogEnabled: 1
-  _NoiseScale: 0.05
-  _3DNoiseTextureDimensions: {x: 48, y: 48, z: 64}
+  _HeightFogEnabled: 0
+  _NoiseScale: 0.9
+  _3DNoiseTextureDimensions: {x: 128, y: 128, z: 128}
 --- !u!1 &1512003169963242
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,7 +206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 282ca755df74c92408ac26cda57322ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _MoveSpeed: 10
+  _MoveSpeed: 8
   _LockCursor: 1
   _XSensitivity: 1
   _YSensitivity: 1

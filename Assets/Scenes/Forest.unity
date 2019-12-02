@@ -178,7 +178,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
-      propertyPath: FogLightCasters.Array.data[0]
+      propertyPath: FogLightCasters.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
+        type: 3}
+      propertyPath: FogLightCasters.Array.data[2]
       value: 
       objectReference: {fileID: 597845560}
     - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
@@ -186,90 +191,15 @@ PrefabInstance:
       propertyPath: sunLight
       value: 
       objectReference: {fileID: 597845560}
-    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: _LimitFogInSize
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: _RayMarchSteps
-      value: 167
-      objectReference: {fileID: 0}
-    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: _FPSTarget
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: _OptimizeSettingsFPS
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: _NoiseSource
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: _HeightFogEnabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: _ShadowsEnabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: _BlurEnabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114654324437572800, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: _NoiseScale
-      value: 0.01
-      objectReference: {fileID: 0}
     - target: {fileID: 224416662048640022, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2884300384054891921, guid: 1c135b10b7692ea4383285d4f646a727,
+    - target: {fileID: 20988825282140592, guid: 1c135b10b7692ea4383285d4f646a727,
         type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2884300384054891921, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2884300384054891921, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6716010342065675785, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6716010342065675785, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6716010342065675785, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6716010342065675785, guid: 1c135b10b7692ea4383285d4f646a727,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
+      propertyPath: far clip plane
+      value: 1500
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1c135b10b7692ea4383285d4f646a727, type: 3}
@@ -346,7 +276,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 1.5e-44, y: 0, z: 1, w: 4e-45}
+  m_BoundingSphereOverride: {x: 0, y: 0.068359375, z: 0.02734375, w: -0.017578125}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0

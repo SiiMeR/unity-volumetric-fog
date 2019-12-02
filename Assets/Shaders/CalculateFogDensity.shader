@@ -132,7 +132,7 @@
                 return weights;
             }
             
-                        //-----------------------------------------------------------------------------------------
+            //-----------------------------------------------------------------------------------------
             // GetCascadeShadowCoord
             //-----------------------------------------------------------------------------------------
             inline float4 GetCascadeShadowCoord(float4 wpos, fixed4 cascadeWeights)
@@ -163,12 +163,9 @@
 			
 			// combines cascades to get shadowmap coordinate for later sampling of shadowmap
 			fixed4 getShadowCoord(float4 worldPos, float4 weights){
-			
-			 
 			    float3 shadowCoord = float3(0,0,0);
 			    
 			    // find which cascades need sampling and then transform the positions to light space using worldtoshadow
-			    
 			    if(weights[0] == 1){
 			        shadowCoord += mul(unity_WorldToShadow[0], worldPos).xyz; 
 			    }
@@ -203,7 +200,6 @@
 			
 			// gpu pro 6 p. 224
 			fixed4 getHeightDensity(float height){
-			
 			    float ePow = pow(e, (-height * _HeightDensityCoef));
 			    
 			    return _BaseHeightDensity * ePow;
@@ -218,15 +214,12 @@
 			     
 			     float cos2 = costheta * costheta;
 			     
-			     float term2 = (1 + cos2) / (pow((1 + g2 - 2 * _Anisotropy * cos2),3/2));
-			     
+			     float term2 = (1 + cos2) / (pow((1 + g2 - 2 * _Anisotropy * cos2),3/2));  
 			     return term1 * term2;
-			
 			}
 			
 			// https://media.contentapi.ea.com/content/dam/eacom/frostbite/files/s2016-pbs-frostbite-sky-clouds-new.pdf
-			float getSchlickScattering(float costheta){
-			     
+			float getSchlickScattering(float costheta){ 
 			     float o1 = 1 - (_kFactor * _kFactor);
 			     
 			     float sqr = (1 + _kFactor * costheta) * (1 + _kFactor * costheta);
@@ -317,21 +310,19 @@
                 //linearise depth		
                 float lindepth = Linear01Depth(depth);
                 
-                //get view and then world positions		
+                // calculate view position of the pixel	
                 float4 viewPos = float4(i.ray.xyz * lindepth,1);
                 
+                // world position of the pixel
                 float3 worldPos = mul(InverseViewMatrix, viewPos).xyz;	
                 
                 //calculate weights for cascade split selection  
                 float4 weights = getCascadeWeights(-viewPos.z);
              
                 // ray direction in world space
-                float3 rayDir = normalize(worldPos-_WorldSpaceCameraPos.xyz);
-                //float3 rayDir = i.ray - _WorldSpaceCameraPos;
-                //rayDir *= lindepth;  
+                float3 rayDir = normalize(worldPos - _WorldSpaceCameraPos.xyz);
                   
-                float rayDistance = length(worldPos-_WorldSpaceCameraPos.xyz);
-               // float rayDistance = length(rayDir);
+                float rayDistance = length(worldPos - _WorldSpaceCameraPos.xyz);
                 
                 //calculate step size for raymarching
                 float stepSize = rayDistance / STEPS;
@@ -362,7 +353,7 @@
                 for(; currentSteps < STEPS ; currentSteps++)
                 {	
                                     			
-                    if(transmittance < 0.001){
+                    if(transmittance < 0.0001){
                         break;
                     }  
                     
@@ -428,10 +419,7 @@
                     currentPos += rayDir * stepSize; // step forward along ray
 
                 } // raymarch loop   
-                
-              if(true){
-             //   return tex2D(_BlueNoiseTexture, i.uv);
-              }        
+                     
               return float4(result , transmittance);          
 
             }  // frag

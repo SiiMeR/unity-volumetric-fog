@@ -1,7 +1,10 @@
-﻿public enum FPSTarget
+﻿namespace Enum
 {
-    MAX_30,
-    MAX_60,
-    MAX_120,
-    UNLIMITED
+    public enum FPSTarget
+    {
+        Max30,
+        Max60,
+        Max120,
+        Unlimited
+    }
 }

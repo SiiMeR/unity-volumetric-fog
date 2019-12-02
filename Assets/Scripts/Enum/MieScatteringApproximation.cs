@@ -1,7 +1,10 @@
-﻿public enum MieScatteringApproximation
+﻿namespace Enum
 {
-    HenyeyGreenstein,
-    CornetteShanks,
-    Schlick,
-    Off
+    public enum MieScatteringApproximation
+    {
+        HenyeyGreenstein,
+        CornetteShanks,
+        Schlick,
+        Off
+    }
 }

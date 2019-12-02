@@ -15,7 +15,6 @@
 				float3 ray : TEXCOORD1;
             };   
 			
-
             uniform sampler2D FogRendertargetLinear,
                               _CameraDepthTexture,
                               _MainTex;
