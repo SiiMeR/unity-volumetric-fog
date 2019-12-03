@@ -26,26 +26,26 @@ public class VolumetricFog : MonoBehaviour
     public float _FogSize = 10.0f;
 
     [Header("Performance")] [Range(0, 8)] public int _RenderTextureResDivision;
-    [Range(16, 256)] public int _RayMarchSteps = 128;
+    [Range(16, 300)] public int _RayMarchSteps = 128;
 
     public bool _OptimizeSettingsFPS; // optimize raymarch steps according to fps
     public FPSTarget _FPSTarget = FPSTarget.Max60;
 
     [Header("Physical coefficients")] public bool _UseRayleighScattering = true;
-    [Range(-1, 256)] public float _RayleighScatteringCoef = 0.01f;
+    [Range(-1, 2)] public float _RayleighScatteringCoef = 0.01f;
 
-    [Range(-1, 256)] public float _MieScatteringCoef = 0.05f;
+    [Range(-1, 2)] public float _MieScatteringCoef = 0.05f;
     public MieScatteringApproximation _MieScatteringApproximation = MieScatteringApproximation.HenyeyGreenstein;
 
-    [Range(0, 10000f)] public float _FogDensityCoef = 0.3f;
-    [Range(0, 10000f)] public float _ExtinctionCoef = 0.05f;
-    [Range(-1, 1)] public float _Anisotropy = 0.5f;
-    [Range(0, 1)] public float _HeightDensityCoef = 0.5f;
+    [Range(0, 100f)] public float _FogDensityCoef = 2f;
+    [Range(0, 1f)] public float _ExtinctionCoef = 0.05f;
+    [Range(-1f, 1f)] public float _Anisotropy = 0.5f;
+    [Range(0, 1f)] public float _HeightDensityCoef = 0.5f;
     [Range(0, 10000)] public float _BaseHeightDensity = 0.5f;
 
     [Header("Blur")]
     [Range(1, 8)] public int _BlurIterations = 4;
-    [Range(0, 2000)] public float _BlurDepthFalloff = 75f;
+    [Range(0, 2000f)] public float _BlurDepthFalloff = 75f;
     public Vector3 _BlurOffsets = new Vector3(1, 2, 3);
     public Vector3 _BlurWeights = new Vector3(0.213f, 0.17f, 0.036f);
 
@@ -175,8 +175,17 @@ public class VolumetricFog : MonoBehaviour
 
     private void OnEnable()
     {
-        sunLight = FindObjectsOfType<Light>().First(l => l.type == LightType.Directional);
-        FogLightCasters.Add(sunLight);
+        sunLight = FindObjectsOfType<Light>().FirstOrDefault(l => l.type == LightType.Directional);
+
+        if (!sunLight)
+        {
+            sunLight = FindObjectOfType<Light>();
+        }
+        
+        if (!FogLightCasters.Contains(sunLight))
+        {
+            FogLightCasters.Add(sunLight);
+        }
     }
 
     private void Start()
@@ -191,12 +200,10 @@ public class VolumetricFog : MonoBehaviour
         var is3DSource =
                 _NoiseSource.HasFlag(NoiseSource.SimplexNoiseCompute) ||
                 _NoiseSource.HasFlag(NoiseSource.Texture3DCompute) ||
-                _NoiseSource.HasFlag(NoiseSource.Texture3D)
-            ;
+                _NoiseSource.HasFlag(NoiseSource.Texture3D);
 
         if (!is3DSource) return;
-
-
+        
         switch (_NoiseSource)
         {
             case NoiseSource.Texture3D:
@@ -226,35 +233,35 @@ public class VolumetricFog : MonoBehaviour
 
 
     // based on https://interplayoflight.wordpress.com/2015/07/03/adventures-in-postprocessing-with-unity/    
-    private void RemoveLightCommandBuffer(Light light)
+    private void RemoveLightCommandBuffer(Light lightComponent)
     {
-        if (_afterShadowPass != null && light)
+        if (_afterShadowPass != null && lightComponent)
         {
-            light.RemoveCommandBuffer(LightEvent.AfterShadowMap, _afterShadowPass);
+            lightComponent.RemoveCommandBuffer(LightEvent.AfterShadowMap, _afterShadowPass);
         }
     }
 
     // based on https://interplayoflight.wordpress.com/2015/07/03/adventures-in-postprocessing-with-unity/
-    private void AddLightCommandBuffer(Light light)
+    private void AddLightCommandBuffer(Light lightComponent)
     {
         _afterShadowPass = new CommandBuffer {name = "Volumetric Fog ShadowMap"};
 
         _afterShadowPass.SetGlobalTexture("ShadowMap",
             new RenderTargetIdentifier(BuiltinRenderTextureType.CurrentActive));
 
-        if (light)
+        if (lightComponent)
         {
-            light.AddCommandBuffer(LightEvent.AfterShadowMap, _afterShadowPass);
+            lightComponent.AddCommandBuffer(LightEvent.AfterShadowMap, _afterShadowPass);
         }
     }
 
 
     private bool HasRequiredAssets()
     {
-        return _FogTexture2D ||
-               ApplyFogMaterial || _ApplyFogShader ||
-               CalculateFogMaterial || _CalculateFogShader ||
-               ApplyBlurMaterial || _ApplyBlurShader;
+        return _FogTexture2D &&
+               ApplyFogMaterial && _ApplyFogShader &&
+               CalculateFogMaterial && _CalculateFogShader &&
+               ApplyBlurMaterial && _ApplyBlurShader;
     }
 
 
@@ -279,7 +286,10 @@ public class VolumetricFog : MonoBehaviour
             Shader.EnableKeyword("SHADOWS_OFF");
         }
 
-        sunLight.intensity = _LightIntensity;
+        if (sunLight)
+        {
+            sunLight.intensity = _LightIntensity;
+        }
 
         var fogRTWidth = source.width >> _RenderTextureResDivision;
         var fogRTHeight = source.height >> _RenderTextureResDivision;
