@@ -19,6 +19,7 @@ Mouse look - Look around
 Shift - Fly faster  
 
 # More screenshots
+![Fog result image 1](docs/images/fogresult5.PNG?raw=true "")
 ![Fog result image 1](docs/images/fogresult1.PNG?raw=true "")
 ![Fog result 2019 jan.](docs/images/Fogresult2019.png?raw=true "")  
 ![Fog result image 2](docs/images/fogresult2.PNG?raw=true "")
