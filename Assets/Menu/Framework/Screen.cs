@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Menu.Framework;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace NewMainMenu.Base

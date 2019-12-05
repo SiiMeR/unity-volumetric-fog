@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Menu;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Screen = NewMainMenu.Base.Screen;
 
-namespace NewMainMenu.Base
+namespace Menu.Framework
 {
 	public class MenuManager : Singleton<MenuManager>
 	{
@@ -113,9 +114,16 @@ namespace NewMainMenu.Base
 		private void Update()
 		{
 			// On Android the back button is sent as Esc
-			if (Input.GetKeyDown(KeyCode.Escape) && _screens.Count > 0)
+			if (Input.GetKeyDown(KeyCode.Escape))
 			{
-				_screens.Peek().OnBackPressed();
+				if (_screens.Count > 0)
+				{
+					_screens.Peek().OnBackPressed();
+				}
+				else
+				{
+					PauseMenuController.Show();
+				}
 			}
 		}
 	}

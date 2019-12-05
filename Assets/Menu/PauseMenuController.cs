@@ -1,10 +1,33 @@
-﻿using Menu.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Menu.Framework;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Menu
 {
     public class PauseMenuController : AbstractScreen<PauseMenuController>
     {
+        private List<Button> _buttons;
+
+        private void Start()
+        {
+            _buttons = GetComponentsInChildren<Button>().ToList();
+            // _buttons.ForEach(button => button.OnPointerEnter());
+        }
+
+        private void OnEnable()
+        {
+            Time.timeScale = 0f;
+        }
+
+        private void OnDisable()
+        {
+            Time.timeScale = 1f;
+        }
+
         public void OnCloseMenuPressed()
         {
             Hide();
