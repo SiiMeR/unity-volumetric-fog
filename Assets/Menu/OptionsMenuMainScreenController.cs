@@ -4,6 +4,5 @@ namespace Menu
 {
     public class OptionsMenuMainScreenController : AbstractScreen<OptionsMenuMainScreenController>
     {
-        
     }
 }

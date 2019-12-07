@@ -12,13 +12,13 @@ namespace Menu
     {
         public Color onHoverColor = Color.black;
         private TextMeshProUGUI _text;
-
+        
         protected override void Awake()
         {
-            onHoverColor.a = 0;
             base.Awake();
             _text = GetComponentInChildren<TextMeshProUGUI>();
             targetGraphic.color = onHoverColor;
+            onHoverColor.a = 0;
         }
 
         public override void OnPointerEnter(PointerEventData eventData)

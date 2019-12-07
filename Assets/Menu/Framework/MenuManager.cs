@@ -11,18 +11,15 @@ namespace Menu.Framework
 	{
 		[Header("Menu screens")]
 		public PauseMenuController pauseMenuPrefab;
-		// public TitleScreen titleScreenPrefab;
-		// public OptionsScreen optionsScreenPrefab;
+		public OptionsMenuMainScreenController optionsMenuMainPrefab;
 
 		private readonly Stack<Screen> _screens = new Stack<Screen>();
 
 
 		private void Awake()
 		{
-			if (SceneManager.GetActiveScene().name == "Menu")
-			{
-				// TitleScreen.Show();
-			}
+			OptionsMenuMainScreenController.Show();
+			
 		}
 
 		public void CreateInstance<T>() where T : Screen
@@ -108,6 +105,11 @@ namespace Menu.Framework
 
 				if (screen.disableScreensUnderneath)
 					break;
+			}
+
+			if (_screens.Count == 0)
+			{
+				Time.timeScale = 1f;
 			}
 		}
 
