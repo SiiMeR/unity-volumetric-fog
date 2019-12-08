@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Menu
 {
-    public class EventManager : Singleton<EventManager>
+    public static class EventManager
     {
         public delegate void OnRaymarchStepsChanged(float newValue);
 
