@@ -32,17 +32,20 @@ namespace Menu
         public void UpdateIndicatorText(float newValue)
         {
             _indicatorText.SetText(newValue.ToString(CultureInfo.InvariantCulture));
+            EventManager.RaymarchStepsChanged(newValue); // TODO: Does not belong here
         }
-
-        // public override void OnPointerDown(PointerEventData eventData)
-        // {
-        //     targetGraphic.DOColor(onClickColor, .25f);
-        // }
-        //
-        // public override void OnPointerUp(PointerEventData eventData)
-        // {
-        //     targetGraphic.DOColor(_originalColor, .25f);
-        // }
+        
+        public override void OnPointerDown(PointerEventData eventData)
+        {
+            base.OnPointerDown(eventData);
+            OptionsMenuMainScreenController.Instance.GetComponent<CanvasGroup>().alpha = .3f;
+        }
+        
+        public override void OnPointerUp(PointerEventData eventData)
+        {
+            base.OnPointerUp(eventData);
+            OptionsMenuMainScreenController.Instance.GetComponent<CanvasGroup>().alpha = 1.0f;
+        }
 
         // public override void OnPointerEnter(PointerEventData eventData)
         // {

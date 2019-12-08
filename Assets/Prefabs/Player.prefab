@@ -122,6 +122,7 @@ MonoBehaviour:
   FogLightCasters:
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
   _BlueNoiseTexture2D: {fileID: 2800000, guid: 23d5ea4373b861b408ef7ed28d0e3a97, type: 3}
   sunLight: {fileID: 0}
@@ -171,6 +172,7 @@ GameObject:
   - component: {fileID: 114403535140116930}
   - component: {fileID: 95884583520890922}
   - component: {fileID: 2052194915901544986}
+  - component: {fileID: 465666613559954021}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -245,6 +247,18 @@ MonoBehaviour:
   _frametimeText: {fileID: 4578041579053456225}
   benchmarkModeEnabled: 0
   TimeSpent: 0
+--- !u!114 &465666613559954021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512003169963242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2a8e7d975ce4baaad6c893f45a3e6c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1821856736
 PrefabInstance:
   m_ObjectHideFlags: 0
