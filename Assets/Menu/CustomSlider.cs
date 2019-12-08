@@ -38,13 +38,13 @@ namespace Menu
         public override void OnPointerDown(PointerEventData eventData)
         {
             base.OnPointerDown(eventData);
-            OptionsMenuMainScreenController.Instance.GetComponent<CanvasGroup>().alpha = .3f;
+            // OptionsMenuMainScreenController.Instance.GetComponent<CanvasGroup>().alpha = .3f;
         }
         
         public override void OnPointerUp(PointerEventData eventData)
         {
             base.OnPointerUp(eventData);
-            OptionsMenuMainScreenController.Instance.GetComponent<CanvasGroup>().alpha = 1.0f;
+            // OptionsMenuMainScreenController.Instance.GetComponent<CanvasGroup>().alpha = 1.0f;
         }
 
         // public override void OnPointerEnter(PointerEventData eventData)

@@ -1,9 +1,19 @@
-﻿using Menu.Framework;
+﻿using System;
+using Menu.Framework;
 
 namespace Menu
 {
     public class OptionsMenuMainScreenController : AbstractScreen<OptionsMenuMainScreenController>
     {
-        // TODO: Bind correct configuration values on opening this menu
+        private void Start()
+        {
+            var volumetricFog = FindObjectOfType<VolumetricFog>();
+            if (!volumetricFog)
+            {
+                return;
+            }
+            
+            // TODO: Bind correct configuration values on opening this menu
+        }
     }
 }
