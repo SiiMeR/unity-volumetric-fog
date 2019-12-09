@@ -121,8 +121,6 @@ MonoBehaviour:
   _Create3DLUTShader: {fileID: 7200000, guid: 9ec5b97ad6003dd4d9006df2f588ae3a, type: 3}
   FogLightCasters:
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   _FogTexture2D: {fileID: 2800000, guid: b8f5422c90699b147a50d5e2bd3b7509, type: 3}
   _BlueNoiseTexture2D: {fileID: 2800000, guid: 23d5ea4373b861b408ef7ed28d0e3a97, type: 3}
   sunLight: {fileID: 0}
