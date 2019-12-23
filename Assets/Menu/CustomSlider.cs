@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using DG.Tweening;
+﻿using System.Globalization;
 using TMPro;
 using UnityEditor;
 using UnityEditor.UI;

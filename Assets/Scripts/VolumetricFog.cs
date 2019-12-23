@@ -26,7 +26,7 @@ public class VolumetricFog : MonoBehaviour
     public float _FogSize = 10.0f;
 
     [Header("Performance")] [Range(0, 8)] public int _RenderTextureResDivision;
-    [Range(16, 300)] public int _RayMarchSteps = 128;
+    [Range(1, 1024)] public int _RayMarchSteps = 128;
 
     public bool _OptimizeSettingsFPS; // optimize raymarch steps according to fps
     public FPSTarget _FPSTarget = FPSTarget.Max60;

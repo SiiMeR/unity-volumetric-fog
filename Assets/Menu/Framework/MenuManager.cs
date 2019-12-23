@@ -3,7 +3,7 @@ using System.Reflection;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Screen = NewMainMenu.Base.Screen;
+using Screen = Menu.Framework.Screen;
 
 namespace Menu.Framework
 {
@@ -124,7 +124,7 @@ namespace Menu.Framework
 				}
 				else
 				{
-					PauseMenuController.Show();
+					OptionsMenuMainScreenController.Show();
 				}
 			}
 		}

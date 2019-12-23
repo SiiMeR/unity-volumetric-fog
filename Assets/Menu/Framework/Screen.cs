@@ -1,8 +1,6 @@
-﻿using Menu.Framework;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
-namespace NewMainMenu.Base
+namespace Menu.Framework
 {
     public abstract class Screen<T> : Screen where T : Screen<T>
     {
