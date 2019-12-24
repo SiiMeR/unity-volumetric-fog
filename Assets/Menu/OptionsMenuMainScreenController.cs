@@ -1,6 +1,7 @@
 ﻿using System;
 using DG.Tweening;
 using Menu.Framework;
+using TMPro;
 using UnityEngine;
 
 namespace Menu

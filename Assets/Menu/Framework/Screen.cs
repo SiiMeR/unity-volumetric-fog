@@ -8,8 +8,6 @@ namespace Menu.Framework
 
         protected static void Open()
         {
-            Time.timeScale = 0f;
-
             if (Instance == null) 
                 MenuManager.Instance.CreateInstance<T>();
             else 

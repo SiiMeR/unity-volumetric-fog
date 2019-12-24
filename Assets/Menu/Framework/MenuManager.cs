@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Screen = Menu.Framework.Screen;
@@ -9,17 +10,17 @@ namespace Menu.Framework
 {
 	public class MenuManager : Singleton<MenuManager>
 	{
+		[SerializeField] private RectTransform _escapeToSettings;
+		
 		[Header("Menu screens")]
 		public PauseMenuController pauseMenuPrefab;
 		public OptionsMenuMainScreenController optionsMenuMainPrefab;
 
 		private readonly Stack<Screen> _screens = new Stack<Screen>();
 
-
 		private void Awake()
 		{
-			OptionsMenuMainScreenController.Show();
-			
+			// OptionsMenuMainScreenController.Show();
 		}
 
 		public void CreateInstance<T>() where T : Screen
@@ -110,6 +111,7 @@ namespace Menu.Framework
 			if (_screens.Count == 0)
 			{
 				Time.timeScale = 1f;
+				_escapeToSettings.DOAnchorPosY(0, 0.1f);
 			}
 		}
 
@@ -124,6 +126,8 @@ namespace Menu.Framework
 				}
 				else
 				{
+					Time.timeScale = 0f;
+					_escapeToSettings.DOAnchorPosY(-50, 0.2f);
 					OptionsMenuMainScreenController.Show();
 				}
 			}
