@@ -49,7 +49,7 @@ public class ColorPicker : MonoBehaviour
         Setup.ColorToggleElement.Toggle(Setup.ShowColorSliderToggle);
         Setup.RgbSliders.Toggle(Setup.ShowRgb);
         Setup.HsvSliders.Toggle(Setup.ShowHsv);
-        Setup.ColorBox.Toggle(Setup.ShowColorBox);
+        // Setup.ColorBox.Toggle(Setup.ShowColorBox);
 
         HandleHeaderSetting(Setup.ShowHeader);
         UpdateColorToggleText();

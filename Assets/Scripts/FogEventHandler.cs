@@ -1,5 +1,5 @@
-using System;
 using Menu;
+using UnityEngine;
 
 public class FogEventHandler : Singleton<FogEventHandler>
 {
@@ -8,11 +8,13 @@ public class FogEventHandler : Singleton<FogEventHandler>
     private void Awake()
     {
         EventManager.onRaymarchStepsChanged += OnRaymarchStepsChanged;
+        EventManager.onFogColorChanged += OnFogColorChanged;
     }
 
     private void OnDestroy()
     {
         EventManager.onRaymarchStepsChanged -= OnRaymarchStepsChanged;
+        EventManager.onFogColorChanged += OnFogColorChanged;
     }
 
     private void Start()
@@ -23,5 +25,10 @@ public class FogEventHandler : Singleton<FogEventHandler>
     private void OnRaymarchStepsChanged(float newValue)
     {
         _fog._RayMarchSteps = (int) newValue;
+    }  
+    
+    private void OnFogColorChanged(Color newColor)
+    {
+        _fog._FogInLightColor = newColor;
     }
 }
