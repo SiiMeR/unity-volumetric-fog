@@ -24,11 +24,11 @@ public class FogEventHandler : Singleton<FogEventHandler>
 
     private void OnRaymarchStepsChanged(float newValue)
     {
-        _fog._RayMarchSteps = (int) newValue;
+        _fog.fogOptions.rayMarchSteps = (int) newValue;
     }  
     
     private void OnFogColorChanged(Color newColor)
     {
-        _fog._FogInLightColor = newColor;
+        _fog.fogOptions.fogInLightColor = newColor;
     }
 }
