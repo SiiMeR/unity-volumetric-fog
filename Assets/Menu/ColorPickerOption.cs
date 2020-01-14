@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Menu
 {
@@ -19,24 +20,18 @@ namespace Menu
 
         public void OnColorClicked()
         {
-            if (_hsvField.activeInHierarchy)
+            if(!_hsvField.activeInHierarchy)
             {
-                DOTween.Sequence()
-                    .Append(_hsvCanvas.DOFade(0.0f, 0.2f))
-                    .AppendCallback(() => _hsvField.SetActive(!_hsvField.activeInHierarchy));
+                EventSystem.current.SetSelectedGameObject(_hsvCanvas.gameObject);
+                Show();
             }
-            else
-            {
-                DOTween.Sequence()
-                    .AppendCallback(() => _hsvField.SetActive(!_hsvField.activeInHierarchy))
-                    .Append(_hsvCanvas.DOFade(1.0f, 0.4f));
-            }
-
         }
-        
-        // Update is called once per frame
-        void Update()
+
+        private Sequence Show()
         {
+            return DOTween.Sequence()
+                .AppendCallback(() => _hsvField.SetActive(true))
+                .Append(_hsvCanvas.DOFade(1.0f, 0.4f));
         }
     }
 }
