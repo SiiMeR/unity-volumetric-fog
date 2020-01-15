@@ -22,14 +22,22 @@ namespace Menu
             _originalColor = targetGraphic.color;
 
             _indicatorText = GetComponentInChildren<TextMeshProUGUI>();
-            _indicatorText.SetText(value.ToString(CultureInfo.InvariantCulture));
+            
+            UpdateIndicatorText(value);
+            
             onValueChanged.AddListener(UpdateIndicatorText);
         }
 
         public void UpdateIndicatorText(float newValue)
         {
-            _indicatorText.SetText(newValue.ToString(CultureInfo.InvariantCulture));
-            EventManager.RaymarchStepsChanged(newValue); // TODO: Does not belong here
+            if (wholeNumbers)
+            {
+                _indicatorText.SetText(newValue.ToString(CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                _indicatorText.SetText(newValue.ToString("0.00"));
+            }
         }
         
         public override void OnPointerDown(PointerEventData eventData)

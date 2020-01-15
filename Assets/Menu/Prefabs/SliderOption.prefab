@@ -166,6 +166,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2071148362366490666}
   - component: {fileID: 8882572097619663331}
+  - component: {fileID: 8065969774626865744}
   m_Layer: 5
   m_Name: SliderOption
   m_TagString: Untagged
@@ -219,6 +220,19 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &8065969774626865744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9186769005997704688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7a16a74ac224e00a9557ad4a858a4a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetOption: limitFogInSize
 --- !u!1001 &3086072358624623140
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -340,6 +354,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -0.18499756
+      objectReference: {fileID: 0}
+    - target: {fileID: 8229529796874831536, guid: 04f3cd9a72749904681096c2e0094623,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4674909501359522048, guid: 04f3cd9a72749904681096c2e0094623,
         type: 3}

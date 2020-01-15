@@ -804,6 +804,7 @@ GameObject:
   m_Component:
   - component: {fileID: 235752061440734951}
   - component: {fileID: 7259381987548051246}
+  - component: {fileID: 704373785848825625}
   m_Layer: 5
   m_Name: CarouselOption
   m_TagString: Untagged
@@ -857,6 +858,19 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &704373785848825625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6955326435264228157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dabedc43f6b4887a9b4e18f89091617, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetOption: limitFogInSize
 --- !u!1 &8131077113832078477
 GameObject:
   m_ObjectHideFlags: 0

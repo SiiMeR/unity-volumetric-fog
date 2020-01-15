@@ -2,6 +2,7 @@
 using System.Linq;
 using Attributes;
 using Enum;
+using Menu;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -148,6 +149,7 @@ public class VolumetricFog : MonoBehaviour
         _benchmark = FindObjectOfType<Benchmark>();
         fogLightCasters.ForEach(AddLightCommandBuffer);
         Regenerate3DTexture();
+        EventManager.FogOptionsChanged(fogOptions);
     }
 
     public void Regenerate3DTexture()

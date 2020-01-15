@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: FogOptions
   m_EditorClassIdentifier: 
   limitFogInSize: 0
-  fogWorldPosition: {x: 0, y: 0, z: 0}
+  fogWorldPosition: {x: 284, y: 0, z: 289}
   fogSize: 50
   renderTextureResDivision: 0
-  rayMarchSteps: 25
+  rayMarchSteps: 492
   optimizeSettingsFps: 0
   fpsTarget: 1
   useRayleighScattering: 1
@@ -33,8 +33,8 @@ MonoBehaviour:
   blurOffsets: {x: 1, y: 2, z: 3}
   blurWeights: {x: 0.213, y: 0.17, z: 0.036}
   useLightColorForFog: 0
-  fogInShadowColor: {r: 0.0627451, g: 0.20784314, b: 0.49019608, a: 1}
-  fogInLightColor: {r: 1, g: 0, b: 0, a: 1}
+  fogInShadowColor: {r: 0, g: 0, b: 0, a: 1}
+  fogInLightColor: {r: 0.48064512, g: 0.13408282, b: 0.4067875, a: 1}
   ambientFog: 0.2
   lightIntensity: 1
   windDirection: {x: 1, y: 0, z: 0}

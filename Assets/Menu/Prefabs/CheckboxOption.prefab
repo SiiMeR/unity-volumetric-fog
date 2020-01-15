@@ -239,6 +239,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5984477937223204423}
   - component: {fileID: 3816286999863623566}
+  - component: {fileID: 5895377253288001954}
   m_Layer: 5
   m_Name: CheckboxOption
   m_TagString: Untagged
@@ -292,6 +293,19 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &5895377253288001954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3517000355586679709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 159da50cabdc402083e8f7b8590982c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetOption: limitFogInSize
 --- !u!1 &4978860655840047126
 GameObject:
   m_ObjectHideFlags: 0
