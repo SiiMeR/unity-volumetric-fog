@@ -10,7 +10,7 @@ namespace Menu
 {
     public class CustomButton : Button
     {
-        public Color onHoverColor = Color.black;
+        public Color onHoverColor;
         private TextMeshProUGUI _text;
         
         protected override void Awake()

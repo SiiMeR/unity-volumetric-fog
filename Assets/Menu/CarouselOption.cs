@@ -24,9 +24,7 @@ namespace Menu
             var fieldInfo = CurrentOptions.GetType().GetField(targetOption);
             var defaultValue = fieldInfo.GetValue(CurrentOptions);
             var allValues = System.Enum.GetNames(fieldInfo.FieldType).ToList();
-            
-            print(string.Join(" ,", allValues));
-            
+
             _carousel.SetOptions(allValues);
             _carousel.SetCurrentText(defaultValue.ToString());
         }
