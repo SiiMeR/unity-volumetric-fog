@@ -1,3 +1,5 @@
+using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Menu
@@ -26,14 +28,22 @@ namespace Menu
             _slider = GetComponentInChildren<Slider>();
             _slider.onValueChanged.AddListener(OnValueChanged);
 
-            if (_slider.wholeNumbers) // ints
+            try
             {
-                _slider.value = (int) CurrentOptions.GetType().GetField(targetOption).GetValue(CurrentOptions);
+                if (_slider.wholeNumbers) // ints
+                {
+                    _slider.value = (int) CurrentOptions.GetType().GetField(targetOption).GetValue(CurrentOptions);
+                }
+                else // floats
+                {
+                    _slider.value = (float) CurrentOptions.GetType().GetField(targetOption).GetValue(CurrentOptions);
+                }
             }
-            else // floats
+            catch (Exception e)
             {
-                _slider.value = (float) CurrentOptions.GetType().GetField(targetOption).GetValue(CurrentOptions);
+                Debug.LogError($"Unable to set slider value for option: {targetOption}");
             }
+
         }
     }
 }
