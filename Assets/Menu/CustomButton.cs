@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using TMPro;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -10,20 +11,23 @@ namespace Menu
 {
     public class CustomButton : Button
     {
-        public Color onHoverColor;
+        [HideInInspector] public Color onHoverColor;
         private TextMeshProUGUI _text;
         
         protected override void Awake()
         {
             base.Awake();
             _text = GetComponentInChildren<TextMeshProUGUI>();
+        }
+
+        protected override void OnEnable()
+        {
             targetGraphic.color = onHoverColor;
-            onHoverColor.a = 0;
         }
 
         public override void OnPointerEnter(PointerEventData eventData)
         {
-            targetGraphic.DOFade(1.0f, 0.15f);
+            targetGraphic.DOFade(onHoverColor.a, 0.15f);
             _text.DOColor(Color.white, .15f);
         }
 
@@ -43,6 +47,12 @@ namespace Menu
             targetMenuButton.onHoverColor = EditorGUILayout.ColorField("On hover color", targetMenuButton.onHoverColor);
  
             base.OnInspectorGUI();
+
+            if (GUI.changed)
+            {
+                EditorUtility.SetDirty(targetMenuButton);
+                EditorSceneManager.MarkSceneDirty(targetMenuButton.gameObject.scene);
+            }
         }
     }
 }

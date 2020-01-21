@@ -34,7 +34,7 @@ MonoBehaviour:
   blurWeights: {x: 0.213, y: 0.17, z: 0.036}
   useLightColorForFog: 0
   fogInShadowColor: {r: 0.43400002, g: 0.29729, b: 0.3648932, a: 1}
-  fogInLightColor: {r: 0.36463743, g: 0.19860396, b: 0.692, a: 1}
+  fogInLightColor: {r: 0.38790843, g: 0.19999997, b: 0.6901961, a: 1}
   ambientFog: 0.2
   lightIntensity: 1
   windDirection: {x: 1, y: 0, z: 0}

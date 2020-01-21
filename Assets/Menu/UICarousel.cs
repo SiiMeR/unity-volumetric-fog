@@ -50,7 +50,7 @@ namespace Menu
             _currentText.text = _options[index];
         }
 
-        private void Awake()
+        private void Start()
         {
             SetCurrentlySelectedOption(_currentIndex);
         }
