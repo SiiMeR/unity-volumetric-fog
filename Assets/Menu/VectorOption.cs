@@ -18,9 +18,9 @@ namespace Menu
             inputFieldZ.onEndEdit.AddListener(OnValueChangedZ);
 
             var currentValue = (Vector3) CurrentOptions.GetType().GetField(targetOption).GetValue(CurrentOptions);
-            inputFieldX.text = currentValue.x.ToString();
-            inputFieldY.text = currentValue.y.ToString();
-            inputFieldZ.text = currentValue.z.ToString();
+            inputFieldX.text = currentValue.x.ToString("0");
+            inputFieldY.text = currentValue.y.ToString("0");
+            inputFieldZ.text = currentValue.z.ToString("0");
         }
 
         public void OnValueChangedX(string newValue)

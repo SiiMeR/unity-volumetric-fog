@@ -36,7 +36,7 @@ namespace Menu
             }
             else
             {
-                _indicatorText.SetText(newValue.ToString("0.00"));
+                _indicatorText.SetText(newValue.ToString("0.000"));
             }
         }
         

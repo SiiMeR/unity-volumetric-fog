@@ -353,7 +353,7 @@
                 for(; currentSteps < STEPS ; currentSteps++)
                 {	
                                     			
-                    if(transmittance < 0.0001){
+                    if(transmittance < 0.0000000001){
                         break;
                     }  
                     
@@ -388,13 +388,12 @@
                 
                      //   float4 weights = GetCascadeWeights_SplitSpheres(currentPos);
                      
-
-                       
                         float4 shadowCoord = getShadowCoord(float4(currentPos,1), weights);
                        // float4 shadowCoord = GetCascadeShadowCoord(float4(currentPos,1), weights);
     
-                        //do shadow test and store the result				
-                        float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);				
+                        //do shadow test and store the result
+                        float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);
+
 
                         //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas,
                         //add a bit of ambient fog so shadowed areas get some fog too
