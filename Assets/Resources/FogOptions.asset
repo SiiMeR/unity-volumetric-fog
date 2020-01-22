@@ -16,36 +16,36 @@ MonoBehaviour:
   fogWorldPosition: {x: 284, y: 0, z: 289}
   fogSize: 50
   renderTextureResDivision: 0
-  rayMarchSteps: 208
+  rayMarchSteps: 472
   optimizeSettingsFps: 0
   fpsTarget: 1
   useRayleighScattering: 1
-  rayleighScatteringCoef: 0.02
-  mieScatteringCoef: 0.01
+  rayleighScatteringCoef: 0.0022727728
+  mieScatteringCoef: 0.010000012
   mieScatteringApproximation: 0
-  fogDensityCoef: 8
-  extinctionCoef: 0.02
-  anisotropy: -0.3
-  heightDensityCoef: -4.2727275
+  fogDensityCoef: 11.818182
+  extinctionCoef: 0.024545496
+  anisotropy: -0.3090909
+  heightDensityCoef: 0
   baseHeightDensity: 2795
   blurIterations: 4
   blurDepthFalloff: 125
   blurOffsets: {x: 1, y: 2, z: 3}
   blurWeights: {x: 0.213, y: 0.17, z: 0.036}
   useLightColorForFog: 0
-  fogInShadowColor: {r: 0.9583333, g: 0.12382961, b: 0.5530029, a: 1}
+  fogInShadowColor: {r: 0.9404762, g: 0.11095503, b: 0.20090319, a: 1}
   fogInLightColor: {r: 0.38790843, g: 0.19999997, b: 0.6901961, a: 1}
-  ambientFog: 0.2
-  lightIntensity: 1
+  ambientFog: 0.17272727
+  lightIntensity: 1.0227273
   sunShouldMove: 0
-  moveDirection: {x: 2, y: 0, z: 0}
-  moveSpeed: 2
-  windDirection: {x: 20, y: 3, z: 0}
-  speed: 0
+  sunAngle: {x: 17.6, y: 10.000652, z: 180.00005}
+  moveSpeed: -7.3636365
+  windDirection: {x: 1, y: 1, z: 0}
+  speed: 5.909091
   noiseSource: 2
   addSceneColor: 1
   blurEnabled: 1
   shadowsEnabled: 1
   heightFogEnabled: 0
-  noiseScale: -0.19107997
+  noiseScale: 0.9363637
   noiseTexture3DDimensions: {x: 86, y: 86, z: 86}

@@ -394,7 +394,6 @@
                         //do shadow test and store the result
                         float shadowTerm = UNITY_SAMPLE_SHADOW(ShadowMap, shadowCoord);
 
-
                         //use shadow term to lerp between shadowed and lit fog colour, so as to allow fog in shadowed areas,
                         //add a bit of ambient fog so shadowed areas get some fog too
                         float3 fColor = lerp(_ShadowColor, litFogColor, shadowTerm + _AmbientFog);                 
