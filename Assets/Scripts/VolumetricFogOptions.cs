@@ -42,7 +42,12 @@ public class VolumetricFogOptions : ScriptableObject
     public Color fogInShadowColor = Color.blue;
     public Color fogInLightColor = Color.grey;
     [Range(0, 1)] public float ambientFog = .2f;
+    
+    [Header("Sun")]
     [Range(0, 10)] public float lightIntensity = 1;
+    public bool sunShouldMove;
+    public Vector3 sunAngle = new Vector3(23, 0, 0);
+    [Range(-10,10)] public float moveSpeed = 2;
 
     [Header("Animation")]
     public Vector3 windDirection = Vector3.right;

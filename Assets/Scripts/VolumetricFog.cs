@@ -38,6 +38,7 @@ public class VolumetricFog : MonoBehaviour
     private RenderTexture _fogTexture3DCompute;
     private RenderTexture _fogTexture3DSimplex;
     private Benchmark _benchmark;
+    private MoveSun _moveSun;
 
     public Material ApplyFogMaterial
     {
@@ -132,12 +133,14 @@ public class VolumetricFog : MonoBehaviour
     private void OnEnable()
     {
         sunLight = FindObjectsOfType<Light>().FirstOrDefault(l => l.type == LightType.Directional);
-
+        
         if (!sunLight)
         {
             sunLight = FindObjectOfType<Light>();
         }
-        
+
+        _moveSun = sunLight.GetComponent<MoveSun>() ?? sunLight.gameObject.AddComponent<MoveSun>();
+
         if (!fogLightCasters.Contains(sunLight))
         {
             fogLightCasters.Add(sunLight);
@@ -149,7 +152,6 @@ public class VolumetricFog : MonoBehaviour
         _benchmark = FindObjectOfType<Benchmark>();
         fogLightCasters.ForEach(AddLightCommandBuffer);
         Regenerate3DTexture();
-        EventManager.FogOptionsChanged(fogOptions);
     }
 
     public void Regenerate3DTexture()
@@ -246,6 +248,18 @@ public class VolumetricFog : MonoBehaviour
         if (sunLight)
         {
             sunLight.intensity = fogOptions.lightIntensity;
+            if (fogOptions.sunShouldMove)
+            {
+                // _moveSun.moveDirection = fogOptions.sunAngle;
+                _moveSun.shouldMove = true;
+                _moveSun.moveSpeed = fogOptions.moveSpeed;
+                fogOptions.sunAngle = sunLight.transform.rotation.eulerAngles;
+            }
+            else
+            {
+                _moveSun.shouldMove = false;
+                sunLight.transform.rotation = Quaternion.Euler(fogOptions.sunAngle);
+            }
         }
 
         var fogRtWidth = source.width >> fogOptions.renderTextureResDivision;
