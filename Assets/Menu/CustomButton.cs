@@ -1,8 +1,7 @@
-﻿using DG.Tweening;
+﻿
+
+using DG.Tweening;
 using TMPro;
-using UnityEditor;
-using UnityEditor.SceneManagement;
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -35,24 +34,6 @@ namespace Menu
         {
             targetGraphic.DOFade(0.0f, 0.15f);
             _text.DOColor(Color.black, .15f);
-        }
-    }
-
-    [CustomEditor(typeof(CustomButton))]
-    public class CustomButtonEditor : ButtonEditor
-    {
-        public override void OnInspectorGUI()
-        {
-            var targetMenuButton = (CustomButton)target;
-            targetMenuButton.onHoverColor = EditorGUILayout.ColorField("On hover color", targetMenuButton.onHoverColor);
- 
-            base.OnInspectorGUI();
-
-            if (GUI.changed)
-            {
-                EditorUtility.SetDirty(targetMenuButton);
-                EditorSceneManager.MarkSceneDirty(targetMenuButton.gameObject.scene);
-            }
         }
     }
 }

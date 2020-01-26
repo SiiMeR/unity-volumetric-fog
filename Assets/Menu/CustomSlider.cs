@@ -1,7 +1,5 @@
 ﻿using System.Globalization;
 using TMPro;
-using UnityEditor;
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -61,19 +59,5 @@ namespace Menu
         // {
         //     targetGraphic.DOColor(_originalColor, .25f);
         // }
-    }
-
-    [CustomEditor(typeof(CustomSlider))]
-    public class CustomSliderEditor : SliderEditor
-    {
-        public override void OnInspectorGUI()
-        {
-            var targetSlider = (CustomSlider)target;
-            
-            targetSlider.onHoverColor = EditorGUILayout.ColorField("On hover color", targetSlider.onHoverColor);
-            targetSlider.onClickColor = EditorGUILayout.ColorField("On click color", targetSlider.onClickColor);
- 
-            base.OnInspectorGUI();
-        }
     }
 }

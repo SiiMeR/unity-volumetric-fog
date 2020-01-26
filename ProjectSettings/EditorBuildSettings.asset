@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Forest.unity
-    guid: 77075def2384cae4f9ad33bae52d8136
-  - enabled: 1
     path: Assets/3rdParty/NatureManufacture Assets/Meadow Environment Dynamic Nature/Demo
       Scenes/Unity Standard Demo Scene.unity
     guid: 98069e6af3a8c7b4695577be2afc6b78
+  - enabled: 1
+    path: Assets/Scenes/Forest.unity
+    guid: 77075def2384cae4f9ad33bae52d8136
   m_configObjects: {}
