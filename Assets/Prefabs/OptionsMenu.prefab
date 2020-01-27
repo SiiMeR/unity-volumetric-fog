@@ -1070,7 +1070,6 @@ MonoBehaviour:
   destroyWhenClosed: 1
   disableScreensUnderneath: 1
   _menuRect: {fileID: 3203230243684799645}
-  _defaultSettings: {fileID: 11400000, guid: be8d6eaf273bf044dbb737a8ff68f1c4, type: 2}
 --- !u!225 &5879704528816917384
 CanvasGroup:
   m_ObjectHideFlags: 0

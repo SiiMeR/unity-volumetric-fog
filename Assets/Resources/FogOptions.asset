@@ -16,7 +16,7 @@ MonoBehaviour:
   fogWorldPosition: {x: 284, y: 0, z: 289}
   fogSize: 50
   renderTextureResDivision: 0
-  rayMarchSteps: 472
+  rayMarchSteps: 462
   optimizeSettingsFps: 0
   fpsTarget: 1
   useRayleighScattering: 1
@@ -38,7 +38,7 @@ MonoBehaviour:
   ambientFog: 0.17272727
   lightIntensity: 1.0227273
   sunShouldMove: 0
-  sunAngle: {x: 17.6, y: 10.000651, z: 180.00005}
+  sunAngle: {x: 17.6, y: 10.00065, z: 180.00005}
   moveSpeed: -7.3636365
   windDirection: {x: 1, y: 1, z: 0}
   speed: 5.909091

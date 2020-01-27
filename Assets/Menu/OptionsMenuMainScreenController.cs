@@ -40,7 +40,7 @@ namespace Menu
 
         public void OnChangeScenePressed()
         {
-            
+            SceneSelectionMenu.Show();
         }
 
         public void OnResetPressed()

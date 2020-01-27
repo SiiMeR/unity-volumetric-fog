@@ -32,10 +32,5 @@ namespace Menu
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-
-        public void OnChangeScenePressed()
-        {
-            ChangeSceneScreenController.Show();
-        }
     }
 }

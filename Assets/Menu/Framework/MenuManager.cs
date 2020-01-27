@@ -15,6 +15,7 @@ namespace Menu.Framework
 		[Header("Menu screens")]
 		public PauseMenuController pauseMenuPrefab;
 		public OptionsMenuMainScreenController optionsMenuMainPrefab;
+		public SceneSelectionMenu sceneSelectionMenuPrefab;
 
 		private readonly Stack<Screen> _screens = new Stack<Screen>();
 
