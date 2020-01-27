@@ -191,7 +191,7 @@ QualitySettings:
     shadowDistance: 2000
     shadowNearPlaneOffset: 1
     shadowCascade2Split: 0.33333334
-    shadowCascade4Split: {x: 0.4490982, y: 0.6113298, z: 0.79936624}
+    shadowCascade4Split: {x: 0.2133162, y: 0.49284652, z: 0.79936624}
     shadowmaskMode: 1
     skinWeights: 4
     textureQuality: 0
@@ -204,7 +204,7 @@ QualitySettings:
     vSyncCount: 0
     lodBias: 2
     maximumLODLevel: 0
-    streamingMipmapsActive: 0
+    streamingMipmapsActive: 1
     streamingMipmapsAddAllCameras: 1
     streamingMipmapsMemoryBudget: 512
     streamingMipmapsRenderersPerFrame: 512

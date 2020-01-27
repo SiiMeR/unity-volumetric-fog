@@ -4,6 +4,7 @@ using DG.Tweening;
 using Menu.Framework;
 using TMPro;
 using UnityEngine;
+using Screen = UnityEngine.Screen;
 
 namespace Menu
 {
@@ -46,7 +47,7 @@ namespace Menu
         {
             var volumetricFogOptions = ScriptableObject.CreateInstance<VolumetricFogOptions>();
             FindObjectOfType<VolumetricFog>().fogOptions = volumetricFogOptions;
-                        
+            Screen.SetResolution(1920, 1080, true, Screen.currentResolution.refreshRate);
             foreach (var option in GetComponentsInChildren<Option>(true))
             {
                 option.CurrentOptions = volumetricFogOptions;

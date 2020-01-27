@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEditor;
@@ -18,14 +19,14 @@ namespace Menu
         // Start is called before the first frame update
         void Start()
         {
-            var resolutions = Screen.resolutions.Select(res => $"{res.width}x{res.height}").ToList();
+            var resolutions = Screen.resolutions.Select(res => $"{res.width}x{res.height}").Distinct().ToList();
             var currentResolution = $"{Screen.currentResolution.width}x{Screen.currentResolution.height}";
             var index = resolutions.IndexOf(currentResolution);
             _dropDown.ClearOptions();
+            _dropDown.AddOptions(new List<string>{"256x144", "426x240", "640x360"});
             _dropDown.AddOptions(resolutions);
             _dropDown.SetValueWithoutNotify(index);
             _dropDown.onValueChanged.AddListener(OnResolutionChanged);
-            // _dropDown.onValueChanged += OnResolutionChanged;
         }
 
         public void OnResolutionChanged(int newRes)

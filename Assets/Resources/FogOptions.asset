@@ -25,7 +25,7 @@ MonoBehaviour:
   mieScatteringApproximation: 0
   fogDensityCoef: 11.818182
   extinctionCoef: 0.024545496
-  anisotropy: -0.3090909
+  anisotropy: -0.3
   heightDensityCoef: 0
   baseHeightDensity: 2795
   blurIterations: 4
@@ -38,7 +38,7 @@ MonoBehaviour:
   ambientFog: 0.17272727
   lightIntensity: 1.0227273
   sunShouldMove: 0
-  sunAngle: {x: 17.6, y: 10.000652, z: 180.00005}
+  sunAngle: {x: 17.6, y: 10.000651, z: 180.00005}
   moveSpeed: -7.3636365
   windDirection: {x: 1, y: 1, z: 0}
   speed: 5.909091
