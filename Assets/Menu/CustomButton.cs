@@ -21,7 +21,7 @@ namespace Menu
 
         protected override void OnEnable()
         {
-            targetGraphic.color = onHoverColor;
+            // targetGraphic.color = onHoverColor;
         }
 
         public override void OnPointerEnter(PointerEventData eventData)

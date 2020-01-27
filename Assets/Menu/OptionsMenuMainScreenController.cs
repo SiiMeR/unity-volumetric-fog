@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using DG.Tweening;
 using Menu.Framework;
 using TMPro;
@@ -9,7 +10,6 @@ namespace Menu
     public class OptionsMenuMainScreenController : AbstractScreen<OptionsMenuMainScreenController>
     {
         [SerializeField] private RectTransform _menuRect;
-
         private CanvasGroup _canvasGroup;
 
         private void Start()
@@ -26,7 +26,6 @@ namespace Menu
             _menuRect.DOAnchorPosX(0, inAnimationDuration);
             _canvasGroup.alpha = 0f;
             _canvasGroup.DOFade(1, inAnimationDuration).SetEase(Ease.Linear);
-            // TODO: Bind correct configuration values on opening this menu
         }
 
         public override void OnBackPressed()
@@ -36,6 +35,23 @@ namespace Menu
                 .Join(_menuRect.DOAnchorPosX(600, outDuration))
                 .Join(_canvasGroup.DOFade(0, outDuration).SetEase(Ease.Linear))
                 .AppendCallback(() => base.OnBackPressed());
+        }
+
+        public void OnChangeScenePressed()
+        {
+            
+        }
+
+        public void OnResetPressed()
+        {
+            var volumetricFogOptions = ScriptableObject.CreateInstance<VolumetricFogOptions>();
+            FindObjectOfType<VolumetricFog>().fogOptions = volumetricFogOptions;
+            FindObjectOfType<Option>().CurrentOptions = volumetricFogOptions;
+                        
+            foreach (var componentsInChild in GetComponentsInChildren<Option>(true))
+            {
+                componentsInChild.Awake();
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Menu
         [DropdownDisplay(typeof(FogOptionsDrawerHelper), "AllOptions")]
         public string targetOption;
 
-        protected VolumetricFogOptions CurrentOptions;
+        public VolumetricFogOptions CurrentOptions;
         public virtual void Awake()
         {
             CurrentOptions = FindObjectOfType<VolumetricFog>().fogOptions;
