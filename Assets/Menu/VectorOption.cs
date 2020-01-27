@@ -11,8 +11,10 @@ namespace Menu
         public TMP_InputField inputFieldY;
         public TMP_InputField inputFieldZ;
         // Start is called before the first frame update
-        void Start()
+        public override void Awake()
         {
+            base.Awake();
+            
             inputFieldX.onEndEdit.AddListener(OnValueChangedX);
             inputFieldY.onEndEdit.AddListener(OnValueChangedY);
             inputFieldZ.onEndEdit.AddListener(OnValueChangedZ);

@@ -23,7 +23,7 @@ MonoBehaviour:
   rayleighScatteringCoef: 0.01
   mieScatteringCoef: 0.02
   mieScatteringApproximation: 0
-  fogDensityCoef: 8
+  fogDensityCoef: 7
   extinctionCoef: 0.03
   anisotropy: -0.3
   heightDensityCoef: 0.5
@@ -34,7 +34,7 @@ MonoBehaviour:
   blurWeights: {x: 0.213, y: 0.17, z: 0.036}
   useLightColorForFog: 0
   fogInShadowColor: {r: 0.0627451, g: 0.20784314, b: 0.49019608, a: 1}
-  fogInLightColor: {r: 1, g: 0.2784314, b: 0.09803922, a: 1}
+  fogInLightColor: {r: 1, g: 0.59694713, b: 0.09803921, a: 1}
   ambientFog: 0.2
   lightIntensity: 1
   sunShouldMove: 0

@@ -46,11 +46,11 @@ namespace Menu
         {
             var volumetricFogOptions = ScriptableObject.CreateInstance<VolumetricFogOptions>();
             FindObjectOfType<VolumetricFog>().fogOptions = volumetricFogOptions;
-            FindObjectOfType<Option>().CurrentOptions = volumetricFogOptions;
                         
-            foreach (var componentsInChild in GetComponentsInChildren<Option>(true))
+            foreach (var option in GetComponentsInChildren<Option>(true))
             {
-                componentsInChild.Awake();
+                option.CurrentOptions = volumetricFogOptions;
+                option.Awake();
             }
         }
     }
