@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 0}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 597845560}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 0}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -328,7 +328,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 4.6e-44, z: 1.48575e-40, w: 1.02e-43}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 1.3963e-41}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -339,7 +339,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 597845559}
-  m_LocalRotation: {x: 0.08613531, y: -0.15240364, z: 0.9844674, w: 0.013334067}
+  m_LocalRotation: {x: 0.086135305, y: -0.15240364, z: 0.9844674, w: 0.013334065}
   m_LocalPosition: {x: 65.9, y: 71.4, z: 81}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -442,31 +442,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2267240823495543460, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267240823495543460, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267240823495543460, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267240823495543460, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267240823495543460, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2267240823917229376, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -572,35 +547,16 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2267240823917229377, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
+        type: 3}
+      propertyPath: sceneSelectionMenuPrefab
+      value: 
+      objectReference: {fileID: 8965066355875979400, guid: d953ac99798831746b405657da0a54b4,
+        type: 3}
     - target: {fileID: 2267240823917229436, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
         type: 3}
       propertyPath: m_Name
       value: Menu
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267240824144144425, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267240824144144425, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267240824144144425, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267240824144144425, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267240824144144425, guid: 25adc8a53e4798c46b4c30f9eed3ff17,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 25adc8a53e4798c46b4c30f9eed3ff17, type: 3}

@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using Screen = Menu.Framework.Screen;
 
 namespace Menu.Framework
 {

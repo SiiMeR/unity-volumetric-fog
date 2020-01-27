@@ -52,7 +52,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2267240822966340199}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 058cba836c1846c3aa1c5fd2e28aea77, type: 3}
   m_Name: 
@@ -89,7 +89,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2267240823495543459
 RectTransform:
   m_ObjectHideFlags: 0
@@ -336,8 +336,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 2267240823569401568}
-  - {fileID: 8224511729260651008}
-  - {fileID: 2472160984444885420}
+  - {fileID: 2267240823073605785}
+  - {fileID: 1025353683768901764}
   - {fileID: 2267240824144144424}
   - {fileID: 2267240823495543459}
   - {fileID: 5795319480731696927}
@@ -425,6 +425,8 @@ MonoBehaviour:
   pauseMenuPrefab: {fileID: 7878359612671157050, guid: 2e3820b797f874248a4843d257b0aee0,
     type: 3}
   optionsMenuMainPrefab: {fileID: 5831608673411400274, guid: 101b7d556a1921f41becd079d1bc6de0,
+    type: 3}
+  sceneSelectionMenuPrefab: {fileID: 8965066355875979400, guid: d953ac99798831746b405657da0a54b4,
     type: 3}
 --- !u!1 &2267240824128673798
 GameObject:
@@ -533,7 +535,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -15, y: 0}
+  m_AnchoredPosition: {x: -10, y: 0}
   m_SizeDelta: {x: 1200, y: 50}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &2267240824144144426
@@ -590,13 +592,13 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_textAlignment: 260
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -770,6 +772,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SceneSelectionMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 5024423295549332380, guid: d953ac99798831746b405657da0a54b4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d953ac99798831746b405657da0a54b4, type: 3}
@@ -2582,7 +2589,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 101b7d556a1921f41becd079d1bc6de0, type: 3}
---- !u!224 &2472160984444885420 stripped
+--- !u!224 &1025353683768901764 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3203230242252902722, guid: 101b7d556a1921f41becd079d1bc6de0,
     type: 3}
@@ -2792,7 +2799,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e3820b797f874248a4843d257b0aee0, type: 3}
---- !u!224 &8224511729260651008 stripped
+--- !u!224 &2267240823073605785 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7878359612671157054, guid: 2e3820b797f874248a4843d257b0aee0,
     type: 3}

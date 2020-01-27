@@ -28,8 +28,8 @@ public class VolumetricFogOptions : ScriptableObject
     [Range(0, 100f)] public float fogDensityCoef = 9f;
     [Range(0, 1f)] public float extinctionCoef = 0.04f;
     [Range(-1f, 1f)] public float anisotropy = -.3f;
-    [Range(0, 1f)] public float heightDensityCoef = 0.5f;
-    [Range(0, 10000)] public float baseHeightDensity = 5f;
+    [Range(0, 1f)] public float heightDensityCoef = 0.7f;
+    [Range(0, 10000)] public float baseHeightDensity = 6000f;
 
     [Header("Blur")]
     [Range(1, 8)] public int blurIterations = 4;

@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using Menu.Framework;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Menu
 {
@@ -27,6 +28,13 @@ namespace Menu
                 .Join(_menuRect.DOAnchorPosX(600, outDuration))
                 .Join(_canvasGroup.DOFade(0, outDuration).SetEase(Ease.Linear))
                 .AppendCallback(() => base.OnBackPressed());
+        }
+
+        public void OnSceneSelected(string scene)
+        {
+            Close();
+            SceneManager.LoadScene(scene);
+            Time.timeScale = 1f;
         }
     }
 }

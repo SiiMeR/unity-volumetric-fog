@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 20988825282140592}
   - component: {fileID: 81533298716714680}
   - component: {fileID: 124758704881637454}
-  - component: {fileID: 45299289169075336}
   - component: {fileID: 114654324437572800}
   m_Layer: 0
   m_Name: CameraAndFog
@@ -94,15 +93,6 @@ Behaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1449617652394336}
   m_Enabled: 1
---- !u!45 &45299289169075336
-Skybox:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1449617652394336}
-  m_Enabled: 1
-  m_CustomSkybox: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!114 &114654324437572800
 MonoBehaviour:
   m_ObjectHideFlags: 0
