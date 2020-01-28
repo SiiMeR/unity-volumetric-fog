@@ -60,10 +60,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f363afe9c4a2074ea34efee3c0a654a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _options:
-  - Henyey-Greenstein
-  - Cornette-Shanks
-  - Schlick
   _currentText: {fileID: 3061810483801563152}
   _leftArrow: {fileID: 5769120438015029344}
   _rightArrow: {fileID: 5293177267193552705}
@@ -851,7 +847,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 3
-  m_Spacing: 0
+  m_Spacing: -3
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -871,6 +867,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetOption: limitFogInSize
+  CurrentOptions: {fileID: 0}
 --- !u!1 &8131077113832078477
 GameObject:
   m_ObjectHideFlags: 0

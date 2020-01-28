@@ -32,7 +32,7 @@ namespace Menu
 
         public void OnSceneSelected(string scene)
         {
-            Close();
+            // Close();
             SceneManager.LoadScene(scene);
             Time.timeScale = 1f;
         }
