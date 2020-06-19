@@ -1,7 +1,7 @@
 ![Fog result 2019 dec.](docs/images/fogresult4.png?raw=true "")  
 
 # Volumetric Fog
-Volumetric fog implementation in Unity. Made originally as a part of my Bachelors thesis. Now I am just improving it in my free time. Does not currently support the new HD render pipeline that came in Unity 2018.
+Volumetric fog implementation in Unity. Made originally as a part of my Bachelors thesis (which you can read from [here](https://comserv.cs.ut.ee/home/files/raudsepp_informaatika_2018.pdf?study=ATILoputoo&reference=C3BDF219560416C7BFECB8725A13433EFF35FA4F)). Now I am just improving it in my free time. Does not currently support the new HD render pipeline that came in Unity 2018.
 
 # How to run:
 1. Clone this repository (`git clone https://github.com/SiiMeR/unity-volumetric-fog.git`)  
